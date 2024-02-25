@@ -1,6 +1,6 @@
 import './Card.css';
 
-function Login({ setEmail, setPassword, handleGoogleClick }) {
+function Login({ setEmail, setPassword, handleGoogleClick, signInReturningUser }) {
   return (
     <>
       <div className='label-container'>
@@ -13,7 +13,7 @@ function Login({ setEmail, setPassword, handleGoogleClick }) {
           <input onChange={(e) => setPassword(e.target.value)} type='password'></input>
         </div>
       </div>
-      <button className='auth-button' onClick={handleGoogleClick}>
+      <button className='auth-button' onClick={signInReturningUser}>
         Sign In
       </button>
       <button className='auth-button' onClick={handleGoogleClick}>
