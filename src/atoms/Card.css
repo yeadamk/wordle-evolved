@@ -1,0 +1,31 @@
+.label-container {
+  margin: 0 12.5% 2.5vh;
+}
+.label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0vh 0 3vh;
+}
+
+.label > input {
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0 rgba(96, 76, 103, 0.5);
+  height: 5vh;
+  outline: none;
+  text-indent: 5px;
+}
+
+.auth-button {
+  height: 6.5vh;
+  margin: 3vh 12.5% 0.5vh;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  background: linear-gradient(#bb8fce, #9651a5);
+}
+
+.auth-button:hover {
+  background: linear-gradient(#bb8fce, #8f6798);
+}

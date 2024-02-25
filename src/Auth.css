@@ -1,0 +1,42 @@
+.login-container {
+  width: 75vw;
+  max-width: 500px;
+  height: 75vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(155, 80, 190, 2);
+}
+.toggle:hover {
+  cursor: pointer;
+}
+.toggle {
+  margin: 7vh 0;
+  width: 37.5%;
+  height: 7vh;
+  border: none;
+  box-shadow: 0 0 10px 0 rgba(89, 82, 92, 0.5);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sel {
+  background-color: rgba(155, 80, 190, 0.8) !important;
+  color: white;
+}
+
+.toggle-left {
+  border-radius: 10px 0 0px 10px;
+  background-color: white;
+}
+
+.toggle-right {
+  border-radius: 0px 10px 10px 0px;
+  background-color: white;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
