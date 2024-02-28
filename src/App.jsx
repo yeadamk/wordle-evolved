@@ -37,17 +37,44 @@ function App() {
                   "RET", 'Z', 'X', 'C', 'V', 'B', 'N', 'M', "DEL"];
   const [kbSquares, setKbSquares] = useState(kbInit);
 
-//   const handleKbClick = (whichSq, whichKey, value) => {
-//     // Do whatever you need to do when a keyboard square is clicked
-//         setKeyboardValue(keyboardValue === "0" ? "1" : "0");
-//   };
+  const [secretWord, setSecretWord] = useState("BEANS");
+  const [userGuess, setUserGuess] = useState("");
+  const [restrictType, setRestrictType] = useState(false);
+  const [minIndDel, setMinIndDel] = useState(0);
 
 
   function handleKbClick(val) {
+
     const nextGridSquares = gridSquares.slice();
-    nextGridSquares[currGridSq] = val;
-    setCurrGridSq(currGridSq + 1);
+
+    if(val == "DEL"){
+      if(currGridSq > 0 && currGridSq > minIndDel){
+          nextGridSquares[currGridSq - 1] = null;
+          setCurrGridSq(currGridSq - 1);
+          setRestrictType(false);
+      }
+    } else if(val == "RET"){
+      if(currGridSq % 5 == 0 && currGridSq != 0){
+          //this is where to check the winner
+
+          setUserGuess(nextGridSquares[currGridSq - 4] + nextGridSquares[currGridSq - 3] + nextGridSquares[currGridSq - 2] + nextGridSquares[currGridSq - 1] + nextGridSquares[currGridSq]);
+          //setCurrGridSq(currGridSq + 2);
+          setRestrictType(false);
+          setMinIndDel(currGridSq);
+      }
+    } else{
+      if(!restrictType){
+          nextGridSquares[currGridSq] = val;
+          setCurrGridSq(currGridSq + 1);
+
+          if((currGridSq + 1) % 5 == 0){
+            setRestrictType(true);
+          }
+      }
+    }
+
     setGridSquares(nextGridSquares);
+
   }
 
 
