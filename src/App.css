@@ -40,3 +40,47 @@
 .read-the-docs {
   color: #888;
 }
+
+.square {
+  background: transparent;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: 5px;
+  margin-top: 5px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+  place-items: center
+}
+
+.kb-square {
+  background: transparent;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: 5px;
+  margin-top: 5px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+  place-items: center
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.kb-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
