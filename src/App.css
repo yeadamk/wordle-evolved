@@ -2,7 +2,7 @@
   font-family: 'JetBrains Mono', monospace;
 }
 body {
-  background-image: url('./assets/background.avif');
+  /* background-image: url('./assets/background.avif'); */
   background-size: cover; /* Adjust the background size */
   /* background-repeat: no-repeat; */
   margin: 0;
@@ -77,7 +77,7 @@ body {
   padding: 0;
   text-align: center;
   width: 34px;
-  place-items: center
+  place-items: center;
 }
 
 .kb-square {
@@ -93,17 +93,17 @@ body {
   padding: 0;
   text-align: center;
   width: 34px;
-  place-items: center
+  place-items: center;
 }
 
 .board-row:after {
   clear: both;
-  content: "";
+  content: '';
   display: table;
 }
 
 .kb-row:after {
   clear: both;
-  content: "";
+  content: '';
   display: table;
 }
