@@ -97,6 +97,17 @@ function checkWinner(colorArr) {
 
 }
 
+function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, words){
+    const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
+
+    if(words.includes(userGuess)){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 function App() {
   const [message, setMessage] = useState("Click To Start Daily Game!");
   const [showBoard, setShowBoard] = useState(false);
@@ -107,7 +118,14 @@ function App() {
                   "RET", 'Z', 'X', 'C', 'V', 'B', 'N', 'M', "DEL"];
   const [kbSquares, setKbSquares] = useState(kbInit);
 
-  const [targetWord, setTargetWord] = useState("BEETS");
+  //to be replaced with linux.words later? Filtered down of course.
+  const wordList = ["BEANS", "RATIO", "HELLO", "WORLD", "MOUSE", "ROCKY", "WATER", "SUPER", "HOUSE"];
+
+   const [targetWord, setTargetWord] = useState(() => {
+     return wordList[Math.floor(Math.random() * wordList.length)];
+   });
+
+
   const [userGuess, setUserGuess] = useState("");
   const [restrictType, setRestrictType] = useState(false);
   const [minIndDel, setMinIndDel] = useState(0);
@@ -116,6 +134,7 @@ function App() {
   const [playerWon, setPlayerWon] = useState(false);
   const [playerWonOne, setPlayerWonOne] = useState(false);
   const [playerLost, setPlayerLost] = useState(false);
+  const [displayInvalid, setDisplayInvalid] = useState(false);
 
 
   function handleKbClick(val) {
@@ -127,42 +146,47 @@ function App() {
           nextGridSquares[currGridSq - 1] = null;
           setCurrGridSq(currGridSq - 1);
           setRestrictType(false);
+          setDisplayInvalid(false);
       }
     } else if(val == "RET"){
       if(currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost){
-          //this is where to check the winner - TO DO LATER
 
-          setColorArr(checkStatus(nextGridSquares[currGridSq - 5], nextGridSquares[currGridSq - 4], nextGridSquares[currGridSq - 3], nextGridSquares[currGridSq - 2], nextGridSquares[currGridSq - 1], targetWord));
+          if(checkValidWord(nextGridSquares[currGridSq - 5], nextGridSquares[currGridSq - 4], nextGridSquares[currGridSq - 3], nextGridSquares[currGridSq - 2], nextGridSquares[currGridSq - 1], wordList)){
+            setColorArr(checkStatus(nextGridSquares[currGridSq - 5], nextGridSquares[currGridSq - 4], nextGridSquares[currGridSq - 3], nextGridSquares[currGridSq - 2], nextGridSquares[currGridSq - 1], targetWord));
 
-          const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
-          setColorArr(newColorArr);
+            const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
+            setColorArr(newColorArr);
 
-          for(let i = 0; i < 5; i++){
+            for(let i = 0; i < 5; i++){
 
-            if(newColorArr[i] == 0){
-                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'grey' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
-            } else if (newColorArr[i] == 1){
-                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'yellow' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
-            } else if (newColorArr[i] == 2){
-                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'green' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
-            } else {}
+              if(newColorArr[i] == 0){
+                    nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'grey' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+              } else if (newColorArr[i] == 1){
+                    nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'yellow' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+              } else if (newColorArr[i] == 2){
+                    nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'green' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+              } else {}
 
+            }
+
+            setNumGuesses(numGuesses + 1);
+
+            if(checkWinner(newColorArr) && numGuesses == 0){
+                setPlayerWonOne(true);
+            } else if (checkWinner(newColorArr)) {
+                setPlayerWon (true);
+            }
+
+            if(!checkWinner(newColorArr) && currGridSq == 30){
+                setPlayerLost(true);
+            }
+
+            setRestrictType(false);
+            setMinIndDel(currGridSq);
+            setDisplayInvalid(false);
+          } else {
+            setDisplayInvalid(true);
           }
-
-          setNumGuesses(numGuesses + 1);
-
-          if(checkWinner(newColorArr) && numGuesses == 0){
-              setPlayerWonOne(true);
-          } else if (checkWinner(newColorArr)) {
-              setPlayerWon (true);
-          }
-
-          if(!checkWinner(newColorArr) && currGridSq == 30){
-              setPlayerLost(true);
-          }
-
-          setRestrictType(false);
-          setMinIndDel(currGridSq);
       }
     } else{
       if(!restrictType && !playerWon && !playerWonOne && !playerLost){
@@ -172,6 +196,7 @@ function App() {
           if((currGridSq + 1) % 5 == 0){
             setRestrictType(true);
           }
+          setDisplayInvalid(false);
       }
     }
 
@@ -206,6 +231,14 @@ function App() {
    
    {showBoard && (
       <>
+
+        {displayInvalid && (
+        <>
+            <div>
+                <p> Not a valid word! </p>
+            </div>
+        </>
+        )}
 
         {playerWonOne && (
         <>
