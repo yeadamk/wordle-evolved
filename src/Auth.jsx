@@ -48,25 +48,29 @@ function Auth() {
     }
   };
   return (
-    <div className='login-container'>
-      <div className='toggle-container'>
-        <button className={`toggle toggle-left ${authToggle ? 'sel' : ''}`} onClick={() => setAuthToggle(true)}>
-          Sign In
-        </button>
-        <button className={`toggle toggle-right ${authToggle ? '' : 'sel'}`} onClick={() => setAuthToggle(false)}>
-          Sign Up
-        </button>
+    <div className='landing-hero'>
+      <h1 className='title'>Welcome to Wordle-Evolved</h1>
+
+      <div className='login-container'>
+        <div className='toggle-container'>
+          <button className={`toggle toggle-left ${authToggle ? 'sel' : ''}`} onClick={() => setAuthToggle(true)}>
+            Sign In
+          </button>
+          <button className={`toggle toggle-right ${authToggle ? '' : 'sel'}`} onClick={() => setAuthToggle(false)}>
+            Sign Up
+          </button>
+        </div>
+        {authToggle ? (
+          <Login
+            setEmail={setEmail}
+            setPassword={setPassword}
+            handleGoogleClick={handleGoogleClick}
+            signInReturningUser={signInReturningUser}
+          />
+        ) : (
+          <SignUp setName={setName} setEmail={setEmail} setPassword={setPassword} handleNewUsers={handleNewUsers} />
+        )}
       </div>
-      {authToggle ? (
-        <Login
-          setEmail={setEmail}
-          setPassword={setPassword}
-          handleGoogleClick={handleGoogleClick}
-          signInReturningUser={signInReturningUser}
-        />
-      ) : (
-        <SignUp setName={setName} setEmail={setEmail} setPassword={setPassword} handleNewUsers={handleNewUsers} />
-      )}
     </div>
   );
 }
