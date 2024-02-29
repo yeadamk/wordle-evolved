@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
+import Auth from './Auth';
 
 
 function GridSquare({ value }) {
@@ -109,6 +107,13 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
 }
 
 function App() {
+
+  return (
+    <div className='landing-hero'>
+      <h1 className='title'>Welcome to Wordle-Evolved</h1>
+      <Auth />
+    </div>
+
   const [message, setMessage] = useState("Click To Start Daily Game!");
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
