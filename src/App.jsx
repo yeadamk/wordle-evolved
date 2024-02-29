@@ -8,22 +8,92 @@ function GridSquare({ value }) {
   return <div className="square">{value}</div>;
 }
 
-//function KeyboardSquare({ whichKey, value, onKbClick }) {
 function KeyboardSquare({ value, onKbSquareClick }) {
-//   return (
-//     <button id={id} className="kb-square" onClick={() => onKbClick(id, value)}>
-//       {value}
-//     </button>
-//   );
-
-    //return <div className="kb-square">{value}</div>;
-
-
   return (
     <button className="kb-square" onClick={onKbSquareClick}>
       {value}
     </button>
   );
+}
+
+function checkStatus(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, targetWord) {
+
+  const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
+
+  const targetLetters = [];
+  const status = [];
+  let found = false;
+  const indTwos = [];
+
+  let occCtr = 0;
+  let greenValCtr = 0;
+  let yelVal;
+
+  for(let i = 0; i < 5; i++){
+    targetLetters[i] = targetWord[i];
+
+  }
+
+  for (let j = 0; j < 5; j++) {
+
+      if(userGuess[j] == targetWord[j]){
+          status[j] = 2;
+      } else {
+
+        for(let k = 0; k < 5; k++){
+            if(userGuess[j] == targetLetters[k]){
+                found = true;
+                targetLetters[k] = '0';
+                break;
+            }
+        }
+
+        if(found){
+            status[j] = 1;
+        } else {
+            status[j] = 0;
+         }
+
+      }
+
+      found = false;
+  }
+
+  for(let p = 0; p < 5; p++){
+
+    if(status[p] == 1){
+      occCtr = 0;
+      greenValCtr = 0;
+
+      yelVal = userGuess[p];
+      for(let q = 0; q < 5; q++){
+          if(yelVal == targetWord[q]){
+              occCtr++;
+              if(status[q] == 2){
+                greenValCtr++;
+              }
+          }
+      }
+
+      if(occCtr == greenValCtr){
+          status[p] = 0;
+      }
+    }
+  }
+
+  return status;
+
+}
+
+function checkWinner(colorArr) {
+
+  for(let i = 0; i < 5; i++){
+      if(colorArr[i] != 2){
+          return false;
+      }
+  }
+
+  return true;
 
 }
 
@@ -37,10 +107,15 @@ function App() {
                   "RET", 'Z', 'X', 'C', 'V', 'B', 'N', 'M', "DEL"];
   const [kbSquares, setKbSquares] = useState(kbInit);
 
-  const [secretWord, setSecretWord] = useState("BEANS");
+  const [targetWord, setTargetWord] = useState("BEETS");
   const [userGuess, setUserGuess] = useState("");
   const [restrictType, setRestrictType] = useState(false);
   const [minIndDel, setMinIndDel] = useState(0);
+  const [colorArr, setColorArr] = useState(Array(5).fill(null));
+  const [numGuesses, setNumGuesses] = useState(0);
+  const [playerWon, setPlayerWon] = useState(false);
+  const [playerWonOne, setPlayerWonOne] = useState(false);
+  const [playerLost, setPlayerLost] = useState(false);
 
 
   function handleKbClick(val) {
@@ -54,16 +129,43 @@ function App() {
           setRestrictType(false);
       }
     } else if(val == "RET"){
-      if(currGridSq % 5 == 0 && currGridSq != 0){
-          //this is where to check the winner
+      if(currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost){
+          //this is where to check the winner - TO DO LATER
 
-          setUserGuess(nextGridSquares[currGridSq - 4] + nextGridSquares[currGridSq - 3] + nextGridSquares[currGridSq - 2] + nextGridSquares[currGridSq - 1] + nextGridSquares[currGridSq]);
-          //setCurrGridSq(currGridSq + 2);
+          setColorArr(checkStatus(nextGridSquares[currGridSq - 5], nextGridSquares[currGridSq - 4], nextGridSquares[currGridSq - 3], nextGridSquares[currGridSq - 2], nextGridSquares[currGridSq - 1], targetWord));
+
+          const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
+          setColorArr(newColorArr);
+
+          for(let i = 0; i < 5; i++){
+
+            if(newColorArr[i] == 0){
+                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'grey' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+            } else if (newColorArr[i] == 1){
+                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'yellow' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+            } else if (newColorArr[i] == 2){
+                  nextGridSquares[currGridSq + i - 5] = <div className="boardsquare" style={{ backgroundColor: 'green' }}>{nextGridSquares[currGridSq + i - 5]}</div>;
+            } else {}
+
+          }
+
+          setNumGuesses(numGuesses + 1);
+
+          if(checkWinner(newColorArr) && numGuesses == 0){
+              setPlayerWonOne(true);
+          } else if (checkWinner(newColorArr)) {
+              setPlayerWon (true);
+          }
+
+          if(!checkWinner(newColorArr) && currGridSq == 30){
+              setPlayerLost(true);
+          }
+
           setRestrictType(false);
           setMinIndDel(currGridSq);
       }
     } else{
-      if(!restrictType){
+      if(!restrictType && !playerWon && !playerWonOne && !playerLost){
           nextGridSquares[currGridSq] = val;
           setCurrGridSq(currGridSq + 1);
 
@@ -104,6 +206,31 @@ function App() {
    
    {showBoard && (
       <>
+
+        {playerWonOne && (
+        <>
+            <div>
+                <p> You won! It took {numGuesses} guess! </p>
+            </div>
+        </>
+        )}
+
+        {playerWon && (
+        <>
+            <div>
+                <p> You won! It took {numGuesses} guesses! </p>
+            </div>
+        </>
+        )}
+
+        {playerLost && (
+        <>
+            <div>
+                <p> Game over! The word was {targetWord}. </p>
+            </div>
+        </>
+        )}
+
         <div className="board-row">
           <GridSquare value={gridSquares[0]} />
           <GridSquare value={gridSquares[1]} />
@@ -139,6 +266,14 @@ function App() {
           <GridSquare value={gridSquares[23]} />
           <GridSquare value={gridSquares[24]} />
         </div>
+        <div className="board-row">
+          <GridSquare value={gridSquares[25]} />
+          <GridSquare value={gridSquares[26]} />
+          <GridSquare value={gridSquares[27]} />
+          <GridSquare value={gridSquares[28]} />
+          <GridSquare value={gridSquares[29]} />
+        </div>
+
 
         <div className="kb-row">
           <KeyboardSquare value={kbSquares[0]} onKbSquareClick={() => handleKbClick(kbSquares[0])} />
