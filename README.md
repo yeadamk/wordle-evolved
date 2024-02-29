@@ -1,8 +1,14 @@
 # Wordle Evolved
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This web application expands upon the game of Wordle. It provides the ability for users to create their own Wordle game variants by changing the word length, the number of guesses, the number of boards they have to clear, and so on. Users will be able to login to record their statistics and compete against each other on leaderboards for unique Wordle games that they have constructed.
 
-Currently, two official plugins are available:
+## Build & Test
+```
+npm install
+npm run dev
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## License
+© 2024 Yeadam Kim, Pavan Gudavalli, Om Patel, Nikolas Rodriguez, Leo Thit, Ryan Schoenburg
+
+Licensed under the [MIT License](LICENSE).
