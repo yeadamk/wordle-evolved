@@ -16,9 +16,6 @@ function Login({ setEmail, setPassword, handleGoogleClick, signInReturningUser }
       <button className='auth-button' onClick={signInReturningUser}>
         Sign In
       </button>
-      <button className='auth-button' onClick={handleGoogleClick}>
-        sign in with google
-      </button>
     </>
   );
 }

@@ -1,5 +1,4 @@
 import './App.css';
-import Auth from './Auth';
 import { useState } from 'react';
 
 function GridSquare({ value }) {
