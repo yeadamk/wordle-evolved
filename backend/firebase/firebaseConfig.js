@@ -5,8 +5,6 @@ import { getAuth } from 'firebase/auth';
 import dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env.VITE_API_KEY);
-
 const firebaseConfig = {
   apiKey: process.env.VITE_API_KEY,
   authDomain: process.env.VITE_AUTH_DOMAIN,
@@ -18,10 +16,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const firebase = initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth = getAuth(firebase);
 
-const db = getFirestore(app);
+const db = getFirestore(firebase);
 export { auth, db };
-export default app;
+export default firebase;

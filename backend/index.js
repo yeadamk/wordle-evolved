@@ -1,5 +1,5 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, doc, addDoc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, addDoc, getDocs, where, query } from 'firebase/firestore';
 import express from 'express';
 import cors from 'cors';
 import { auth, db } from './firebase/firebaseConfig.js';
@@ -15,12 +15,14 @@ app.use('/api/signin', async (req, res) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
     console.log(user.uid);
+    const q = await query(collection(db, 'users'), where('uid', '==', user.uid));
+    const querySnapshot = await getDocs(q);
 
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDocSnapshot = await getDoc(userDocRef);
-    res.send(userDocSnapshot.data());
+    querySnapshot.forEach((doc) => {
+      res.send(doc.data());
+      console.log(doc.id, ' => ', doc.data());
+    });
   } catch (error) {
     const errorMessage = error.message;
     console.log(errorMessage);
@@ -37,6 +39,7 @@ app.use('/api/signup', async (req, res) => {
     const userObj = {
       name: name,
       email: user.email,
+      uid: user.uid,
     };
 
     // This code was from chatGpt: the prompt was "how do i use firebase auth along with firestore"
@@ -48,7 +51,6 @@ app.use('/api/signup', async (req, res) => {
     } catch (e) {
       console.error('Error adding document: ', e);
     }
-
     res.send(userObj);
   } catch (error) {
     const errorMessage = error.message;
