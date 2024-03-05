@@ -3,12 +3,14 @@ import { useState } from 'react';
 import Login from './atoms/Login';
 import SignUp from './atoms/SignUp';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function Auth() {
+function Auth({ setUserId, setUserName }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [authToggle, setAuthToggle] = useState(false);
+  const navigate = useNavigate();
 
   const signInReturningUser = async () => {
     const user = {
@@ -16,7 +18,10 @@ function Auth() {
       password: password,
     };
     const response = await axios.post('http://localhost:4000/api/signin', user);
-    console.log(response);
+    console.log(response.data);
+    setUserId(response.data.uid);
+    setUserName(response.data.name);
+    navigate('/gameplay');
   };
 
   const handleNewUsers = async () => {
@@ -26,7 +31,9 @@ function Auth() {
       password: password,
     };
     const response = await axios.post('http://localhost:4000/api/signup', user);
-    console.log(response);
+    setUserId(response.data.uid);
+    setUserName(response.data.name);
+    navigate('/gameplay');
   };
 
   return (

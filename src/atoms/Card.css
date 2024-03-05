@@ -20,7 +20,7 @@
 
 .auth-button {
   height: 6.5vh;
-  margin: 3vh 12.5% 0.5vh;
+  width: 75%;
   border: none;
   color: white;
   border-radius: 10px;

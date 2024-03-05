@@ -95,7 +95,7 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
   }
 }
 
-function GamePlay() {
+function GamePlay({ userId, userName }) {
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -252,6 +252,7 @@ function GamePlay() {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
+      <h1>Welcome {userName}!!!</h1>
       <h1>Wordle Evolved</h1>
       <div className='card'>
         {!showBoard && (

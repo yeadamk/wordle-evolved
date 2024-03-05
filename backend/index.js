@@ -15,13 +15,13 @@ app.use('/api/signin', async (req, res) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    console.log(user.uid);
+    // console.log(user.uid);
     const q = await query(collection(db, 'users'), where('uid', '==', user.uid));
     const querySnapshot = await getDocs(q);
 
     querySnapshot.forEach((doc) => {
       res.send(doc.data());
-      console.log(doc.id, ' => ', doc.data());
+      // console.log(doc.id, ' => ', doc.data());
     });
   } catch (error) {
     const errorMessage = error.message;
