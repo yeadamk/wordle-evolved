@@ -59,4 +59,22 @@ app.use('/api/signup', async (req, res) => {
   }
 });
 
+app.use('/api/addhistory', async (req, res) => {
+  const { guesses, colors, targetWord, playerWon, uid } = req.body;
+  try {
+    const historyObj = {
+      guesses: guesses,
+      colors: colors,
+      targetWord: targetWord,
+      playerWon: playerWon,
+      uid: uid,
+    };
+    const docRef = await addDoc(collection(db, 'history'), historyObj);
+    console.log('Document written with ID: ', docRef.id);
+    res.send(docRef);
+  } catch (e) {
+    console.error('Error adding document: ', e);
+  }
+});
+
 app.listen(4000, () => console.log('The server is running at PORT 4000'));

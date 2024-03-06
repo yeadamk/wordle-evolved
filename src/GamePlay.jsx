@@ -1,5 +1,6 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -71,7 +72,7 @@ function checkStatus(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4,
       }
     }
   }
-
+  // Array of 5 ints representing 5 letters
   return status;
 }
 
@@ -139,6 +140,10 @@ function GamePlay({ userId, userName }) {
     return wordList[Math.floor(Math.random() * wordList.length)];
   });
 
+  // Backend variables
+  const [userGuesses, setUserGuesses] = useState([]);
+  const [guessColors, setGuessColors] = useState([]);
+
   const [userGuess, setUserGuess] = useState('');
   const [restrictType, setRestrictType] = useState(false);
   const [minIndDel, setMinIndDel] = useState(0);
@@ -171,19 +176,14 @@ function GamePlay({ userId, userName }) {
             wordList,
           )
         ) {
-          setColorArr(
-            checkStatus(
-              nextGridSquares[currGridSq - 5],
-              nextGridSquares[currGridSq - 4],
-              nextGridSquares[currGridSq - 3],
-              nextGridSquares[currGridSq - 2],
-              nextGridSquares[currGridSq - 1],
-              targetWord,
-            ),
-          );
-
+          // New array of colors with non-null values
           const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
+
+          const guess = nextGridSquares.slice(currGridSq - 5, currGridSq);
           setColorArr(newColorArr);
+
+          setUserGuesses([...userGuesses, guess]);
+          setGuessColors([...guessColors, newColorArr]);
 
           for (let i = 0; i < 5; i++) {
             if (newColorArr[i] == 0) {
@@ -241,6 +241,29 @@ function GamePlay({ userId, userName }) {
 
     setGridSquares(nextGridSquares);
   }
+
+  useEffect(() => {
+    const reformattedUserGuesses = { ...userGuesses };
+    const reformattedColors = { ...guessColors };
+    const history = {
+      guesses: reformattedUserGuesses,
+      colors: reformattedColors,
+      targetWord: targetWord,
+      playerWon: playerWon,
+      uid: userId,
+    };
+    if (playerWon || playerLost) {
+      console.log('hello world');
+      (async () => {
+        try {
+          const response = await axios.post('http://localhost:4000/api/addhistory', history);
+          console.log(response);
+        } catch (e) {
+          console.log(e);
+        }
+      })();
+    }
+  }, [playerWon, playerLost]);
 
   return (
     <>
