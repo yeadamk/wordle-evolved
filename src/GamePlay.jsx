@@ -167,6 +167,7 @@ const kbInitLettersOnly = [
   //to be replaced with linux.words later? Filtered down of course.
   const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE', 'BEETS', 'PEACE', 'CREED'];
 
+  //chooses a random word for the list to be targetWord
   const [targetWord, setTargetWord] = useState(() => {
     return wordList[Math.floor(Math.random() * wordList.length)];
   });
