@@ -6,9 +6,9 @@ function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
 }
 
-function KeyboardSquare({ value, onKbSquareClick }) {
+function KeyboardSquare({ value, color, onKbSquareClick }) {
   return (
-    <button className='kb-square' onClick={onKbSquareClick}>
+    <button className='kb-square' style={{ backgroundColor: color }} onClick={onKbSquareClick}>
       {value}
     </button>
   );
@@ -101,44 +101,78 @@ function GamePlay() {
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
   const [gridSquares, setGridSquares] = useState(Array(30).fill(null));
-  const kbInit = [
-    'Q',
-    'W',
-    'E',
-    'R',
-    'T',
-    'Y',
-    'U',
-    'I',
-    'O',
-    'P',
-    'A',
-    'S',
-    'D',
-    'F',
-    'G',
-    'H',
-    'J',
-    'K',
-    'L',
-    'RET',
-    'Z',
-    'X',
-    'C',
-    'V',
-    'B',
-    'N',
-    'M',
-    'DEL',
-  ];
+const kbInit = [
+  { value: 'Q', color: 'white' },
+  { value: 'W', color: 'white' },
+  { value: 'E', color: 'white' },
+  { value: 'R', color: 'white' },
+  { value: 'T', color: 'white' },
+  { value: 'Y', color: 'white' },
+  { value: 'U', color: 'white' },
+  { value: 'I', color: 'white' },
+  { value: 'O', color: 'white' },
+  { value: 'P', color: 'white' },
+  { value: 'A', color: 'white' },
+  { value: 'S', color: 'white' },
+  { value: 'D', color: 'white' },
+  { value: 'F', color: 'white' },
+  { value: 'G', color: 'white' },
+  { value: 'H', color: 'white' },
+  { value: 'J', color: 'white' },
+  { value: 'K', color: 'white' },
+  { value: 'L', color: 'white' },
+  { value: 'RET', color: 'white' },
+  { value: 'Z', color: 'white' },
+  { value: 'X', color: 'white' },
+  { value: 'C', color: 'white' },
+  { value: 'V', color: 'white' },
+  { value: 'B', color: 'white' },
+  { value: 'N', color: 'white' },
+  { value: 'M', color: 'white' },
+  { value: 'DEL', color: 'white' },
+];
+const kbInitLettersOnly = [
+   'Q',
+   'W',
+   'E',
+   'R',
+   'T',
+   'Y',
+   'U',
+   'I',
+   'O',
+   'P',
+   'A',
+   'S',
+   'D',
+   'F',
+   'G',
+   'H',
+   'J',
+   'K',
+   'L',
+   'RET',
+   'Z',
+   'X',
+   'C',
+   'V',
+   'B',
+   'N',
+   'M',
+   'DEL',
+];
+
   const [kbSquares, setKbSquares] = useState(kbInit);
 
   //to be replaced with linux.words later? Filtered down of course.
-  const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE'];
+  const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE', 'BEETS', 'PEACE', 'CREED'];
 
-  const [targetWord, setTargetWord] = useState(() => {
-    return wordList[Math.floor(Math.random() * wordList.length)];
-  });
+ // const [targetWord, setTargetWord] = useState(() => {
+ //   return wordList[Math.floor(Math.random() * wordList.length)];
+ // });
+
+
+  const [targetWord, setTargetWord] = useState(('BEETS')); 
 
   const [userGuess, setUserGuess] = useState('');
   const [restrictType, setRestrictType] = useState(false);
@@ -150,17 +184,18 @@ function GamePlay() {
   const [playerLost, setPlayerLost] = useState(false);
   const [displayInvalid, setDisplayInvalid] = useState(false);
 
-  function handleKbClick(val) {
+  function handleKbClick(kbButtonSquare) {
     const nextGridSquares = gridSquares.slice();
+    const nextKbSquares = kbSquares.slice();
 
-    if (val == 'DEL') {
+    if (kbButtonSquare.value == 'DEL') {
       if (currGridSq > 0 && currGridSq > minIndDel) {
         nextGridSquares[currGridSq - 1] = null;
         setCurrGridSq(currGridSq - 1);
         setRestrictType(false);
         setDisplayInvalid(false);
       }
-    } else if (val == 'RET') {
+    } else if (kbButtonSquare.value == 'RET') {
       if (currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
         if (
           checkValidWord(
@@ -172,16 +207,6 @@ function GamePlay() {
             wordList,
           )
         ) {
-          setColorArr(
-            checkStatus(
-              nextGridSquares[currGridSq - 5],
-              nextGridSquares[currGridSq - 4],
-              nextGridSquares[currGridSq - 3],
-              nextGridSquares[currGridSq - 2],
-              nextGridSquares[currGridSq - 1],
-              targetWord,
-            ),
-          );
 
           const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
           setColorArr(newColorArr);
@@ -189,25 +214,49 @@ function GamePlay() {
           for (let i = 0; i < 5; i++) {
             if (newColorArr[i] == 0) {
               nextGridSquares[currGridSq + i - 5] = (
-                <div className='boardsquare' style={{ backgroundColor: 'grey' }}>
+                <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
                   {nextGridSquares[currGridSq + i - 5]}
                 </div>
               );
+
+              if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color === 'white') {
+              	nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
+               	...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
+                color: 'grey'
+              	};
+	      }
+
             } else if (newColorArr[i] == 1) {
               nextGridSquares[currGridSq + i - 5] = (
-                <div className='boardsquare' style={{ backgroundColor: 'yellow' }}>
+                <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
                   {nextGridSquares[currGridSq + i - 5]}
                 </div>
               );
+
+              if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color !== 'green') {
+                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
+                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
+                color: 'yellow'
+                };
+              }
+
             } else if (newColorArr[i] == 2) {
               nextGridSquares[currGridSq + i - 5] = (
-                <div className='boardsquare' style={{ backgroundColor: 'green' }}>
+                <div className='GridSquare' style={{ backgroundColor: 'green' }}>
                   {nextGridSquares[currGridSq + i - 5]}
                 </div>
               );
+
+              nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
+                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
+                color: 'green'
+              };
+
             } else {
             }
           }
+
+          setKbSquares(nextKbSquares);
 
           setNumGuesses(numGuesses + 1);
 
@@ -230,7 +279,8 @@ function GamePlay() {
       }
     } else {
       if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
-        nextGridSquares[currGridSq] = val;
+
+        nextGridSquares[currGridSq] = kbButtonSquare.value;
         setCurrGridSq(currGridSq + 1);
 
         if ((currGridSq + 1) % 5 == 0) {
@@ -348,42 +398,47 @@ function GamePlay() {
             <GridSquare value={gridSquares[29]} />
           </div>
 
+
+
+
+
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[0]} onKbSquareClick={() => handleKbClick(kbSquares[0])} />
-            <KeyboardSquare value={kbSquares[1]} onKbSquareClick={() => handleKbClick(kbSquares[1])} />
-            <KeyboardSquare value={kbSquares[2]} onKbSquareClick={() => handleKbClick(kbSquares[2])} />
-            <KeyboardSquare value={kbSquares[3]} onKbSquareClick={() => handleKbClick(kbSquares[3])} />
-            <KeyboardSquare value={kbSquares[4]} onKbSquareClick={() => handleKbClick(kbSquares[4])} />
-            <KeyboardSquare value={kbSquares[5]} onKbSquareClick={() => handleKbClick(kbSquares[5])} />
-            <KeyboardSquare value={kbSquares[6]} onKbSquareClick={() => handleKbClick(kbSquares[6])} />
-            <KeyboardSquare value={kbSquares[7]} onKbSquareClick={() => handleKbClick(kbSquares[7])} />
-            <KeyboardSquare value={kbSquares[8]} onKbSquareClick={() => handleKbClick(kbSquares[8])} />
-            <KeyboardSquare value={kbSquares[9]} onKbSquareClick={() => handleKbClick(kbSquares[9])} />
+            <KeyboardSquare value={kbSquares[0].value} color={kbSquares[0].color} onKbSquareClick={() => handleKbClick(kbSquares[0])} />
+            <KeyboardSquare value={kbSquares[1].value} color={kbSquares[1].color} onKbSquareClick={() => handleKbClick(kbSquares[1])} />
+            <KeyboardSquare value={kbSquares[2].value} color={kbSquares[2].color} onKbSquareClick={() => handleKbClick(kbSquares[2])} />
+            <KeyboardSquare value={kbSquares[3].value} color={kbSquares[3].color} onKbSquareClick={() => handleKbClick(kbSquares[3])} />
+            <KeyboardSquare value={kbSquares[4].value} color={kbSquares[4].color} onKbSquareClick={() => handleKbClick(kbSquares[4])} />
+            <KeyboardSquare value={kbSquares[5].value} color={kbSquares[5].color} onKbSquareClick={() => handleKbClick(kbSquares[5])} />
+            <KeyboardSquare value={kbSquares[6].value} color={kbSquares[6].color} onKbSquareClick={() => handleKbClick(kbSquares[6])} />
+            <KeyboardSquare value={kbSquares[7].value} color={kbSquares[7].color} onKbSquareClick={() => handleKbClick(kbSquares[7])} />
+            <KeyboardSquare value={kbSquares[8].value} color={kbSquares[8].color} onKbSquareClick={() => handleKbClick(kbSquares[8])} />
+            <KeyboardSquare value={kbSquares[9].value} color={kbSquares[9].color} onKbSquareClick={() => handleKbClick(kbSquares[9])} />
           </div>
 
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[10]} onKbSquareClick={() => handleKbClick(kbSquares[10])} />
-            <KeyboardSquare value={kbSquares[11]} onKbSquareClick={() => handleKbClick(kbSquares[11])} />
-            <KeyboardSquare value={kbSquares[12]} onKbSquareClick={() => handleKbClick(kbSquares[12])} />
-            <KeyboardSquare value={kbSquares[13]} onKbSquareClick={() => handleKbClick(kbSquares[13])} />
-            <KeyboardSquare value={kbSquares[14]} onKbSquareClick={() => handleKbClick(kbSquares[14])} />
-            <KeyboardSquare value={kbSquares[15]} onKbSquareClick={() => handleKbClick(kbSquares[15])} />
-            <KeyboardSquare value={kbSquares[16]} onKbSquareClick={() => handleKbClick(kbSquares[16])} />
-            <KeyboardSquare value={kbSquares[17]} onKbSquareClick={() => handleKbClick(kbSquares[17])} />
-            <KeyboardSquare value={kbSquares[18]} onKbSquareClick={() => handleKbClick(kbSquares[18])} />
+            <KeyboardSquare value={kbSquares[10].value} color={kbSquares[10].color} onKbSquareClick={() => handleKbClick(kbSquares[10])} />
+            <KeyboardSquare value={kbSquares[11].value} color={kbSquares[11].color} onKbSquareClick={() => handleKbClick(kbSquares[11])} />
+            <KeyboardSquare value={kbSquares[12].value} color={kbSquares[12].color} onKbSquareClick={() => handleKbClick(kbSquares[12])} />
+            <KeyboardSquare value={kbSquares[13].value} color={kbSquares[13].color} onKbSquareClick={() => handleKbClick(kbSquares[13])} />
+            <KeyboardSquare value={kbSquares[14].value} color={kbSquares[14].color} onKbSquareClick={() => handleKbClick(kbSquares[14])} />
+            <KeyboardSquare value={kbSquares[15].value} color={kbSquares[15].color} onKbSquareClick={() => handleKbClick(kbSquares[15])} />
+            <KeyboardSquare value={kbSquares[16].value} color={kbSquares[16].color} onKbSquareClick={() => handleKbClick(kbSquares[16])} />
+            <KeyboardSquare value={kbSquares[17].value} color={kbSquares[17].color} onKbSquareClick={() => handleKbClick(kbSquares[17])} />
+            <KeyboardSquare value={kbSquares[18].value} color={kbSquares[18].color} onKbSquareClick={() => handleKbClick(kbSquares[18])} />
           </div>
 
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[19]} onKbSquareClick={() => handleKbClick(kbSquares[19])} />
-            <KeyboardSquare value={kbSquares[20]} onKbSquareClick={() => handleKbClick(kbSquares[20])} />
-            <KeyboardSquare value={kbSquares[21]} onKbSquareClick={() => handleKbClick(kbSquares[21])} />
-            <KeyboardSquare value={kbSquares[22]} onKbSquareClick={() => handleKbClick(kbSquares[22])} />
-            <KeyboardSquare value={kbSquares[23]} onKbSquareClick={() => handleKbClick(kbSquares[23])} />
-            <KeyboardSquare value={kbSquares[24]} onKbSquareClick={() => handleKbClick(kbSquares[24])} />
-            <KeyboardSquare value={kbSquares[25]} onKbSquareClick={() => handleKbClick(kbSquares[25])} />
-            <KeyboardSquare value={kbSquares[26]} onKbSquareClick={() => handleKbClick(kbSquares[26])} />
-            <KeyboardSquare value={kbSquares[27]} onKbSquareClick={() => handleKbClick(kbSquares[27])} />
+            <KeyboardSquare value={kbSquares[19].value} color={kbSquares[19].color} onKbSquareClick={() => handleKbClick(kbSquares[19])} />
+            <KeyboardSquare value={kbSquares[20].value} color={kbSquares[20].color} onKbSquareClick={() => handleKbClick(kbSquares[20])} />
+            <KeyboardSquare value={kbSquares[21].value} color={kbSquares[21].color} onKbSquareClick={() => handleKbClick(kbSquares[21])} />
+            <KeyboardSquare value={kbSquares[22].value} color={kbSquares[22].color} onKbSquareClick={() => handleKbClick(kbSquares[22])} />
+            <KeyboardSquare value={kbSquares[23].value} color={kbSquares[23].color} onKbSquareClick={() => handleKbClick(kbSquares[23])} />
+            <KeyboardSquare value={kbSquares[24].value} color={kbSquares[24].color} onKbSquareClick={() => handleKbClick(kbSquares[24])} />
+            <KeyboardSquare value={kbSquares[25].value} color={kbSquares[25].color} onKbSquareClick={() => handleKbClick(kbSquares[25])} />
+            <KeyboardSquare value={kbSquares[26].value} color={kbSquares[26].color} onKbSquareClick={() => handleKbClick(kbSquares[26])} />
+            <KeyboardSquare value={kbSquares[27].value} color={kbSquares[27].color} onKbSquareClick={() => handleKbClick(kbSquares[27])} />
           </div>
+
         </>
       )}
     </>
