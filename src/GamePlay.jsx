@@ -167,12 +167,9 @@ const kbInitLettersOnly = [
   //to be replaced with linux.words later? Filtered down of course.
   const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE', 'BEETS', 'PEACE', 'CREED'];
 
- // const [targetWord, setTargetWord] = useState(() => {
- //   return wordList[Math.floor(Math.random() * wordList.length)];
- // });
-
-
-  const [targetWord, setTargetWord] = useState(('BEETS')); 
+  const [targetWord, setTargetWord] = useState(() => {
+    return wordList[Math.floor(Math.random() * wordList.length)];
+  });
 
   const [userGuess, setUserGuess] = useState('');
   const [restrictType, setRestrictType] = useState(false);
