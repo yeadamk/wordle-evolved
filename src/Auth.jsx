@@ -1,52 +1,41 @@
-import { auth } from '../firebase/firebaseConfig';
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 import './Auth.css';
 import { useState } from 'react';
 import Login from './atoms/Login';
 import SignUp from './atoms/SignUp';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function Auth() {
+function Auth({ setUserId, setUserName }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [authToggle, setAuthToggle] = useState(false);
-
-  const provider = new GoogleAuthProvider();
+  const navigate = useNavigate();
 
   const signInReturningUser = async () => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
+    const user = {
+      email: email,
+      password: password,
+    };
+    const response = await axios.post('http://localhost:4000/api/signin', user);
+    console.log(response.data);
+    setUserId(response.data.uid);
+    setUserName(response.data.name);
+    navigate('/gameplay');
   };
 
   const handleNewUsers = async () => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+    };
+    const response = await axios.post('http://localhost:4000/api/signup', user);
+    setUserId(response.data.uid);
+    setUserName(response.data.name);
+    navigate('/gameplay');
   };
 
-  const handleGoogleClick = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <div className='landing-hero'>
       <h1 className='title'>Welcome to Wordle-Evolved</h1>
@@ -61,12 +50,7 @@ function Auth() {
           </button>
         </div>
         {authToggle ? (
-          <Login
-            setEmail={setEmail}
-            setPassword={setPassword}
-            handleGoogleClick={handleGoogleClick}
-            signInReturningUser={signInReturningUser}
-          />
+          <Login setEmail={setEmail} setPassword={setPassword} signInReturningUser={signInReturningUser} />
         ) : (
           <SignUp setName={setName} setEmail={setEmail} setPassword={setPassword} handleNewUsers={handleNewUsers} />
         )}

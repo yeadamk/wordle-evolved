@@ -1,4 +1,5 @@
 import './Card.css';
+import { Link } from 'react-router-dom';
 
 function SignUp({ setName, setEmail, setPassword, handleNewUsers }) {
   return (
@@ -17,9 +18,12 @@ function SignUp({ setName, setEmail, setPassword, handleNewUsers }) {
           <input onChange={(e) => setPassword(e.target.value)} type='password'></input>
         </div>
       </div>
-      <button className='auth-button' onClick={handleNewUsers}>
-        Sign up
-      </button>
+
+      <Link to='/gameplay'>
+        <button className='auth-button' onClick={handleNewUsers}>
+          Sign up
+        </button>
+      </Link>
     </>
   );
 }

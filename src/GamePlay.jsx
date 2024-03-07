@@ -1,6 +1,7 @@
 import './App.css';
-import Auth from './Auth';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -72,7 +73,7 @@ function checkStatus(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4,
       }
     }
   }
-
+  // Array of 5 ints representing 5 letters
   return status;
 }
 
@@ -96,7 +97,7 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
   }
 }
 
-function GamePlay() {
+function GamePlay({ userId, userName }) {
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -172,6 +173,10 @@ const kbInitLettersOnly = [
     return wordList[Math.floor(Math.random() * wordList.length)];
   });
 
+  // Backend variables
+  const [userGuesses, setUserGuesses] = useState([]);
+  const [guessColors, setGuessColors] = useState([]);
+
   const [userGuess, setUserGuess] = useState('');
   const [restrictType, setRestrictType] = useState(false);
   const [minIndDel, setMinIndDel] = useState(0);
@@ -205,9 +210,13 @@ const kbInitLettersOnly = [
             wordList,
           )
         ) {
-
           const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
+
+          const guess = nextGridSquares.slice(currGridSq - 5, currGridSq);
           setColorArr(newColorArr);
+
+          setUserGuesses([...userGuesses, guess]);
+          setGuessColors([...guessColors, newColorArr]);
 
           for (let i = 0; i < 5; i++) {
             if (newColorArr[i] == 0) {
@@ -291,6 +300,29 @@ const kbInitLettersOnly = [
     setGridSquares(nextGridSquares);
   }
 
+  useEffect(() => {
+    const reformattedUserGuesses = { ...userGuesses };
+    const reformattedColors = { ...guessColors };
+    const history = {
+      guesses: reformattedUserGuesses,
+      colors: reformattedColors,
+      targetWord: targetWord,
+      playerWon: playerWon,
+      uid: userId,
+    };
+    if (playerWon || playerLost) {
+      console.log('hello world');
+      (async () => {
+        try {
+          const response = await axios.post('http://localhost:4000/api/addhistory', history);
+          console.log(response);
+        } catch (e) {
+          console.log(e);
+        }
+      })();
+    }
+  }, [playerWon, playerLost]);
+
   return (
     <>
       {/* <div>
@@ -301,23 +333,31 @@ const kbInitLettersOnly = [
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-      <h1>Wordle Evolved</h1>
-      <div className='card'>
-        {!showBoard && (
-          <button
-            onClick={() => {
-              setMessage('Button Clicked! Daily Game Starting Now!');
-              setShowBoard(true);
-            }}>
-            {' '}
-            {message}
-          </button>
-        )}
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
+
+      {userId ? (
+        <>
+          <h1>Welcome {userName}!!!</h1>
+          <h1>Wordle Evolved</h1>
+          <div className='card'></div>
+          {!showBoard && (
+            <button
+              onClick={() => {
+                setMessage('Button Clicked! Daily Game Starting Now!');
+                setShowBoard(true);
+              }}>
+              {' '}
+              {message}
+            </button>
+          )}
+        </>
+      ) : (
+        <>
+          <h1>PLEASE SIGN IN</h1>
+          <Link to='/auth'>
+            <button>SIGN IN</button>
+          </Link>
+        </>
+      )}
 
       {showBoard && (
         <>
@@ -439,6 +479,9 @@ const kbInitLettersOnly = [
 
         </>
       )}
+      <Link to='/history'>
+        <button>HISTORY</button>
+      </Link>
     </>
   );
 }

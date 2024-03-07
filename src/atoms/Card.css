@@ -6,6 +6,7 @@
   flex-direction: column;
   justify-content: center;
   margin: 0vh 0 3vh;
+  text-align: left;
 }
 
 .label > input {
@@ -19,7 +20,7 @@
 
 .auth-button {
   height: 6.5vh;
-  margin: 3vh 12.5% 0.5vh;
+  width: 75%;
   border: none;
   color: white;
   border-radius: 10px;
@@ -28,4 +29,5 @@
 
 .auth-button:hover {
   background: linear-gradient(#bb8fce, #8f6798);
+  cursor: pointer;
 }
