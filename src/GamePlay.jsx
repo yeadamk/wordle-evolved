@@ -417,6 +417,9 @@ function GamePlay({ userId, userName }) {
           </div>
         </>
       )}
+      <Link to='/history'>
+        <button>HISTORY</button>
+      </Link>
     </>
   );
 }

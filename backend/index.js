@@ -77,16 +77,18 @@ app.use('/api/addhistory', async (req, res) => {
   }
 });
 
-app.use('/api/gethistory', async (req, res) => {
-  const { uid } = req.body;
+app.use('/api/gethistory/:uid', async (req, res) => {
+  const uid = req.params.uid;
 
   try {
-    const q = await query(collection(db, 'history'), where('uid', '==', user.uid));
+    const q = await query(collection(db, 'history'), where('uid', '==', uid));
     const querySnapshot = await getDocs(q);
-
+    const history = [];
     querySnapshot.forEach((doc) => {
-      res.send(doc.data());
+      // doc.data() is never undefined for query doc snapshots
+      history.push(doc.data());
     });
+    res.send(history);
   } catch (error) {
     const errorMessage = error.message;
     console.log(errorMessage);
