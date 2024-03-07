@@ -8,9 +8,6 @@ function App() {
   const [userId, setUserId] = useState('');
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    console.log(userId, userName);
-  }, [userId, userName]);
   return (
     <Router>
       <Routes>

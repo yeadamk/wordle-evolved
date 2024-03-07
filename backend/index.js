@@ -77,4 +77,21 @@ app.use('/api/addhistory', async (req, res) => {
   }
 });
 
+app.use('/api/gethistory', async (req, res) => {
+  const { uid } = req.body;
+
+  try {
+    const q = await query(collection(db, 'history'), where('uid', '==', user.uid));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+      res.send(doc.data());
+    });
+  } catch (error) {
+    const errorMessage = error.message;
+    console.log(errorMessage);
+    res.send(errorMessage);
+  }
+});
+
 app.listen(4000, () => console.log('The server is running at PORT 4000'));

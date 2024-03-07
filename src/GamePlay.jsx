@@ -1,6 +1,7 @@
 import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -275,24 +276,31 @@ function GamePlay({ userId, userName }) {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-      <h1>Welcome {userName}!!!</h1>
-      <h1>Wordle Evolved</h1>
-      <div className='card'>
-        {!showBoard && (
-          <button
-            onClick={() => {
-              setMessage('Button Clicked! Daily Game Starting Now!');
-              setShowBoard(true);
-            }}>
-            {' '}
-            {message}
-          </button>
-        )}
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
+
+      {userId ? (
+        <>
+          <h1>Welcome {userName}!!!</h1>
+          <h1>Wordle Evolved</h1>
+          <div className='card'></div>
+          {!showBoard && (
+            <button
+              onClick={() => {
+                setMessage('Button Clicked! Daily Game Starting Now!');
+                setShowBoard(true);
+              }}>
+              {' '}
+              {message}
+            </button>
+          )}
+        </>
+      ) : (
+        <>
+          <h1>PLEASE SIGN IN</h1>
+          <Link to='/auth'>
+            <button>SIGN IN</button>
+          </Link>
+        </>
+      )}
 
       {showBoard && (
         <>
