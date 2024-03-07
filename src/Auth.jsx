@@ -10,6 +10,7 @@ function Auth({ setUserId, setUserName }) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [authToggle, setAuthToggle] = useState(false);
+  const [failed, setFailed] = useState(false);
   const navigate = useNavigate();
 
   const signInReturningUser = async () => {
@@ -21,7 +22,13 @@ function Auth({ setUserId, setUserName }) {
     console.log(response.data);
     setUserId(response.data.uid);
     setUserName(response.data.name);
-    navigate('/gameplay');
+    console.log(response.data.name);
+    if (response.data.name != null) {
+      navigate('/gameplay');
+      setFailed(false);
+    } else {
+      setFailed(true);
+    }
   };
 
   const handleNewUsers = async () => {
@@ -33,7 +40,12 @@ function Auth({ setUserId, setUserName }) {
     const response = await axios.post('http://localhost:4000/api/signup', user);
     setUserId(response.data.uid);
     setUserName(response.data.name);
-    navigate('/gameplay');
+    if (response.data.name != null) {
+      navigate('/gameplay');
+      setFailed(false);
+    } else {
+      setFailed(true);
+    }
   };
 
   return (
@@ -54,6 +66,7 @@ function Auth({ setUserId, setUserName }) {
         ) : (
           <SignUp setName={setName} setEmail={setEmail} setPassword={setPassword} handleNewUsers={handleNewUsers} />
         )}
+        {failed && <p className='error-msg'>Login Error</p>}
       </div>
     </div>
   );
