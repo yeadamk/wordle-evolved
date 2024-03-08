@@ -283,7 +283,7 @@ function GamePlay() {
                                 </div>
                             );
                         } else if (colorArr[i] == 1) {
-                            console.log("colorArr " + i + " is 1")
+                         
                             nextGridSquares[i] = (
                                 <div className='boardsquare' style={{ backgroundColor: 'yellow' }}>
                                     {guess[i]}
