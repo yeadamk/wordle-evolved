@@ -64,252 +64,322 @@ function checkStatus(userGuess, targetWord) {
     //    console.log(lettersDict)
     return status;
 }
-
 function checkWinner(colorArr) {
-  for (let i = 0; i < 5; i++) {
-    if (colorArr[i] != 2) {
-      return false;
+    for (let i = 0; i < colorArr.length; i++) {
+        if (colorArr[i] != 2) {
+            return false;
+        }
     }
-  }
 
-  return true;
+    return true;
 }
 
-function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, words) {
-  const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
+function checkValidWord(userGuess, words) {
+    if (words.includes(userGuess)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
-  if (words.includes(userGuess)) {
-    return true;
-  } else {
-    return false;
-  }
+function generateWord(words, length, letterRestrictions, specificRequirements) {
+
+    let validWords = []
+    let valid = true
+
+    if (letterRestrictions == null) {
+        letterRestrictions = []
+    }
+
+    if (specificRequirements == null) {
+        specificRequirements = []
+        for (let i = 0; i < length; i++) {
+            specificRequirements.push("")
+        }
+    }
+
+    for (let i = 0; i < words.length; i++) {
+
+        let word = words[i]
+        if (word.length != length) {
+            continue
+        }
+
+
+        valid = true
+        for (let j = 0; j < word.length; j++) {
+
+            if (word[j] in letterRestrictions) {
+
+                valid = false;
+                break;
+                // check for '~letter', then invalidates word if it has that letter at index i
+            } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
+
+                valid = false;
+                break;
+            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != word[j]) {
+
+                valid = false;
+                break;
+
+            }
+        }
+
+        if (valid == true) {
+            validWords.push(word)
+        }
+    }
+
+    return validWords[Math.floor(Math.random() * validWords.length)]
 }
 
 function GamePlay({ userId, userName }) {
-  const [message, setMessage] = useState('Click To Start Daily Game!');
-  const [showBoard, setShowBoard] = useState(false);
-  const [currGridSq, setCurrGridSq] = useState(0);
-  const [gridSquares, setGridSquares] = useState(Array(30).fill(null));
-const kbInit = [
-  { value: 'Q', color: 'white' },
-  { value: 'W', color: 'white' },
-  { value: 'E', color: 'white' },
-  { value: 'R', color: 'white' },
-  { value: 'T', color: 'white' },
-  { value: 'Y', color: 'white' },
-  { value: 'U', color: 'white' },
-  { value: 'I', color: 'white' },
-  { value: 'O', color: 'white' },
-  { value: 'P', color: 'white' },
-  { value: 'A', color: 'white' },
-  { value: 'S', color: 'white' },
-  { value: 'D', color: 'white' },
-  { value: 'F', color: 'white' },
-  { value: 'G', color: 'white' },
-  { value: 'H', color: 'white' },
-  { value: 'J', color: 'white' },
-  { value: 'K', color: 'white' },
-  { value: 'L', color: 'white' },
-  { value: 'RET', color: 'white' },
-  { value: 'Z', color: 'white' },
-  { value: 'X', color: 'white' },
-  { value: 'C', color: 'white' },
-  { value: 'V', color: 'white' },
-  { value: 'B', color: 'white' },
-  { value: 'N', color: 'white' },
-  { value: 'M', color: 'white' },
-  { value: 'DEL', color: 'white' },
-];
-const kbInitLettersOnly = [
-   'Q',
-   'W',
-   'E',
-   'R',
-   'T',
-   'Y',
-   'U',
-   'I',
-   'O',
-   'P',
-   'A',
-   'S',
-   'D',
-   'F',
-   'G',
-   'H',
-   'J',
-   'K',
-   'L',
-   'RET',
-   'Z',
-   'X',
-   'C',
-   'V',
-   'B',
-   'N',
-   'M',
-   'DEL',
-];
 
-  const [kbSquares, setKbSquares] = useState(kbInit);
+    const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
+        "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
+        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm"]
+    const wordLength = 5
+    const maxGuesses = 6
+    const letterRestrictions = null
+    const specificRequirements = null
 
-  //to be replaced with linux.words later? Filtered down of course.
-  const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE', 'BEETS', 'PEACE', 'CREED'];
+    const [message, setMessage] = useState('Click To Start Daily Game!');
+    const [showBoard, setShowBoard] = useState(false);
+    const [currGridSq, setCurrGridSq] = useState(0);
+    const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
 
-  //chooses a random word for the list to be targetWord
-  const [targetWord, setTargetWord] = useState(() => {
-    return wordList[Math.floor(Math.random() * wordList.length)];
-  });
 
-  // Backend variables
-  const [userGuesses, setUserGuesses] = useState([]);
-  const [guessColors, setGuessColors] = useState([]);
+    let gridRows = new Map()
 
-  const [userGuess, setUserGuess] = useState('');
-  const [restrictType, setRestrictType] = useState(false);
-  const [minIndDel, setMinIndDel] = useState(0);
-  const [colorArr, setColorArr] = useState(Array(5).fill(null));
-  const [numGuesses, setNumGuesses] = useState(0);
-  const [playerWon, setPlayerWon] = useState(false);
-  const [playerWonOne, setPlayerWonOne] = useState(false);
-  const [playerLost, setPlayerLost] = useState(false);
-  const [displayInvalid, setDisplayInvalid] = useState(false);
+    for (let i = 0; i < maxGuesses; i++) {
 
-  function handleKbClick(kbButtonSquare) {
-    const nextGridSquares = gridSquares.slice();
-    const nextKbSquares = kbSquares.slice();
+        gridRows.set(i, Array(wordLength).fill(
 
-    if (kbButtonSquare.value == 'DEL') {
-      if (currGridSq > 0 && currGridSq > minIndDel) {
-        nextGridSquares[currGridSq - 1] = null;
-        setCurrGridSq(currGridSq - 1);
-        setRestrictType(false);
-        setDisplayInvalid(false);
-      }
-    } else if (kbButtonSquare.value == 'RET') {
-      if (currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
-        if (
-          checkValidWord(
-            nextGridSquares[currGridSq - 5],
-            nextGridSquares[currGridSq - 4],
-            nextGridSquares[currGridSq - 3],
-            nextGridSquares[currGridSq - 2],
-            nextGridSquares[currGridSq - 1],
-            wordList,
-          )
-        ) {
-          const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
+            <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+                {null}
+            </div>
 
-          const guess = nextGridSquares.slice(currGridSq - 5, currGridSq);
-          setColorArr(newColorArr);
+        ))
+    }
+    // Hack-y solution to making gridRows a component causing 'too many re-renders'
+    const [gridRowsCopy, setGridRowsCopy] = useState(gridRows)
 
-          setUserGuesses([...userGuesses, guess]);
-          setGuessColors([...guessColors, newColorArr]);
+    const kbInit = [
+      { value: 'Q', color: 'white' },
+      { value: 'W', color: 'white' },
+      { value: 'E', color: 'white' },
+      { value: 'R', color: 'white' },
+      { value: 'T', color: 'white' },
+      { value: 'Y', color: 'white' },
+      { value: 'U', color: 'white' },
+      { value: 'I', color: 'white' },
+      { value: 'O', color: 'white' },
+      { value: 'P', color: 'white' },
+      { value: 'A', color: 'white' },
+      { value: 'S', color: 'white' },
+      { value: 'D', color: 'white' },
+      { value: 'F', color: 'white' },
+      { value: 'G', color: 'white' },
+      { value: 'H', color: 'white' },
+      { value: 'J', color: 'white' },
+      { value: 'K', color: 'white' },
+      { value: 'L', color: 'white' },
+      { value: 'RET', color: 'white' },
+      { value: 'Z', color: 'white' },
+      { value: 'X', color: 'white' },
+      { value: 'C', color: 'white' },
+      { value: 'V', color: 'white' },
+      { value: 'B', color: 'white' },
+      { value: 'N', color: 'white' },
+      { value: 'M', color: 'white' },
+      { value: 'DEL', color: 'white' },
+    ];
+    const kbInitLettersOnly = [
+       'Q',
+       'W',
+       'E',
+       'R',
+       'T',
+       'Y',
+       'U',
+       'I',
+       'O',
+       'P',
+       'A',
+       'S',
+       'D',
+       'F',
+       'G',
+       'H',
+       'J',
+       'K',
+       'L',
+       'RET',
+       'Z',
+       'X',
+       'C',
+       'V',
+       'B',
+       'N',
+       'M',
+       'DEL',
+    ];
 
-          for (let i = 0; i < 5; i++) {
-            if (newColorArr[i] == 0) {
-              nextGridSquares[currGridSq + i - 5] = (
-                <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
-                  {nextGridSquares[currGridSq + i - 5]}
-                </div>
-              );
+    const [kbSquares, setKbSquares] = useState(kbInit)
+    const [userGuesses, setUserGuesses] = useState([]);
+    const [guessColors, setGuessColors] = useState([]);
 
-              if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color === 'white') {
-              	nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
-               	...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'grey'
-              	};
-	      }
+    const [targetWord, setTargetWord] = useState(generateWord(wordList, wordLength,
+        letterRestrictions, specificRequirements));
 
-            } else if (newColorArr[i] == 1) {
-              nextGridSquares[currGridSq + i - 5] = (
-                <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
-                  {nextGridSquares[currGridSq + i - 5]}
-                </div>
-              );
+    const [restrictType, setRestrictType] = useState(false);
+    let [colorArr, setColorArr] = useState(Array(wordLength).fill(null));
+    let [numGuesses, setNumGuesses] = useState(0);
+    const [playerWon, setPlayerWon] = useState(false);
+    const [playerWonOne, setPlayerWonOne] = useState(false);
+    const [playerLost, setPlayerLost] = useState(false);
+    const [displayInvalid, setDisplayInvalid] = useState(false);
 
-              if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color !== 'green') {
-                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
-                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'yellow'
-                };
-              }
+    function extractChildren(oldSquares) {
+        const squaresCopy = []
+        for (let i = 0; i < oldSquares.length; i++) {
+            squaresCopy.push(oldSquares[i].props.children)
+        }
+        return squaresCopy;
+    }
 
-            } else if (newColorArr[i] == 2) {
-              nextGridSquares[currGridSq + i - 5] = (
-                <div className='GridSquare' style={{ backgroundColor: 'green' }}>
-                  {nextGridSquares[currGridSq + i - 5]}
-                </div>
-              );
+    function handleKbClick(kbButtonSquare) {
+        const nextGridSquares = gridSquares;
+        const nextKbSquares = kbSquares;
 
-              nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
-                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'green'
-              };
-
-            } else {
+        if (kbButtonSquare.value == 'DEL') {
+            if (currGridSq > 0) {
+                nextGridSquares[currGridSq - 1] = null;
+                setCurrGridSq(currGridSq - 1);
+                setRestrictType(false);
+                setDisplayInvalid(false);
             }
-          }
+        } else if (kbButtonSquare.value == 'RET') {
 
-          setKbSquares(nextKbSquares);
+            if (currGridSq % word == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
 
-          setNumGuesses(numGuesses + 1);
+                const guess = nextGridSquares.toString().replaceAll(",", "").toLowerCase(); 
 
-          if (checkWinner(newColorArr) && numGuesses == 0) {
-            setPlayerWonOne(true);
-          } else if (checkWinner(newColorArr)) {
-            setPlayerWon(true);
-          }
+                if (checkValidWord(guess, targetWord)) {
 
-          if (!checkWinner(newColorArr) && currGridSq == 30) {
-            setPlayerLost(true);
-          }
+                    const newColorArr = checkStatus(guess, targetWord);
+                    setColorArr(newColorArr);
+                    setUserGuesses([...userGuesses, guess]);
+                    setGuessColors([...guessColors, newColorArr]);
 
-          setRestrictType(false);
-          setMinIndDel(currGridSq);
-          setDisplayInvalid(false);
+                    for (let i = 0; i < 5; i++) {
+                        if (newColorArr[i] == 0) {
+                            nextGridSquares[i] = (
+                                <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
+                                    {nextGridSquares[i]}
+                                </div>
+                            );
+
+                            if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])].color === 'white') {
+                                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
+                                    ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                                    color: 'grey'
+                                };
+                             }
+
+                        } else if (newColorArr[i] == 1) {
+
+                            nextGridSquares[i] = (
+                                <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
+                                    {nextGridSquares[i]}
+                                </div>
+                            );
+
+                            if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])].color !== 'green') {
+                                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
+                                    ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                                    color: 'yellow'
+                                };
+                            }
+
+                        } else if (newColorArr[i] == 2) {
+                            nextGridSquares[i] = (
+                                <div className='GridSquare' style={{ backgroundColor: 'green' }}>
+                                    {nextGridSquares[i]}
+                                </div>
+                            );
+
+                            nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
+                                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                                color: 'green'
+                            };
+                        } else {
+                        }
+                    }
+
+                setKbSquares(nextKbSquares);
+
+                setNumGuesses(numGuesses + 1);
+
+                if (checkWinner(newColorArr) && numGuesses == 0) {
+                    setPlayerWonOne(true);
+
+                } else if (checkWinner(newColorArr)) {
+                    setPlayerWon(true);
+                }
+
+                if (!checkWinner(newColorArr) && currGridSq == 30) {
+                    setPlayerLost(true);
+                }
+
+                setRestrictType(false);
+                setDisplayInvalid(false);
+
+                } else {
+                    setDisplayInvalid(true);
+                }
+            }
         } else {
-          setDisplayInvalid(true);
-        }
-      }
-    } else {
-      if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
+            if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
 
-        nextGridSquares[currGridSq] = kbButtonSquare.value;
-        setCurrGridSq(currGridSq + 1);
+                nextGridSquares[currGridSq] = kbButtonSquare.value;
+                setCurrGridSq(currGridSq + 1);
 
-        if ((currGridSq + 1) % 5 == 0) {
-          setRestrictType(true);
+                if ((currGridSq + 1) % wordLength == 0) {
+                    setRestrictType(true);
+                }
+                setDisplayInvalid(false);
+            }
         }
-        setDisplayInvalid(false);
-      }
+
+        setGridSquares(nextGridSquares);
+        gridRows.set(numGuesses, nextGridSquares);
+        setGridRowsCopy(gridRows)
     }
 
-    setGridSquares(nextGridSquares);
-  }
-
-  useEffect(() => {
-    const reformattedUserGuesses = { ...userGuesses };
-    const reformattedColors = { ...guessColors };
-    const history = {
-      guesses: reformattedUserGuesses,
-      colors: reformattedColors,
-      targetWord: targetWord,
-      playerWon: playerWon,
-      uid: userId,
-    };
-    if (playerWon || playerLost) {
-      console.log('hello world');
-      (async () => {
-        try {
-          const response = await axios.post('http://localhost:4000/api/addhistory', history);
-          console.log(response);
-        } catch (e) {
-          console.log(e);
+    useEffect(() => {
+        const reformattedUserGuesses = { ...userGuesses };
+        const reformattedColors = { ...guessColors };
+        const history = {
+            guesses: reformattedUserGuesses,
+            colors: reformattedColors,
+            targetWord: targetWord,
+            playerWon: playerWon,
+            uid: userId,
+        };
+        if (playerWon || playerLost) {
+            console.log('hello world');
+            (async () => {
+                try {
+                    const response = await axios.post('http://localhost:4000/api/addhistory', history);
+                    console.log(response);
+                } catch (e) {
+                    console.log(e);
+                }
+            })();
         }
-      })();
-    }
-  }, [playerWon, playerLost]);
+    }, [playerWon, playerLost]);
 
   return (
     <>
@@ -381,49 +451,28 @@ const kbInitLettersOnly = [
             </>
           )}
 
-          <div className='board-row'>
-            <GridSquare value={gridSquares[0]} />
-            <GridSquare value={gridSquares[1]} />
-            <GridSquare value={gridSquares[2]} />
-            <GridSquare value={gridSquares[3]} />
-            <GridSquare value={gridSquares[4]} />
-          </div>
-          <div className='board-row'>
-            <GridSquare value={gridSquares[5]} />
-            <GridSquare value={gridSquares[6]} />
-            <GridSquare value={gridSquares[7]} />
-            <GridSquare value={gridSquares[8]} />
-            <GridSquare value={gridSquares[9]} />
-          </div>
-          <div className='board-row'>
-            <GridSquare value={gridSquares[10]} />
-            <GridSquare value={gridSquares[11]} />
-            <GridSquare value={gridSquares[12]} />
-            <GridSquare value={gridSquares[13]} />
-            <GridSquare value={gridSquares[14]} />
-          </div>
-          <div className='board-row'>
-            <GridSquare value={gridSquares[15]} />
-            <GridSquare value={gridSquares[16]} />
-            <GridSquare value={gridSquares[17]} />
-            <GridSquare value={gridSquares[18]} />
-            <GridSquare value={gridSquares[19]} />
-          </div>
-          <div className='board-row'>
-            <GridSquare value={gridSquares[20]} />
-            <GridSquare value={gridSquares[21]} />
-            <GridSquare value={gridSquares[22]} />
-            <GridSquare value={gridSquares[23]} />
-            <GridSquare value={gridSquares[24]} />
-          </div>
-          <div className='board-row'>
-            <GridSquare value={gridSquares[25]} />
-            <GridSquare value={gridSquares[26]} />
-            <GridSquare value={gridSquares[27]} />
-            <GridSquare value={gridSquares[28]} />
-            <GridSquare value={gridSquares[29]} />
-          </div>
+           { 
 
+            (() => {
+                //hack to work around the fact that gridRows is not a component
+                gridRows = gridRowsCopy
+                let rows = []
+                for (let i = 0; i < maxGuesses; i++) {
+                    rows.push(
+                        <div className='board-row' key={i}>
+                            {(() => {
+                                let row = []
+                                for (let j = 0; j < wordLength; j++) {
+                                    row.push(<GridSquare value={gridRows.get(i)[j]} />)
+                                }
+                                return row
+                            })()}
+                        </div>
+                    )
+                }
+                return rows
+            })()
+           }
 
 
 
