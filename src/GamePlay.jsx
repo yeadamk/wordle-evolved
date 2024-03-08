@@ -21,34 +21,48 @@ function KeyboardSquare({ value, onKbSquareClick }) {
 function checkStatus(userGuess, targetWord) {
 
     const wordLength = userGuess.length
-    const lettersDict = new Map() // are maps valid to use?
+    const lettersDict = new Map() 
     let status = []
 
+    
+
     for (let j = 0; j < wordLength; j++) {
+    
         if (lettersDict.has(targetWord[j])) {
             lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) + 1)
         } else {
             lettersDict.set(targetWord[j], 1)
         }
     }
+ //   console.log("LettersDict, then userGuess")
+ //   console.log(lettersDict)
+ //   console.log(userGuess)
+
+   // console.log(" ")
 
     for (let j = 0; j < wordLength; j++) {
+      //  console.log("LETTER " + j)
         if (userGuess[j] == targetWord[j]) {
+          //  console.log(2)
             status.push(2)
             lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) - 1)
         }
         else {
+        //    console.log(0)
             status.push(0)
         }
     }
-
+    
+//    console.log(status)
+  //  console.log(lettersDict)
     for (let j = 0; j < wordLength; j++) {
-        if (status[j] == 0 && lettersDict.get(targetWord[j]) > 0) {
+        if (status[j] == 0 && lettersDict.has(userGuess[j]) && lettersDict.get(userGuess[j]) > 0) {
             status[j] = 1
-            lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) - 1)
+            lettersDict.set(userGuess[j], lettersDict.get(userGuess[j]) - 1)
         }
     }
-
+  //  console.log(status)
+//    console.log(lettersDict)
     return status;
 }
 
@@ -71,28 +85,42 @@ function checkValidWord(userGuess, words) {
 }
 
 function generateWord(words, length, letterRestrictions, specificRequirements) {
+
     let validWords = []
     let valid = true
 
-    for (let word in words) {
+    if (letterRestrictions == null) {
+        letterRestrictions = []
+    }
 
+    if (specificRequirements == null) {
+        specificRequirements = []
+        for (let i = 0; i < length; i++) {
+            specificRequirements.push("")
+        }
+    }
+
+    for (let i = 0; i < words.length; i++) {
+
+        let word = words[i]
         if (word.length != length) {
             continue
         }
+    
 
         valid = true
-        for (let i = 0; i < word.length; i++) {
+        for (let j = 0; j < word.length; j++) {
 
-            if (word[i] in letterRestrictions) {
+            if (word[j] in letterRestrictions) {
 
                 valid = false;
                 break;
                 // check for '~letter', then invalidates word if it has that letter at index i
-            } else if (specificRequirements[i].length > 1 && specificRequirements[i][1] == word[i]) {
+            } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
 
                 valid = false;
                 break;
-            } else if (specificRequirements[i].length == 1 && specificRequirements[i] != word[i]) {
+            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != word[j]) {
 
                 valid = false;
                 break;
@@ -105,15 +133,27 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
         }
     }
 
-    return validWords[Math.floor(Math.random(0, validWords.length))]
+    return validWords[Math.floor(Math.random() * validWords.length)]
 }
 
 
 function GamePlay() {
 
+    /*
+    const test = new Map()
+    test.set(1, Array(8).fill(
+ 
+    console.log(test.get(1))
+    console.log(test)
+    */
+
     // for now, the dynamic values will be hard-coded
     // TODO: accept input for these
-    const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse"]
+
+
+    const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
+        "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
+        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm"]
     const wordLength = 5
     const maxGuesses = 6
     const letterRestrictions = null
@@ -121,30 +161,29 @@ function GamePlay() {
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
     const [showBoard, setShowBoard] = useState(false);
-
-    /* 
-    
-    currGridSq: one of (wordLength) boxes in gridSquares; these represent individual letters
-    gridSquares: one of (maxGuesses) arrays in gridRows; these represent individual guesses
-    gridRows: dictionary of rows in a game; this stores all the rows that are actually rendered
-
-    */
-
-
     const [currGridSq, setCurrGridSq] = useState(0);
-    const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
-    const [gridRows, setGridRows] = useState(new Map())
+    const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(
+    
+       <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+                          {null}
+                     </div>
+
+    ));
+
+    let gridRows = new Map()
 
     for (let i = 0; i < maxGuesses; i++) {
-
-        gridRows.set(i, Array(wordLength).fill(<div className='boardsquare' style={{ backgroundColor: 'grey' }}>
-            {null}
-        </div>));
-
+        
+        gridRows.set(i, Array(wordLength).fill(
+        
+            <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+                          {null}
+                     </div>
+        
+        )) 
     }
-
-    
-
+    // Hack-y solution to making gridRows a component causing 'too many re-renders'
+    const [gridRowsCopy, setGridRowsCopy] = useState(gridRows)
     const kbInit = [
         'Q',
         'W',
@@ -178,20 +217,36 @@ function GamePlay() {
 
     const [kbSquares, setKbSquares] = useState(kbInit);
 
-    let generatedWord = generateWord(wordList, wordLength,
-        letterRestrictions, specificRequirements)
+   
 
-    const [targetWord, setTargetWord] = useState(generatedWord);
+    const [targetWord, setTargetWord] = useState(generateWord(wordList, wordLength,
+        letterRestrictions, specificRequirements));
+
     const [userGuess, setUserGuess] = useState('');
     const [restrictType, setRestrictType] = useState(false);
-    const [colorArr, setColorArr] = useState(Array(wordLength).fill(null));
-    const [numGuesses, setNumGuesses] = useState(0);
+    let [colorArr, setColorArr] = useState(Array(wordLength).fill(null));
+    let [numGuesses, setNumGuesses] = useState(0);
     const [playerWon, setPlayerWon] = useState(false);
     const [playerWonOne, setPlayerWonOne] = useState(false);
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
 
-    let nextGridSquares = Array(wordLength).fill(null)
+    let nextGridSquares = Array(wordLength).fill(
+        <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+            {null}
+        </div>
+    )
+
+
+
+    
+    function extractChildren(oldSquares) {
+        const squaresCopy = []
+        for (let i = 0; i < oldSquares.length; i++) {
+            squaresCopy.push(oldSquares[i].props.children)
+        }
+        return squaresCopy; 
+    }
 
     function handleKbClick(val) {
 
@@ -210,54 +265,55 @@ function GamePlay() {
 
             if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
 
-                let guess = toString(gridSquares).replaceAll(",", ""); // is replaceAll a valid function?
+                let guess = extractChildren(nextGridSquares).toString().replaceAll(",", "").toLowerCase(); 
+       
                 if (checkValidWord(guess, wordList)) {
+                    // Hack? setColorArr doesn't actaully seem to change the color array by itself here
+                    setColorArr(checkStatus(guess, targetWord))
+                    colorArr = checkStatus(guess, targetWord)
 
-
-                    setColorArr(checkStatus(guess, targetWord));
+                   
                     for (let i = 0; i < wordLength; i++) {
-                        /* 
-                        TODO:
-                        We need to make a Map of rows, ofc of size wordLength * numGuesses
-                        Then, based on gridSquares, we update our current guess number on the dict
-                        By replacing it with newGridSquares
-                        That should make this effectively dynamic
-                        */
 
                         if (colorArr[i] == 0) {
+                            
                             nextGridSquares[i] = (
                                 <div className='boardsquare' style={{ backgroundColor: 'grey' }}>
-                                    {nextGridSquares[i]}
+                                    {guess[i]}
                                 </div>
                             );
                         } else if (colorArr[i] == 1) {
+                            console.log("colorArr " + i + " is 1")
                             nextGridSquares[i] = (
                                 <div className='boardsquare' style={{ backgroundColor: 'yellow' }}>
-                                    {nextGridSquares[i]}
+                                    {guess[i]}
                                 </div>
                             );
                         } else if (colorArr[i] == 2) {
+                           
                             nextGridSquares[i] = (
                                 <div className='boardsquare' style={{ backgroundColor: 'green' }}>
-                                    {nextGridSquares[i]}
+                                    {guess[i]}
                                 </div>
                             );
                         }
                     }
-                    // BUG! This doesn't work properly
-                    
-                    gridRows.set(numGuesses, nextGridSquares)
-                    
+           
+                    // Hack? setNumGuesses doesn't actaully seem to change the number of guesses by itself here
                     setNumGuesses(numGuesses + 1);
+                    numGuesses += 1;
+                    setCurrGridSq(0);
 
-                    if (checkWinner(newColorArr) && numGuesses == 0) {
+                    nextGridSquares = Array(wordLength).fill(null);
+
+                    if (checkWinner(colorArr) && numGuesses == 1) {
                         setPlayerWonOne(true);
 
-                    } else if (checkWinner(newColorArr)) {
+                    } else if (checkWinner(colorArr)) {
                         setPlayerWon(true);
                     }
 
-                    if (!checkWinner(newColorArr) && numGuesses >= maxGuesses) {
+                    if (!checkWinner(colorArr) && numGuesses >= maxGuesses) {
                         setPlayerLost(true);
                     }
 
@@ -270,9 +326,13 @@ function GamePlay() {
             }
         } else {
             if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
-                nextGridSquares[currGridSq] = val;
+                nextGridSquares[currGridSq] = (
+                     <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+                          {val}
+                     </div>
+                );
                 setCurrGridSq(currGridSq + 1);
-
+      
                 if ((currGridSq + 1) % wordLength == 0) {
                     setRestrictType(true);
                 }
@@ -281,6 +341,10 @@ function GamePlay() {
         }
 
         setGridSquares(nextGridSquares);
+        gridRows.set(numGuesses, nextGridSquares);
+        setGridRowsCopy(gridRows)
+
+   
     }
 
     
@@ -346,21 +410,35 @@ function GamePlay() {
                         </>
                     )}
 
-                    {
 
+                     {  
                         (() => {
+                            //hack to work around the fact that gridRows is not a component
+                            gridRows = gridRowsCopy
+                            let rows = []
                             for (let i = 0; i < maxGuesses; i++) {
-                                <div className='board-row'>
+                                rows.push(
+                                <div className='board-row' key = {i}>
                                     {(() => {
-                                        for (let j = 0; j < wordLength; j++) {
-                                          
-                                            <GridSquare value={gridRows.get(i)[j]} />
+                                        let row = []
+                                        for (let j = 0; j < wordLength; j++) {                                        
+                                            row.push(<GridSquare value = {gridRows.get(i)[j]} />)
                                         }
-                                    })()}
+                                        return row
+                                    })()}                         
                                 </div>
+                                )
                             }
+                            return rows
                         })()
+
+                        /* STORAGE:
+
+                        return (gridRows.keys).map(())
+
+                        */
                     }
+
 
                     {/* This is good as is! The keys aren't dynamic -- at least, for now... */}
                     <div className='kb-row'>
