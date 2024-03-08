@@ -1,10 +1,6 @@
 // JavaScript source code
-import './App.css';
-import Auth from './Auth';
 import { useState } from 'react';
-
-// these functions turn a list into an effective dictionary 
-// with key - value pairs of the form "string": integer
+import './App.css';
 
 
 
@@ -19,16 +15,7 @@ function KeyboardSquare({ value, onKbSquareClick }) {
         </button>
     );
 }
-function checkDictionary(letter, Dict) {
 
-    for (let i = 0; i < Dict.length; i++) {
-        if (Dict[i](letter) >= 0) {
-            return Dict[i](letter)
-        }
-    }
-
-    return -1
-}
 
 
 function checkStatus(userGuess, targetWord) {
@@ -84,10 +71,10 @@ function checkValidWord(userGuess, words) {
 }
 
 function generateWord(words, length, letterRestrictions, specificRequirements) {
-    validWords = []
+    let validWords = []
     let valid = true
 
-    for (word in words) {
+    for (let word in words) {
 
         if (word.length != length) {
             continue
@@ -121,6 +108,7 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
     return validWords[Math.floor(Math.random(0, validWords.length))]
 }
 
+
 function GamePlay() {
 
     // for now, the dynamic values will be hard-coded
@@ -145,13 +133,17 @@ function GamePlay() {
 
     const [currGridSq, setCurrGridSq] = useState(0);
     const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
+    const [gridRows, setGridRows] = useState(new Map())
 
-    const gridRows = Map();
-    (gridSquares) => {
-        for (let i = 0; i < maxGuesses; i++) {
-            gridRows.set(i, gridSquares);
-        }
+    for (let i = 0; i < maxGuesses; i++) {
+
+        gridRows.set(i, Array(wordLength).fill(<div className='boardsquare' style={{ backgroundColor: 'grey' }}>
+            {null}
+        </div>));
+
     }
+
+    
 
     const kbInit = [
         'Q',
@@ -198,6 +190,8 @@ function GamePlay() {
     const [playerWonOne, setPlayerWonOne] = useState(false);
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
+
+    let nextGridSquares = Array(wordLength).fill(null)
 
     function handleKbClick(val) {
 
@@ -250,8 +244,10 @@ function GamePlay() {
                             );
                         }
                     }
-
-                    gridRows.set(numGuesses, newGridSquares)
+                    // BUG! This doesn't work properly
+                    
+                    gridRows.set(numGuesses, nextGridSquares)
+                    
                     setNumGuesses(numGuesses + 1);
 
                     if (checkWinner(newColorArr) && numGuesses == 0) {
@@ -287,8 +283,7 @@ function GamePlay() {
         setGridSquares(nextGridSquares);
     }
 
-
-
+    
     return (
         <>
             {/* <div>
@@ -351,14 +346,14 @@ function GamePlay() {
                         </>
                     )}
 
-                    {/* How to make dynamic: Use a for loop for every row in the map
-                        *** this is actually the mmotivation for using a dict*/
+                    {
 
                         (() => {
                             for (let i = 0; i < maxGuesses; i++) {
                                 <div className='board-row'>
                                     {(() => {
                                         for (let j = 0; j < wordLength; j++) {
+                                          
                                             <GridSquare value={gridRows.get(i)[j]} />
                                         }
                                     })()}
