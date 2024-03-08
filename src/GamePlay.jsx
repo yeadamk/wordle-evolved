@@ -15,66 +15,54 @@ function KeyboardSquare({ value, color, onKbSquareClick }) {
   );
 }
 
-function checkStatus(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, targetWord) {
-  const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
 
-  const targetLetters = [];
-  const status = [];
-  let found = false;
-  const indTwos = [];
 
-  let occCtr = 0;
-  let greenValCtr = 0;
-  let yelVal;
+function checkStatus(userGuess, targetWord) {
 
-  for (let i = 0; i < 5; i++) {
-    targetLetters[i] = targetWord[i];
-  }
+    const wordLength = userGuess.length
+    const lettersDict = new Map()
+    let status = []
 
-  for (let j = 0; j < 5; j++) {
-    if (userGuess[j] == targetWord[j]) {
-      status[j] = 2;
-    } else {
-      for (let k = 0; k < 5; k++) {
-        if (userGuess[j] == targetLetters[k]) {
-          found = true;
-          targetLetters[k] = '0';
-          break;
+
+
+    for (let j = 0; j < wordLength; j++) {
+
+        if (lettersDict.has(targetWord[j])) {
+            lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) + 1)
+        } else {
+            lettersDict.set(targetWord[j], 1)
         }
-      }
+    }
+    //   console.log("LettersDict, then userGuess")
+    //   console.log(lettersDict)
+    //   console.log(userGuess)
 
-      if (found) {
-        status[j] = 1;
-      } else {
-        status[j] = 0;
-      }
+    // console.log(" ")
+
+    for (let j = 0; j < wordLength; j++) {
+        //  console.log("LETTER " + j)
+        if (userGuess[j] == targetWord[j]) {
+            //  console.log(2)
+            status.push(2)
+            lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) - 1)
+        }
+        else {
+            //    console.log(0)
+            status.push(0)
+        }
     }
 
-    found = false;
-  }
-
-  for (let p = 0; p < 5; p++) {
-    if (status[p] == 1) {
-      occCtr = 0;
-      greenValCtr = 0;
-
-      yelVal = userGuess[p];
-      for (let q = 0; q < 5; q++) {
-        if (yelVal == targetWord[q]) {
-          occCtr++;
-          if (status[q] == 2) {
-            greenValCtr++;
-          }
+    //    console.log(status)
+    //  console.log(lettersDict)
+    for (let j = 0; j < wordLength; j++) {
+        if (status[j] == 0 && lettersDict.has(userGuess[j]) && lettersDict.get(userGuess[j]) > 0) {
+            status[j] = 1
+            lettersDict.set(userGuess[j], lettersDict.get(userGuess[j]) - 1)
         }
-      }
-
-      if (occCtr == greenValCtr) {
-        status[p] = 0;
-      }
     }
-  }
-  // Array of 5 ints representing 5 letters
-  return status;
+    //  console.log(status)
+    //    console.log(lettersDict)
+    return status;
 }
 
 function checkWinner(colorArr) {
