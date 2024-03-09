@@ -97,7 +97,8 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
   }
 }
 
-function GamePlay({ userId, userName }) {
+function GamePlay({ userId, userName, setIsSignedIn }) {
+  setIsSignedIn(true);
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -481,6 +482,9 @@ const kbInitLettersOnly = [
       )}
       <Link to='/history'>
         <button>HISTORY</button>
+      </Link>
+      <Link to='/'>
+        <button>Homepage</button>
       </Link>
     </>
   );
