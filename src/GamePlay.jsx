@@ -33,35 +33,29 @@ function checkStatus(userGuess, targetWord) {
             lettersDict.set(targetWord[j], 1)
         }
     }
- //   console.log("LettersDict, then userGuess")
- //   console.log(lettersDict)
- //   console.log(userGuess)
 
-   // console.log(" ")
 
     for (let j = 0; j < wordLength; j++) {
-      //  console.log("LETTER " + j)
+    
         if (userGuess[j] == targetWord[j]) {
-          //  console.log(2)
+     
             status.push(2)
             lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) - 1)
         }
         else {
-        //    console.log(0)
+     
             status.push(0)
         }
     }
     
-//    console.log(status)
-  //  console.log(lettersDict)
+
     for (let j = 0; j < wordLength; j++) {
         if (status[j] == 0 && lettersDict.has(userGuess[j]) && lettersDict.get(userGuess[j]) > 0) {
             status[j] = 1
             lettersDict.set(userGuess[j], lettersDict.get(userGuess[j]) - 1)
         }
     }
-  //  console.log(status)
-//    console.log(lettersDict)
+
     return status;
 }
 
@@ -76,7 +70,7 @@ function checkWinner(colorArr) {
 }
 
 function checkValidWord(userGuess, words) {
-    if (words.includes(userGuess)) {
+    if (words.includes(userGuess.toLowerCase())) {
         return true;
     } else {
         return false;
@@ -95,9 +89,11 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
     if (specificRequirements == null) {
         specificRequirements = []
         for (let i = 0; i < length; i++) {
-            specificRequirements.push("")
+            specificRequirements.push("_")
         }
     }
+
+
 
     for (let i = 0; i < words.length; i++) {
 
@@ -110,20 +106,20 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
 
         valid = true
         for (let j = 0; j < word.length; j++) {
-          
+            
 
             if (letterRestrictions.includes(word[j])) {
-                console.log("word " + word + " failed test 1")
+               
                 valid = false;
                 break;
-                // check for '~letter', then invalidates word if it has that letter at index i
+              
             } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
-                console.log("word " + word + " failed test 2")
+              
                 valid = false;
                 break;
             } else if (specificRequirements[j].length == 1 && specificRequirements[j] != "_"
                 && specificRequirements[j] != word[j]) {
-                console.log("word " + word + " failed test 3")
+            
                 valid = false;
                 break;
 
@@ -131,44 +127,44 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
         }
 
         if (valid == true) {
-            console.log(word)
+
             validWords.push(word)
         }
     }
 
+
     return validWords[Math.floor(Math.random() * validWords.length)]
 }
 
-
-function GamePlay() {
-
-    /*
-    const test = new Map()
-    test.set(1, Array(8).fill(
- 
-    console.log(test.get(1))
-    console.log(test)
-    */
-
-    // for now, the dynamic values will be hard-coded
-    // TODO: accept input for these
-
-
+function generateWordList() {
     const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
         "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
         "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm",
         "rhino", "homes", "mages", "marsh", "slime", "quote", "feels", "queue", "liver", "white", "black", "brown", "blues", "ligma",
-        "laser", "risks", "antic", "china", "ninja", "north"]
-    
+        "laser", "risks", "antic", "china", "ninja", "north", "sight", "night", "reels", "flows", "exile", "orcas", "shred", "music", "muses",
+        "blast", "chris", "larry", "barry", "jerry", "timae", "camel", "hints", "share", "crane", "great"]
 
+    return wordList;
+}
 
-    const wordLength = 5
-    const maxGuesses = 6
-    const letterRestrictions = ["e"];
-    const specificRequirements = ["_", "~a", "~r", "_", "e"]
+function GamePlay() {
+
+    // generating the wordlist really should be done just once when the website is loaded. If we get to it,
+    // we should probably split GamePlay() into two functions:
+    // one to display the website in general, like the HomeScreen, and then one to handle the actual games
+    // this would also allow us to implement multiple games
+
+    const [wordList, setWordList] = useState(generateWordList());
+    const [wordLength, setWordLength] = useState(5)
+    const [maxGuesses, setMaxGuesses] = useState(6)
+    const [letterRestrictions, setLetterRestrictions] = useState(Array(0))
+    const [specificRequirements, setSpecificRequirements] = useState(Array(wordLength).fill("_"))
+
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
+    const [customGameMessage, setCustomGameMessage] = useState('Click to Start Custom Game!')
     const [showBoard, setShowBoard] = useState(false);
+    const [showHomeScreen, setShowHomeScreen] = useState(true);
     const [currGridSq, setCurrGridSq] = useState(0);
     const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(
     
@@ -224,14 +220,16 @@ function GamePlay() {
     ];
 
     const [kbSquares, setKbSquares] = useState(kbInit);
-
-   
+    
+    const [customGame, setCustomGame] = useState(true);
 
     const [targetWord, setTargetWord] = useState(generateWord(wordList, wordLength,
-        letterRestrictions, specificRequirements));
+        letterRestrictions, specificRequirements).toUpperCase());
 
     const [userGuess, setUserGuess] = useState('');
     const [restrictType, setRestrictType] = useState(false);
+    const [customGameInitializer, setCustomGameInitializer] = useState(false)
+
     let [colorArr, setColorArr] = useState(Array(wordLength).fill(null));
     let [numGuesses, setNumGuesses] = useState(0);
     const [playerWon, setPlayerWon] = useState(false);
@@ -239,13 +237,15 @@ function GamePlay() {
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
 
+    console.log("target is " + targetWord + " now")
+
     let nextGridSquares = Array(wordLength).fill(
         <div className='boardsquare' style={{ backgroundColor: 'white' }}>
             {null}
         </div>
     )
 
-    console.log("word is " + targetWord)
+   
 
 
     
@@ -274,10 +274,10 @@ function GamePlay() {
 
             if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
 
-                let guess = extractChildren(nextGridSquares).toString().replaceAll(",", "").toLowerCase(); 
+                let guess = extractChildren(nextGridSquares).toString().replaceAll(",", "").toUpperCase(); 
        
                 if (checkValidWord(guess, wordList)) {
-                    // Hack? setColorArr doesn't actaully seem to change the color array by itself here
+                  
                     setColorArr(checkStatus(guess, targetWord))
                     colorArr = checkStatus(guess, targetWord)
 
@@ -308,7 +308,7 @@ function GamePlay() {
                         }
                     }
            
-                    // Hack? setNumGuesses doesn't actaully seem to change the number of guesses by itself here
+               
                     setNumGuesses(numGuesses + 1);
                     numGuesses += 1;
                     setCurrGridSq(0);
@@ -353,10 +353,8 @@ function GamePlay() {
         gridRows.set(numGuesses, nextGridSquares);
         setGridRowsCopy(gridRows)
 
-   
     }
-
-    
+   
     return (
         <>
             {/* <div>
@@ -369,21 +367,108 @@ function GamePlay() {
       </div> */}
             <h1>Wordle Evolved</h1>
             <div className='card'>
-                {!showBoard && (
-                    <button
-                        onClick={() => {
-                            setMessage('Button Clicked! Daily Game Starting Now!');
-                            setShowBoard(true);
-                        }}>
-                        {' '}
-                        {message}
-                    </button>
-                )}
+                <div className = 'start-button'>
+                    {showHomeScreen && (
+                        <button
+                            onClick={() => {
+                                
+                                setMessage('Button Clicked! Daily Game Starting Now!');
+                                setShowHomeScreen(false);
+                                setShowBoard(true);
+                                setCustomGame(false);
+                            }}>
+                            {' '}
+                            {message}
+                        </button>
+
+                    )}
+                </div>
+                <div className='start-button'>
+                    {showHomeScreen && (
+                        <button
+                            onClick={() => {
+                                setCustomGameMessage('Submit Parameters and Start Custom Game');
+                                setShowHomeScreen(false);
+                                setCustomGameInitializer(true); 
+                                setCustomGame(true);
+                               
+                            }}>
+                            {' '}
+                            {customGameMessage}
+                        </button>
+
+                    )}
+                </div>
                 <p>
                     Edit <code>src/App.jsx</code> and save to test HMR
                 </p>
-            </div>
+                </div>
             <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
+
+            {customGameInitializer && (
+
+                <div className="game-parameters">
+                    {// TODO: Handle case invalid/impossible parameters. Currently, they just crash the program.
+                    }
+                    
+                    <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
+
+                    <div className="parameter">    
+                        <input id="word-length" type="range" min="3" max="7" defaultValue="5"/>
+                    </div>
+
+                    <div className="parameter">
+                        <input id="max-guesses" type="range" min="3" max="7" defaultValue="6" />
+                    </div>
+                    {// TODO: input requirements; currently, this demands a string, with NO SPACES, of all the restricted letters.
+
+                    }
+                    <div className="parameter">
+                        <input id="letter-restrictions" type="text" />
+                    </div>
+                    { // TODO: change the input type of specific requirements to have one box per letter with default value "_"
+                        // the current method has no checks for bad input; must be taken of the form: "_ _ _ _ _", which is a wordLength-long string 
+                        // of all _'s (or the respective letter you want in that spot) separated by spaces. ~letter is supported.
+                     
+                    }
+                    <div className="parameter">
+                        <input id="specific-requirements" type="text" />
+                    </div>
+
+                    <div className="parameter-button">
+                        <button
+                            onClick={() => {
+
+
+                                setWordLength(document.getElementById('word-length').value);
+                                setMaxGuesses(document.getElementById('max-guesses').value);
+                                setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
+                                setSpecificRequirements(document.getElementById('specific-requirements').value.split(" "));
+
+                                // maybe use a 'try' statement here and demand it not be invalid?
+
+                                setTargetWord(generateWord(
+                                    wordList,
+                                    document.getElementById('word-length').value,
+                                    document.getElementById('letter-restrictions').value.split(""),
+                                    document.getElementById('specific-requirements').value.split(" ")
+                                ).toUpperCase()) 
+                            
+                                setMessage('Button Clicked! Custom Game Starting Now!');
+                                setCustomGameInitializer(false);
+                                setShowBoard(true);
+                                
+
+
+                            }}>
+                            {' '}
+                            {customGameMessage}
+                        </button>
+                    </div>
+                    
+                </div>
+
+            )}
 
             {showBoard && (
                 <>
