@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route path='/auth' element={<Auth setUserId={setUserId} setUserName={setUserName} />} />
         <Route path='/gameplay' element={<GamePlay userId={userId} userName={userName} />} />
-        <Route path='/history' element={<History uid={userId} />} />
+        <Route path='/history' element={<History uid={userId} userName={userName} />} />
       </Routes>
     </Router>
   );

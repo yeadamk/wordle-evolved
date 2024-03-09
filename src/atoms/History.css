@@ -1,0 +1,62 @@
+.history-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid gray;
+  width: 90%;
+  margin: 0 5%;
+}
+.history-container-right {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 45%;
+}
+
+.history-container > p {
+  margin: 10px 10px;
+}
+
+.winning-msg {
+  background-color: rgba(64, 202, 64, 0.832);
+  color: white;
+  border-radius: 15%;
+  padding: 5px 10px;
+}
+
+.losing-msg {
+  background-color: rgb(253, 64, 64);
+  color: white;
+  border-radius: 15%;
+  padding: 5px 10px;
+}
+
+.board > span {
+  display: inline-block;
+  margin: 0;
+  font-size: 1.5rem;
+  padding: 5px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  width: 30px;
+  text-align: center;
+}
+
+.green {
+  background-color: green;
+}
+
+.gray {
+  background-color: gray;
+}
+.yellow {
+  background-color: yellow;
+}
+
+.board {
+  margin: 15px 0px 10px 10px;
+}
+
+.history-container:hover {
+  background-color: #e0e0e0;
+}

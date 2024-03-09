@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import HistoryElement from './atoms/HistoryElement';
 
-function History({ uid }) {
+function History({ uid, userName }) {
   const [history, setHistory] = useState();
 
   useEffect(() => {
@@ -11,14 +12,21 @@ function History({ uid }) {
     })();
   }, []);
 
+  console.log(history);
+
   return (
     <>
-      <h1>HELLO {uid ? uid : 'PLEASE SIGN IN'}</h1>
+      <h1>{uid ? userName : 'PLEASE SIGN IN'}</h1>
       {history ? (
         history.map((item, index) => (
-          <div key={index}>
-            <h1>{item.targetWord}</h1>
-          </div>
+          <HistoryElement
+            key={index}
+            guesses={item.guesses}
+            colors={item.colors}
+            targetWord={item.targetWord}
+            date={item.date}
+            playerWon={item.playerWon}
+          />
         ))
       ) : (
         <h1>PLEASE PLAY SOME GAMES</h1>

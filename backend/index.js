@@ -61,6 +61,8 @@ app.use('/api/signup', async (req, res) => {
 
 app.use('/api/addhistory', async (req, res) => {
   const { guesses, colors, targetWord, playerWon, uid } = req.body;
+  const currentDate = new Date();
+
   try {
     const historyObj = {
       guesses: guesses,
@@ -68,6 +70,7 @@ app.use('/api/addhistory', async (req, res) => {
       targetWord: targetWord,
       playerWon: playerWon,
       uid: uid,
+      date: currentDate.toISOString(),
     };
     const docRef = await addDoc(collection(db, 'history'), historyObj);
     console.log('Document written with ID: ', docRef.id);
