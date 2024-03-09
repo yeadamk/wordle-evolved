@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -187,6 +188,7 @@ const kbInitLettersOnly = [
   const [playerWonOne, setPlayerWonOne] = useState(false);
   const [playerLost, setPlayerLost] = useState(false);
   const [displayInvalid, setDisplayInvalid] = useState(false);
+  const navigate = useNavigate();
 
   function handleKbClick(kbButtonSquare) {
     const nextGridSquares = gridSquares.slice();
@@ -352,12 +354,7 @@ const kbInitLettersOnly = [
           )}
         </>
       ) : (
-        <>
-          <h1>PLEASE SIGN IN</h1>
-          <Link to='/auth'>
-            <button>SIGN IN</button>
-          </Link>
-        </>
+        navigate("/Auth")
       )}
 
       {showBoard && (
