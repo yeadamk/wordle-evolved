@@ -50,7 +50,6 @@ function Auth({ setUserId, setUserName }) {
 
   return (
     <div className='landing-hero'>
-      <h1 className='title'>Welcome to Wordle-Evolved</h1>
 
       <div className='login-container'>
         <div className='toggle-container'>
