@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function History({ uid }) {
   const [history, setHistory] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -11,9 +13,15 @@ function History({ uid }) {
     })();
   }, []);
 
+  useEffect(() => {
+    if (!uid){
+      navigate("/auth");
+    }
+  }, [uid, navigate]);
+
   return (
     <>
-      <h1>HELLO {uid ? uid : 'PLEASE SIGN IN'}</h1>
+      {uid ? (<h1>HELLO {uid} </h1>) : null}
       {history ? (
         history.map((item, index) => (
           <div key={index}>

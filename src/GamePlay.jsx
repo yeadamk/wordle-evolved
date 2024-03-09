@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -99,6 +100,7 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
 
 function GamePlay({ userId, userName, setIsSignedIn }) {
   setIsSignedIn(true);
+  const navigate = useNavigate()
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -352,12 +354,7 @@ const kbInitLettersOnly = [
           )}
         </>
       ) : (
-        <>
-          <h1>PLEASE SIGN IN</h1>
-          <Link to='/auth'>
-            <button>SIGN IN</button>
-          </Link>
-        </>
+        navigate("/auth")
       )}
 
       {showBoard && (
