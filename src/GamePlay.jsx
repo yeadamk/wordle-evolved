@@ -3,7 +3,6 @@ import { useState } from 'react';
 import './App.css';
 
 
-
 function GridSquare({ value }) {
     return <div className='square'>{value}</div>;
 }
@@ -107,21 +106,24 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
             continue
         }
     
+     
 
         valid = true
         for (let j = 0; j < word.length; j++) {
+          
 
-            if (word[j] in letterRestrictions) {
-
+            if (letterRestrictions.includes(word[j])) {
+                console.log("word " + word + " failed test 1")
                 valid = false;
                 break;
                 // check for '~letter', then invalidates word if it has that letter at index i
             } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
-
+                console.log("word " + word + " failed test 2")
                 valid = false;
                 break;
-            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != word[j]) {
-
+            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != "_"
+                && specificRequirements[j] != word[j]) {
+                console.log("word " + word + " failed test 3")
                 valid = false;
                 break;
 
@@ -129,6 +131,7 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
         }
 
         if (valid == true) {
+            console.log(word)
             validWords.push(word)
         }
     }
@@ -153,11 +156,16 @@ function GamePlay() {
 
     const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
         "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
-        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm"]
+        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm",
+        "rhino", "homes", "mages", "marsh", "slime", "quote", "feels", "queue", "liver", "white", "black", "brown", "blues", "ligma",
+        "laser", "risks", "antic", "china", "ninja", "north"]
+    
+
+
     const wordLength = 5
     const maxGuesses = 6
-    const letterRestrictions = null
-    const specificRequirements = null
+    const letterRestrictions = ["e"];
+    const specificRequirements = ["_", "~a", "~r", "_", "e"]
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
     const [showBoard, setShowBoard] = useState(false);
@@ -237,6 +245,7 @@ function GamePlay() {
         </div>
     )
 
+    console.log("word is " + targetWord)
 
 
     
