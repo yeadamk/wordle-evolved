@@ -94,9 +94,11 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
     if (specificRequirements == null) {
         specificRequirements = []
         for (let i = 0; i < length; i++) {
-            specificRequirements.push("")
+            specificRequirements.push("_")
         }
     }
+
+
 
     for (let i = 0; i < words.length; i++) {
 
@@ -105,20 +107,21 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
             continue
         }
 
-
         valid = true
         for (let j = 0; j < word.length; j++) {
 
-            if (word[j] in letterRestrictions) {
+
+            if (letterRestrictions.includes(word[j])) {
 
                 valid = false;
                 break;
-                // check for '~letter', then invalidates word if it has that letter at index i
+
             } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
 
                 valid = false;
                 break;
-            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != word[j]) {
+            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != "_"
+                && specificRequirements[j] != word[j]) {
 
                 valid = false;
                 break;
@@ -127,9 +130,11 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
         }
 
         if (valid == true) {
+
             validWords.push(word)
         }
     }
+
 
     return validWords[Math.floor(Math.random() * validWords.length)]
 }
@@ -249,9 +254,12 @@ function GamePlay({ userId, userName }) {
         return squaresCopy;
     }
 
+   
+    console.log(targetWord)
     function handleKbClick(kbButtonSquare) {
         const nextGridSquares = gridSquares;
         const nextKbSquares = kbSquares;
+        let currentGuess = numGuesses;
 
         if (kbButtonSquare.value == 'DEL') {
             if (currGridSq > 0) {
@@ -262,11 +270,14 @@ function GamePlay({ userId, userName }) {
             }
         } else if (kbButtonSquare.value == 'RET') {
 
-            if (currGridSq % word == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
+            if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
 
+                // potential problem with extracting the letters here; is nextGridSquares just an array of strings?
                 const guess = nextGridSquares.toString().replaceAll(",", "").toLowerCase(); 
+                console.log(guess)
+                console.log(targetWord)
 
-                if (checkValidWord(guess, targetWord)) {
+                if (checkValidWord(guess, wordList)) {
 
                     const newColorArr = checkStatus(guess, targetWord);
                     setColorArr(newColorArr);
@@ -274,19 +285,28 @@ function GamePlay({ userId, userName }) {
                     setGuessColors([...guessColors, newColorArr]);
 
                     for (let i = 0; i < 5; i++) {
+
+                        console.log(i)
+                       
+
                         if (newColorArr[i] == 0) {
+                           
                             nextGridSquares[i] = (
                                 <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
                                     {nextGridSquares[i]}
                                 </div>
                             );
+                            console.log(guess[i])
+                            console.log(kbInitLettersOnly.indexOf(guess[i]))
 
-                            if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])].color === 'white') {
-                                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
-                                    ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                            console.log(nextKbSquares)
+                            console.log(nextKbSquares[kbInitLettersOnly.indexOf(guess[i])])
+                            if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color === 'white') {
+                                nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                                    ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
                                     color: 'grey'
                                 };
-                             }
+                            }
 
                         } else if (newColorArr[i] == 1) {
 
@@ -320,16 +340,18 @@ function GamePlay({ userId, userName }) {
 
                 setKbSquares(nextKbSquares);
 
-                setNumGuesses(numGuesses + 1);
+                currentGuess += 1;
+         
 
-                if (checkWinner(newColorArr) && numGuesses == 0) {
+                // I don't trust that this works without updating a local copy of numGuesses
+                if (checkWinner(newColorArr) && currentGuess == 1) {
                     setPlayerWonOne(true);
 
                 } else if (checkWinner(newColorArr)) {
                     setPlayerWon(true);
                 }
 
-                if (!checkWinner(newColorArr) && currGridSq == 30) {
+                if (!checkWinner(newColorArr) && currGridSq >= maxGuesses) {
                     setPlayerLost(true);
                 }
 
@@ -353,9 +375,12 @@ function GamePlay({ userId, userName }) {
             }
         }
 
+        // beware: did you intend this to be an array of react elements or just strings of letters?
         setGridSquares(nextGridSquares);
+        console.log("current guess is " + currentGuess);
         gridRows.set(numGuesses, nextGridSquares);
         setGridRowsCopy(gridRows)
+        setNumGuesses(currentGuess)
     }
 
     useEffect(() => {
@@ -454,7 +479,7 @@ function GamePlay({ userId, userName }) {
            { 
 
             (() => {
-                //hack to work around the fact that gridRows is not a component
+                
                 gridRows = gridRowsCopy
                 let rows = []
                 for (let i = 0; i < maxGuesses; i++) {
