@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import './DataAnalytics.css';
 
-function DataAnalytics( {uid} ){
+function DataAnalytics( {uid, userName} ){
     const [data, setData] = useState();
     const [gamesPlayed, setGamesPlayed] = useState(0);
     const [totalGuesses, setTotalGuesses] = useState(0);
@@ -102,7 +106,39 @@ function DataAnalytics( {uid} ){
     }, [data]);
     
     return (
-        null
+        <>
+            <div className='user-box'>
+                {data ? (
+                    <div>
+                        <FontAwesomeIcon icon={faCircleUser} size='3x' />
+                        <p className='line'>{userName}</p>
+                    </div>
+                ) : (
+                    <Link to='/auth'>
+                        <button>signin</button>
+                    </Link>
+                )}
+                <div className='up'>
+                    <h1>Played</h1>
+                    <h2>{gamesPlayed}</h2>
+                </div>
+                <div className='up'>
+                    <h1>Completed</h1>
+                </div>
+                <div className='up'>
+                    <h1>Win %</h1>
+                </div>
+                <div className='up'> 
+                    <h1> Current Streak </h1>
+                </div>
+                <div className='up'>
+                    <h1> Max Streak </h1>
+                </div>
+            </div>
+            <div className='stats'>
+                <h1> Overall Statistics </h1>
+            </div>
+        </>
     );  
 }
 

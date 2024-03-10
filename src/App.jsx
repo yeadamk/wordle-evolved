@@ -19,7 +19,7 @@ function App() {
         <Route path='/auth' element={<Auth setUserId={setUserId} setUserName={setUserName} />} />
         <Route path='/gameplay' element={<GamePlay setIsSignedIn={setIsSignedIn} userId={userId} userName={userName} />} />
         <Route path='/history' element={<History uid={userId} userName={userName}/>} />
-        <Route path='/dataanalytics' element={<DataAnalytics uid={userId} />} />
+        <Route path='/dataanalytics' element={<DataAnalytics uid={userId} userName={userName} />} />
       </Routes>
     </Router>
   );
