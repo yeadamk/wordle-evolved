@@ -104,71 +104,84 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
   const [gridSquares, setGridSquares] = useState(Array(30).fill(null));
-const kbInit = [
-  { value: 'Q', color: 'white' },
-  { value: 'W', color: 'white' },
-  { value: 'E', color: 'white' },
-  { value: 'R', color: 'white' },
-  { value: 'T', color: 'white' },
-  { value: 'Y', color: 'white' },
-  { value: 'U', color: 'white' },
-  { value: 'I', color: 'white' },
-  { value: 'O', color: 'white' },
-  { value: 'P', color: 'white' },
-  { value: 'A', color: 'white' },
-  { value: 'S', color: 'white' },
-  { value: 'D', color: 'white' },
-  { value: 'F', color: 'white' },
-  { value: 'G', color: 'white' },
-  { value: 'H', color: 'white' },
-  { value: 'J', color: 'white' },
-  { value: 'K', color: 'white' },
-  { value: 'L', color: 'white' },
-  { value: 'RET', color: 'white' },
-  { value: 'Z', color: 'white' },
-  { value: 'X', color: 'white' },
-  { value: 'C', color: 'white' },
-  { value: 'V', color: 'white' },
-  { value: 'B', color: 'white' },
-  { value: 'N', color: 'white' },
-  { value: 'M', color: 'white' },
-  { value: 'DEL', color: 'white' },
-];
-const kbInitLettersOnly = [
-   'Q',
-   'W',
-   'E',
-   'R',
-   'T',
-   'Y',
-   'U',
-   'I',
-   'O',
-   'P',
-   'A',
-   'S',
-   'D',
-   'F',
-   'G',
-   'H',
-   'J',
-   'K',
-   'L',
-   'RET',
-   'Z',
-   'X',
-   'C',
-   'V',
-   'B',
-   'N',
-   'M',
-   'DEL',
-];
+  const kbInit = [
+    { value: 'Q', color: 'white' },
+    { value: 'W', color: 'white' },
+    { value: 'E', color: 'white' },
+    { value: 'R', color: 'white' },
+    { value: 'T', color: 'white' },
+    { value: 'Y', color: 'white' },
+    { value: 'U', color: 'white' },
+    { value: 'I', color: 'white' },
+    { value: 'O', color: 'white' },
+    { value: 'P', color: 'white' },
+    { value: 'A', color: 'white' },
+    { value: 'S', color: 'white' },
+    { value: 'D', color: 'white' },
+    { value: 'F', color: 'white' },
+    { value: 'G', color: 'white' },
+    { value: 'H', color: 'white' },
+    { value: 'J', color: 'white' },
+    { value: 'K', color: 'white' },
+    { value: 'L', color: 'white' },
+    { value: 'RET', color: 'white' },
+    { value: 'Z', color: 'white' },
+    { value: 'X', color: 'white' },
+    { value: 'C', color: 'white' },
+    { value: 'V', color: 'white' },
+    { value: 'B', color: 'white' },
+    { value: 'N', color: 'white' },
+    { value: 'M', color: 'white' },
+    { value: 'DEL', color: 'white' },
+  ];
+  const kbInitLettersOnly = [
+    'Q',
+    'W',
+    'E',
+    'R',
+    'T',
+    'Y',
+    'U',
+    'I',
+    'O',
+    'P',
+    'A',
+    'S',
+    'D',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'RET',
+    'Z',
+    'X',
+    'C',
+    'V',
+    'B',
+    'N',
+    'M',
+    'DEL',
+  ];
 
   const [kbSquares, setKbSquares] = useState(kbInit);
 
   //to be replaced with linux.words later? Filtered down of course.
-  const wordList = ['BEANS', 'RATIO', 'HELLO', 'WORLD', 'MOUSE', 'ROCKY', 'WATER', 'SUPER', 'HOUSE', 'BEETS', 'PEACE', 'CREED'];
+  const wordList = [
+    'BEANS',
+    'RATIO',
+    'HELLO',
+    'WORLD',
+    'MOUSE',
+    'ROCKY',
+    'WATER',
+    'SUPER',
+    'HOUSE',
+    'BEETS',
+    'PEACE',
+    'CREED',
+  ];
 
   //chooses a random word for the list to be targetWord
   const [targetWord, setTargetWord] = useState(() => {
@@ -229,12 +242,11 @@ const kbInitLettersOnly = [
               );
 
               if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color === 'white') {
-              	nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
-               	...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'grey'
-              	};
-	      }
-
+                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
+                  ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
+                  color: 'grey',
+                };
+              }
             } else if (newColorArr[i] == 1) {
               nextGridSquares[currGridSq + i - 5] = (
                 <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
@@ -244,11 +256,10 @@ const kbInitLettersOnly = [
 
               if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])].color !== 'green') {
                 nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
-                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'yellow'
+                  ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
+                  color: 'yellow',
                 };
               }
-
             } else if (newColorArr[i] == 2) {
               nextGridSquares[currGridSq + i - 5] = (
                 <div className='GridSquare' style={{ backgroundColor: 'green' }}>
@@ -258,9 +269,8 @@ const kbInitLettersOnly = [
 
               nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])] = {
                 ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[currGridSq + i - 5])],
-                color: 'green'
+                color: 'green',
               };
-
             } else {
             }
           }
@@ -288,7 +298,6 @@ const kbInitLettersOnly = [
       }
     } else {
       if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
-
         nextGridSquares[currGridSq] = kbButtonSquare.value;
         setCurrGridSq(currGridSq + 1);
 
@@ -313,11 +322,9 @@ const kbInitLettersOnly = [
       uid: userId,
     };
     if (playerWon || playerLost) {
-      console.log('hello world');
       (async () => {
         try {
           const response = await axios.post('http://localhost:4000/api/addhistory', history);
-          console.log(response);
         } catch (e) {
           console.log(e);
         }
@@ -433,47 +440,154 @@ const kbInitLettersOnly = [
             <GridSquare value={gridSquares[29]} />
           </div>
 
-
-
-
-
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[0].value} color={kbSquares[0].color} onKbSquareClick={() => handleKbClick(kbSquares[0])} />
-            <KeyboardSquare value={kbSquares[1].value} color={kbSquares[1].color} onKbSquareClick={() => handleKbClick(kbSquares[1])} />
-            <KeyboardSquare value={kbSquares[2].value} color={kbSquares[2].color} onKbSquareClick={() => handleKbClick(kbSquares[2])} />
-            <KeyboardSquare value={kbSquares[3].value} color={kbSquares[3].color} onKbSquareClick={() => handleKbClick(kbSquares[3])} />
-            <KeyboardSquare value={kbSquares[4].value} color={kbSquares[4].color} onKbSquareClick={() => handleKbClick(kbSquares[4])} />
-            <KeyboardSquare value={kbSquares[5].value} color={kbSquares[5].color} onKbSquareClick={() => handleKbClick(kbSquares[5])} />
-            <KeyboardSquare value={kbSquares[6].value} color={kbSquares[6].color} onKbSquareClick={() => handleKbClick(kbSquares[6])} />
-            <KeyboardSquare value={kbSquares[7].value} color={kbSquares[7].color} onKbSquareClick={() => handleKbClick(kbSquares[7])} />
-            <KeyboardSquare value={kbSquares[8].value} color={kbSquares[8].color} onKbSquareClick={() => handleKbClick(kbSquares[8])} />
-            <KeyboardSquare value={kbSquares[9].value} color={kbSquares[9].color} onKbSquareClick={() => handleKbClick(kbSquares[9])} />
+            <KeyboardSquare
+              value={kbSquares[0].value}
+              color={kbSquares[0].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[0])}
+            />
+            <KeyboardSquare
+              value={kbSquares[1].value}
+              color={kbSquares[1].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[1])}
+            />
+            <KeyboardSquare
+              value={kbSquares[2].value}
+              color={kbSquares[2].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[2])}
+            />
+            <KeyboardSquare
+              value={kbSquares[3].value}
+              color={kbSquares[3].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[3])}
+            />
+            <KeyboardSquare
+              value={kbSquares[4].value}
+              color={kbSquares[4].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[4])}
+            />
+            <KeyboardSquare
+              value={kbSquares[5].value}
+              color={kbSquares[5].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[5])}
+            />
+            <KeyboardSquare
+              value={kbSquares[6].value}
+              color={kbSquares[6].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[6])}
+            />
+            <KeyboardSquare
+              value={kbSquares[7].value}
+              color={kbSquares[7].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[7])}
+            />
+            <KeyboardSquare
+              value={kbSquares[8].value}
+              color={kbSquares[8].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[8])}
+            />
+            <KeyboardSquare
+              value={kbSquares[9].value}
+              color={kbSquares[9].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[9])}
+            />
           </div>
 
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[10].value} color={kbSquares[10].color} onKbSquareClick={() => handleKbClick(kbSquares[10])} />
-            <KeyboardSquare value={kbSquares[11].value} color={kbSquares[11].color} onKbSquareClick={() => handleKbClick(kbSquares[11])} />
-            <KeyboardSquare value={kbSquares[12].value} color={kbSquares[12].color} onKbSquareClick={() => handleKbClick(kbSquares[12])} />
-            <KeyboardSquare value={kbSquares[13].value} color={kbSquares[13].color} onKbSquareClick={() => handleKbClick(kbSquares[13])} />
-            <KeyboardSquare value={kbSquares[14].value} color={kbSquares[14].color} onKbSquareClick={() => handleKbClick(kbSquares[14])} />
-            <KeyboardSquare value={kbSquares[15].value} color={kbSquares[15].color} onKbSquareClick={() => handleKbClick(kbSquares[15])} />
-            <KeyboardSquare value={kbSquares[16].value} color={kbSquares[16].color} onKbSquareClick={() => handleKbClick(kbSquares[16])} />
-            <KeyboardSquare value={kbSquares[17].value} color={kbSquares[17].color} onKbSquareClick={() => handleKbClick(kbSquares[17])} />
-            <KeyboardSquare value={kbSquares[18].value} color={kbSquares[18].color} onKbSquareClick={() => handleKbClick(kbSquares[18])} />
+            <KeyboardSquare
+              value={kbSquares[10].value}
+              color={kbSquares[10].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[10])}
+            />
+            <KeyboardSquare
+              value={kbSquares[11].value}
+              color={kbSquares[11].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[11])}
+            />
+            <KeyboardSquare
+              value={kbSquares[12].value}
+              color={kbSquares[12].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[12])}
+            />
+            <KeyboardSquare
+              value={kbSquares[13].value}
+              color={kbSquares[13].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[13])}
+            />
+            <KeyboardSquare
+              value={kbSquares[14].value}
+              color={kbSquares[14].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[14])}
+            />
+            <KeyboardSquare
+              value={kbSquares[15].value}
+              color={kbSquares[15].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[15])}
+            />
+            <KeyboardSquare
+              value={kbSquares[16].value}
+              color={kbSquares[16].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[16])}
+            />
+            <KeyboardSquare
+              value={kbSquares[17].value}
+              color={kbSquares[17].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[17])}
+            />
+            <KeyboardSquare
+              value={kbSquares[18].value}
+              color={kbSquares[18].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[18])}
+            />
           </div>
 
           <div className='kb-row'>
-            <KeyboardSquare value={kbSquares[19].value} color={kbSquares[19].color} onKbSquareClick={() => handleKbClick(kbSquares[19])} />
-            <KeyboardSquare value={kbSquares[20].value} color={kbSquares[20].color} onKbSquareClick={() => handleKbClick(kbSquares[20])} />
-            <KeyboardSquare value={kbSquares[21].value} color={kbSquares[21].color} onKbSquareClick={() => handleKbClick(kbSquares[21])} />
-            <KeyboardSquare value={kbSquares[22].value} color={kbSquares[22].color} onKbSquareClick={() => handleKbClick(kbSquares[22])} />
-            <KeyboardSquare value={kbSquares[23].value} color={kbSquares[23].color} onKbSquareClick={() => handleKbClick(kbSquares[23])} />
-            <KeyboardSquare value={kbSquares[24].value} color={kbSquares[24].color} onKbSquareClick={() => handleKbClick(kbSquares[24])} />
-            <KeyboardSquare value={kbSquares[25].value} color={kbSquares[25].color} onKbSquareClick={() => handleKbClick(kbSquares[25])} />
-            <KeyboardSquare value={kbSquares[26].value} color={kbSquares[26].color} onKbSquareClick={() => handleKbClick(kbSquares[26])} />
-            <KeyboardSquare value={kbSquares[27].value} color={kbSquares[27].color} onKbSquareClick={() => handleKbClick(kbSquares[27])} />
+            <KeyboardSquare
+              value={kbSquares[19].value}
+              color={kbSquares[19].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[19])}
+            />
+            <KeyboardSquare
+              value={kbSquares[20].value}
+              color={kbSquares[20].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[20])}
+            />
+            <KeyboardSquare
+              value={kbSquares[21].value}
+              color={kbSquares[21].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[21])}
+            />
+            <KeyboardSquare
+              value={kbSquares[22].value}
+              color={kbSquares[22].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[22])}
+            />
+            <KeyboardSquare
+              value={kbSquares[23].value}
+              color={kbSquares[23].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[23])}
+            />
+            <KeyboardSquare
+              value={kbSquares[24].value}
+              color={kbSquares[24].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[24])}
+            />
+            <KeyboardSquare
+              value={kbSquares[25].value}
+              color={kbSquares[25].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[25])}
+            />
+            <KeyboardSquare
+              value={kbSquares[26].value}
+              color={kbSquares[26].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[26])}
+            />
+            <KeyboardSquare
+              value={kbSquares[27].value}
+              color={kbSquares[27].color}
+              onKbSquareClick={() => handleKbClick(kbSquares[27])}
+            />
           </div>
-
         </>
       )}
       <Link to='/history'>

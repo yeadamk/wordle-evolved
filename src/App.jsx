@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<LandingPage isSignedIn={isSignedIn} />} />
         <Route path='/auth' element={<Auth setIsSignedIn={setIsSignedIn} setUserId={setUserId} setUserName={setUserName} />} />
         <Route path='/gameplay' element={<GamePlay userId={userId} userName={userName} />} />
-        <Route path='/history' element={<History uid={userId} />} />
+        <Route path='/history' element={<History uid={userId} userName={userName} />} />
       </Routes>
     </Router>
   );
