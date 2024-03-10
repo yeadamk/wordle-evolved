@@ -262,9 +262,6 @@ function GamePlay({ userId, userName }) {
 
 
 
-    console.log(targetWord)
-
-
     function handleKbClick(kbButtonSquare) {
         
 
