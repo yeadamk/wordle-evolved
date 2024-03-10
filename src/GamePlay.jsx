@@ -478,7 +478,10 @@ const kbInitLettersOnly = [
         </>
       )}
       <Link to='/history'>
-        <button>HISTORY</button>
+        <button>History</button>
+      </Link>
+      <Link to='/dataanalytics'>
+        <button>Data Analytics</button>
       </Link>
       <Link to='/'>
         <button>Homepage</button>
