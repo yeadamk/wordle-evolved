@@ -19,10 +19,8 @@ function Auth({ setUserId, setUserName }) {
       password: password,
     };
     const response = await axios.post('http://localhost:4000/api/signin', user);
-    console.log(response.data);
     setUserId(response.data.uid);
     setUserName(response.data.name);
-    console.log(response.data.name);
     if (response.data.name != null) {
       navigate('/gameplay');
       setFailed(false);

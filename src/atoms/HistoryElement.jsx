@@ -12,11 +12,19 @@ function HistoryElement({ guesses, colors, targetWord, playerWon, date }) {
         zippedArray.push([Object.values(guesses)[i][j], Object.values(colors)[i][j]]);
       }
     }
-    console.log(zippedArray);
     setGameHistory(zippedArray);
-  }, []);
+  }, [guesses]);
 
-  console.log(gameHistory);
+  console.log(targetWord, date);
+
+  let seconds = 0;
+  const dateObject = new Date(Date.parse(date));
+  if (date.seconds) {
+    seconds = date.seconds;
+  } else {
+    seconds = Math.floor(dateObject.getTime() / 1000);
+  }
+
   return (
     <>
       <div className='history-container'>
@@ -26,7 +34,7 @@ function HistoryElement({ guesses, colors, targetWord, playerWon, date }) {
           {playerWon ? <p>{gameHistory.length / targetWord.length}</p> : '-'}
           <p>{targetWord}</p>
           {playerWon ? <p className='winning-msg'>WON</p> : <p className='losing-msg'>LOST</p>}
-          <p>{new Date(date.seconds * 1000).toLocaleDateString('en-US')}</p>
+          <p>{new Date(seconds * 1000).toLocaleDateString('en-US')}</p>
         </div>
       </div>
     </>
