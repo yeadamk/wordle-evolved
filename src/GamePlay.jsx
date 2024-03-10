@@ -16,9 +16,10 @@ function KeyboardSquare({ value, color, onKbSquareClick }) {
 }
 
 
-
+// IMPORTANT! Depending on whether the word list stores fully capitalized words or lower case words, this may need to change
 function checkStatus(userGuess, targetWord) {
 
+    userGuess = userGuess.toLowerCase()
     const wordLength = userGuess.length
     const lettersDict = new Map()
     let status = []
@@ -33,35 +34,29 @@ function checkStatus(userGuess, targetWord) {
             lettersDict.set(targetWord[j], 1)
         }
     }
-    //   console.log("LettersDict, then userGuess")
-    //   console.log(lettersDict)
-    //   console.log(userGuess)
 
-    // console.log(" ")
 
     for (let j = 0; j < wordLength; j++) {
-        //  console.log("LETTER " + j)
+    
         if (userGuess[j] == targetWord[j]) {
-            //  console.log(2)
+       
             status.push(2)
             lettersDict.set(targetWord[j], lettersDict.get(targetWord[j]) - 1)
         }
         else {
-            //    console.log(0)
+            
             status.push(0)
         }
     }
 
-    //    console.log(status)
-    //  console.log(lettersDict)
+
     for (let j = 0; j < wordLength; j++) {
         if (status[j] == 0 && lettersDict.has(userGuess[j]) && lettersDict.get(userGuess[j]) > 0) {
             status[j] = 1
             lettersDict.set(userGuess[j], lettersDict.get(userGuess[j]) - 1)
         }
     }
-    //  console.log(status)
-    //    console.log(lettersDict)
+
     return status;
 }
 function checkWinner(colorArr) {
@@ -74,8 +69,9 @@ function checkWinner(colorArr) {
     return true;
 }
 
+// IMPORTANT! Depending on whether the word list stores fully capitalized words or lower case words, this may need to change
 function checkValidWord(userGuess, words) {
-    if (words.includes(userGuess)) {
+    if (words.includes(userGuess.toLowerCase())) {
         return true;
     } else {
         return false;
@@ -143,11 +139,13 @@ function GamePlay({ userId, userName }) {
 
     const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
         "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
-        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm"]
-    const wordLength = 5
-    const maxGuesses = 6
-    const letterRestrictions = null
-    const specificRequirements = null
+        "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm", "and", "cap", "can", "dan", "man", "nap", "nab", "mop",
+        "tot", "its", "min", "max", "pop", "pip", "pup", "cup"]
+    const wordLength = 3
+    const maxGuesses = 3
+
+    const letterRestrictions = ["a"]
+    const specificRequirements = ["_","_","p"]
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
     const [showBoard, setShowBoard] = useState(false);
@@ -246,20 +244,18 @@ function GamePlay({ userId, userName }) {
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
 
-    function extractChildren(oldSquares) {
-        const squaresCopy = []
-        for (let i = 0; i < oldSquares.length; i++) {
-            squaresCopy.push(oldSquares[i].props.children)
-        }
-        return squaresCopy;
-    }
 
-   
-    console.log(targetWord)
+
+
+
+
     function handleKbClick(kbButtonSquare) {
+        
+
         const nextGridSquares = gridSquares;
         const nextKbSquares = kbSquares;
         let currentGuess = numGuesses;
+        
 
         if (kbButtonSquare.value == 'DEL') {
             if (currGridSq > 0) {
@@ -267,15 +263,15 @@ function GamePlay({ userId, userName }) {
                 setCurrGridSq(currGridSq - 1);
                 setRestrictType(false);
                 setDisplayInvalid(false);
+               
             }
         } else if (kbButtonSquare.value == 'RET') {
 
             if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
 
-                // potential problem with extracting the letters here; is nextGridSquares just an array of strings?
-                const guess = nextGridSquares.toString().replaceAll(",", "").toLowerCase(); 
-                console.log(guess)
-                console.log(targetWord)
+        
+                const guess = nextGridSquares.toString().replaceAll(",", "").toUpperCase(); 
+              
 
                 if (checkValidWord(guess, wordList)) {
 
@@ -286,8 +282,6 @@ function GamePlay({ userId, userName }) {
 
                     for (let i = 0; i < 5; i++) {
 
-                        console.log(i)
-                       
 
                         if (newColorArr[i] == 0) {
                            
@@ -296,11 +290,7 @@ function GamePlay({ userId, userName }) {
                                     {nextGridSquares[i]}
                                 </div>
                             );
-                            console.log(guess[i])
-                            console.log(kbInitLettersOnly.indexOf(guess[i]))
-
-                            console.log(nextKbSquares)
-                            console.log(nextKbSquares[kbInitLettersOnly.indexOf(guess[i])])
+                          
                             if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color === 'white') {
                                 nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
                                     ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
@@ -316,9 +306,9 @@ function GamePlay({ userId, userName }) {
                                 </div>
                             );
 
-                            if (nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])].color !== 'green') {
-                                nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
-                                    ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                            if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color !== 'green') {
+                                nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                                    ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
                                     color: 'yellow'
                                 };
                             }
@@ -330,8 +320,8 @@ function GamePlay({ userId, userName }) {
                                 </div>
                             );
 
-                            nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])] = {
-                                ...nextKbSquares[kbInitLettersOnly.indexOf(gridSquares[i])],
+                            nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                                ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
                                 color: 'green'
                             };
                         } else {
@@ -339,19 +329,19 @@ function GamePlay({ userId, userName }) {
                     }
 
                 setKbSquares(nextKbSquares);
-
-                currentGuess += 1;
-         
-
-                // I don't trust that this works without updating a local copy of numGuesses
-                if (checkWinner(newColorArr) && currentGuess == 1) {
+                setCurrGridSq(0);
+                setNumGuesses(numGuesses + 1);
+                currentGuess  += 1;
+                
+             
+                if (checkWinner(newColorArr) && numGuesses == 0) {
                     setPlayerWonOne(true);
 
                 } else if (checkWinner(newColorArr)) {
                     setPlayerWon(true);
                 }
-
-                if (!checkWinner(newColorArr) && currGridSq >= maxGuesses) {
+           
+                if (!checkWinner(newColorArr) && currentGuess >= maxGuesses) {
                     setPlayerLost(true);
                 }
 
@@ -361,6 +351,7 @@ function GamePlay({ userId, userName }) {
                 } else {
                     setDisplayInvalid(true);
                 }
+              
             }
         } else {
             if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
@@ -372,15 +363,15 @@ function GamePlay({ userId, userName }) {
                     setRestrictType(true);
                 }
                 setDisplayInvalid(false);
+               
             }
         }
-
-        // beware: did you intend this to be an array of react elements or just strings of letters?
-        setGridSquares(nextGridSquares);
-        console.log("current guess is " + currentGuess);
+        
+        
         gridRows.set(numGuesses, nextGridSquares);
+        setGridSquares(gridRows.get(currentGuess))    
         setGridRowsCopy(gridRows)
-        setNumGuesses(currentGuess)
+      
     }
 
     useEffect(() => {
