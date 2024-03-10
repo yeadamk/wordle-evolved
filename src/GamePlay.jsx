@@ -99,7 +99,6 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
 }
 
 function GamePlay({ userId, userName, setIsSignedIn }) {
-  setIsSignedIn(true);
   const navigate = useNavigate()
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
