@@ -343,7 +343,10 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-
+      <Header 
+        userId={userId}
+        userName={userName}
+      />
       {userId ? (
         <>
           <h1>Welcome {userName}!!!</h1>
