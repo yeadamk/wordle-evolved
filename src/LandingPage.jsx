@@ -20,7 +20,8 @@ function LandingPage({ isSignedIn }) {
             not in the correct spot. If the square does not change color, the letter is not in the word.
             You can also modify the number of guesses, the length of the word to guess, and more. To see your history and data analytics on
             games, please select the associated buttons after you are logged in. Have fun!</p>
-            <button className="signin-button" onClick={signInClickRedirect}>Login/Sign Up</button>
+            {isSignedIn ? (<button className="signin-button" onClick={signInClickRedirect}>Go to game</button>) :
+            (<button className="signin-button" onClick={signInClickRedirect}>Login/Sign Up</button>)}
         </div>
     );
 }
