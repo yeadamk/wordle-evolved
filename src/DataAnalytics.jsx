@@ -29,14 +29,14 @@ function DataAnalytics( {uid} ){
     useEffect(() => {
         if (data){
             
-            const ones = data.filter((item) => item.guesses.length === 1).length;
-            const twos = data.filter((item) => item.guesses.length === 2).length;
-            const threes = data.filter((item) => item.guesses.length === 3).length;
-            const fours = data.filter((item) => item.guesses.length === 4).length;
-            const fives = data.filter((item) => item.guesses.length === 5).length;
-            const sixes = data.filter((item) => item.guesses.length === 6).length;
-            const totalG = data.map((item) => item.guesses.length).reduce((acc, guesses) => acc+guesses, 0);
-            const totalLengthOfAllTargetWords = data.map((item) => item.targetWord.length).reduce((acc, wordLength) => acc+wordLength, 0);
+            const ones = data.filter((item) => item.numGuesses === 1).length;
+            const twos = data.filter((item) => item.numGuesses === 2).length;
+            const threes = data.filter((item) => item.numGuesses === 3).length;
+            const fours = data.filter((item) => item.numGuesses === 4).length;
+            const fives = data.filter((item) => item.numGuesses === 5).length;
+            const sixes = data.filter((item) => item.numGuesses === 6 && item.playerWon==true).length;
+            const totalG = data.map((item) => item.numGuesses).reduce((acc, guesses) => acc+guesses, 0);
+            const totalLengthOfAllTargetWords = data.map((item) => item.length).reduce((acc, wordLength) => acc+wordLength, 0);
             const numberWins = data.filter((item) => item.playerWon == true).length;
             const numberLosses = data.filter((item) => item.playerWon == false).length;
             const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
@@ -81,6 +81,23 @@ function DataAnalytics( {uid} ){
             setNumFours(fours);
             setNumFives(fives);
             setNumSixes(sixes);
+
+            console.log("Games played: ", gamesPlayed);
+            console.log("Total guesses: ", totalGuesses);
+            console.log("Average guesses: ", averageGuesses);
+            console.log("Total wins: ", totalWins);
+            console.log("Total losses: ", totalLosses);
+            console.log("Win percentage: ", winPercentage);
+            console.log("Current win streak: ", currentWinStreak);
+            console.log("Max win streak: ", maxWinStreak);
+            console.log("Average target word length: ", averageTargetWordLength);
+            console.log("Num one: ", numOnes);
+            console.log("Num twos: ", numTwos);
+            console.log("Num threes: ", numThrees);
+            console.log("Num four: ", numFours);
+            console.log("Num fours: ", numFours);
+            console.log("Num fives: ", numFives);
+            console.log("Num sixes: ", numSixes);
         }
     }, [data]);
     
