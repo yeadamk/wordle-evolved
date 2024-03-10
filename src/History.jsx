@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import HistoryElement from './atoms/HistoryElement';
 import HistoryLegend from './atoms/HistoryLegend';
+import Header from './atoms/Header';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +22,12 @@ function History({ uid, userName }) {
 
   return (
     <>
+      { uid && (
+        <Header 
+        userId={uid}
+        userName={userName}
+        />
+      )}
       <div className='user-box'>
         {uid ? (
           <div>

@@ -1,0 +1,29 @@
+.h_line{
+    border-bottom: 5px solid black;
+    margin-top: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.inline{
+    display: flex;
+    flex-direction: row;
+    flex-flow: row;
+    width: 100%;
+    justify-content: space-between;
+}
+/*
+.left{
+    flex-flow: row;
+    width: 100%;
+    justify-content: space-between;
+}
+*/
+.sign{
+    width: 100px;
+    border: solid black 2px;
+}
+
+.name{
+    font-size:50px;
+}

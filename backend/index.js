@@ -28,6 +28,14 @@ app.use('/api/signin', async (req, res) => {
   }
 });
 
+/*
+//API endpoint that handles user logout
+app.use('/api/logout', async (req, res) => {
+  const { email, password } = req.body;
+
+}
+*/
+
 // API endpoint that handles regular user signup
 app.use('/api/signup', async (req, res) => {
   const { name, email, password } = req.body;
