@@ -135,20 +135,36 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
     return validWords[Math.floor(Math.random() * validWords.length)]
 }
 
-function GamePlay({ userId, userName }) {
-
+function generateWordList() {
     const wordList = ["hello", "apple", "genes", "races", "horse", "magic", "happy", "lapse", "horrid", "george",
         "flower", "quests", "likely", "second", "outcry", "nobody", "a", "ab", "abc", "abcd", "abcde", "abcdef",
         "abcdefg", "abcdefgh", "abcdefghi", "abcdefghij", "abcdefghijk", "abcdefghijkl", "abcdefghijklm", "and", "cap", "can", "dan", "man", "nap", "nab", "mop",
-        "tot", "its", "min", "max", "pop", "pip", "pup", "cup"]
-    const wordLength = 3
-    const maxGuesses = 3
+        "tot", "its", "min", "max", "pop", "pip", "pup", "cup",
+        "rhino", "homes", "mages", "marsh", "slime", "quote", "feels", "queue", "liver", "white", "black", "brown", "blues", "ligma",
+        "laser", "risks", "antic", "china", "ninja", "north", "sight", "night", "reels", "flows", "exile", "orcas", "shred", "music", "muses",
+        "blast", "chris", "larry", "barry", "jerry", "timae", "camel", "hints", "share", "crane", "great", "like", "stop", "grab", "grep", "pops",
+        "cans", "cons", "onto", "into", "ends", "rave", "gore", "dare", "dire", "mice", "maps", "most", "post", 'tows', 'goes', 'open', 'nobs', 'pens',
+        'free', 'seen', 'knee', 'knob', 'knot', 'gnat'
+    ]
+    return wordList;
+}
 
-    const letterRestrictions = ["a"]
-    const specificRequirements = ["_","_","p"]
+function GamePlay({ userId, userName }) {
+
+
+    const [wordList, setWordList] = useState(generateWordList());
+    const [wordLength, setWordLength] = useState(5)
+    const [maxGuesses, setMaxGuesses] = useState(6)
+    const [letterRestrictions, setLetterRestrictions] = useState(Array(0))
+    const [specificRequirements, setSpecificRequirements] = useState(Array(wordLength).fill("_"))
+
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
+    const [customGameMessage, setCustomGameMessage] = useState('Click to Start Custom Game!')
     const [showBoard, setShowBoard] = useState(false);
+    const [showHomeScreen, setShowHomeScreen] = useState(true);
+    const [customGame, setCustomGame] = useState(true);
+    const [customGameInitializer, setCustomGameInitializer] = useState(false)
     const [currGridSq, setCurrGridSq] = useState(0);
     const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
 
@@ -165,7 +181,7 @@ function GamePlay({ userId, userName }) {
 
         ))
     }
-    // Hack-y solution to making gridRows a component causing 'too many re-renders'
+  
     const [gridRowsCopy, setGridRowsCopy] = useState(gridRows)
 
     const kbInit = [
@@ -246,7 +262,7 @@ function GamePlay({ userId, userName }) {
 
 
 
-
+    console.log(targetWord)
 
 
     function handleKbClick(kbButtonSquare) {
@@ -408,21 +424,115 @@ function GamePlay({ userId, userName }) {
         </a>
       </div> */}
 
-      {userId ? (
+          {userId ? (
+
+
         <>
-          <h1>Welcome {userName}!!!</h1>
-          <h1>Wordle Evolved</h1>
-          <div className='card'></div>
-          {!showBoard && (
-            <button
-              onClick={() => {
-                setMessage('Button Clicked! Daily Game Starting Now!');
-                setShowBoard(true);
-              }}>
-              {' '}
-              {message}
-            </button>
-          )}
+                  <h1>Wordle Evolved</h1>
+                  <div className='card'>
+                      <div className='start-button'>
+                          {showHomeScreen && (
+                              <button
+                                  onClick={() => {
+
+                                      setMessage('Button Clicked! Daily Game Starting Now!');
+                                      setShowHomeScreen(false);
+                                      setShowBoard(true);
+                                      setCustomGame(false);
+                                  }}>
+                                  {' '}
+                                  {message}
+                              </button>
+
+                          )}
+                      </div>
+                      <div className='start-button'>
+                          {showHomeScreen && (
+                              <button
+                                  onClick={() => {
+                                      setCustomGameMessage('Submit Parameters and Start Custom Game');
+                                      setShowHomeScreen(false);
+                                      setCustomGameInitializer(true);
+                                      setCustomGame(true);
+
+                                  }}>
+                                  {' '}
+                                  {customGameMessage}
+                              </button>
+
+                          )}
+                      </div>
+                      <p>
+                          Edit <code>src/App.jsx</code> and save to test HMR
+                      </p>
+                  </div>
+                  <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
+
+                  {customGameInitializer && (
+
+                      <div className="game-parameters">
+                          {// TODO: Handle case invalid/impossible parameters. Currently, they just crash the program.
+                          }
+
+                          <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
+
+                          <div className="parameter">
+                              <input id="word-length" type="range" min="3" max="7" defaultValue="5" />
+                          </div>
+
+                          <div className="parameter">
+                              <input id="max-guesses" type="range" min="3" max="7" defaultValue="6" />
+                          </div>
+                          {// TODO: input requirements; currently, this demands a string, with NO SPACES, of all the restricted letters.
+
+                          }
+                          <div className="parameter">
+                              <input id="letter-restrictions" type="text" />
+                          </div>
+                          { // TODO: change the input type of specific requirements to have one box per letter with default value "_"
+                              // the current method has no checks for bad input; must be taken of the form: "_ _ _ _ _", which is a wordLength-long string 
+                              // of all _'s (or the respective letter you want in that spot) separated by spaces. ~letter is supported.
+
+                          }
+                          <div className="parameter">
+                              <input id="specific-requirements" type="text" />
+                          </div>
+
+                          <div className="parameter-button">
+                              <button
+                                  onClick={() => {
+
+
+                                      setWordLength(document.getElementById('word-length').value);
+                                      setMaxGuesses(document.getElementById('max-guesses').value);
+                                      setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
+                                      setSpecificRequirements(document.getElementById('specific-requirements').value.split(" "));
+
+                                      // maybe use a 'try' statement here and demand it not be invalid?
+                                      // IMPORTANT !!!! -- depending on how the word list is set up, we may want to change the .toUpperCase() statement
+
+                                      setTargetWord(generateWord(
+                                          wordList,
+                                          document.getElementById('word-length').value,
+                                          document.getElementById('letter-restrictions').value.split(""),
+                                          document.getElementById('specific-requirements').value.split(" ")
+                                      ).toLowerCase())
+
+                                      setMessage('Button Clicked! Custom Game Starting Now!');
+                                      setCustomGameInitializer(false);
+                                      setShowBoard(true);
+
+
+
+                                  }}>
+                                  {' '}
+                                  {customGameMessage}
+                              </button>
+                          </div>
+
+                      </div>
+
+                  )}
         </>
       ) : (
         <>
@@ -479,7 +589,7 @@ function GamePlay({ userId, userName }) {
                             {(() => {
                                 let row = []
                                 for (let j = 0; j < wordLength; j++) {
-                                    row.push(<GridSquare value={gridRows.get(i)[j]} />)
+                                    row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />)
                                 }
                                 return row
                             })()}
