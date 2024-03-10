@@ -42,7 +42,7 @@ function HistoryLegend({ uid, filter, setFilter, setFilterContent, filterContent
             <div className='dropdown-menu'>
               <span onClick={() => dropDownClick('playerWon')}>Result</span>
               <span onClick={() => dropDownClick('date')}>Date</span>
-              <span onClick={() => dropDownClick('gength')}>Length</span>
+              <span onClick={() => dropDownClick('length')}>Length</span>
               <span onClick={() => dropDownClick('numGuesses')}>Guesses</span>
               <span onClick={() => dropDownClick('targetWord')}>Word</span>
             </div>
