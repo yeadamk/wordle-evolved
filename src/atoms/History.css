@@ -1,0 +1,91 @@
+.user-box {
+  width: 90%;
+  background-color: #daf0f9;
+  margin: 0 5%;
+  border-radius: 15px 15px 0 0;
+}
+
+.user-box > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 3%;
+  padding: 10px;
+}
+.user-box > div > p {
+  font-size: 25px;
+  letter-spacing: 0px;
+  margin-left: 3vw;
+}
+
+.history-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid gray;
+  width: 90%;
+  margin: 0 5%;
+}
+
+.history-legend-board {
+  margin-left: 3% !important;
+}
+.history-container-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  margin-right: 3%;
+}
+
+.history-container-right > p {
+  min-width: 50px;
+}
+
+.history-container > p {
+  margin: 10px 10px;
+}
+
+.winning-msg {
+  background-color: rgba(64, 202, 64, 0.832);
+  color: white;
+  border-radius: 15%;
+  padding: 5px 10px !important;
+}
+
+.losing-msg {
+  background-color: rgb(253, 64, 64);
+  color: white;
+  border-radius: 15%;
+  padding: 5px 10px !important;
+}
+
+.board > span {
+  display: inline-block;
+  margin: 0;
+  font-size: 1.5rem;
+  padding: 5px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  width: 30px;
+  text-align: center;
+}
+
+.green {
+  background-color: green;
+}
+
+.gray {
+  background-color: gray;
+}
+.yellow {
+  background-color: yellow;
+}
+
+.board {
+  margin: 15px 0px 10px 3%;
+}
+
+.history-container:hover {
+  background-color: #e0e0e0;
+}
