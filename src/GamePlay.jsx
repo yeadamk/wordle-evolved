@@ -164,7 +164,8 @@ function GamePlay({ userId, userName }) {
     const [showBoard, setShowBoard] = useState(false);
     const [showHomeScreen, setShowHomeScreen] = useState(true);
     const [customGame, setCustomGame] = useState(true);
-    const [customGameInitializer, setCustomGameInitializer] = useState(false)
+    const [customGameInitializer, setCustomGameInitializer] = useState(false);
+
     const [currGridSq, setCurrGridSq] = useState(0);
     const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
 
@@ -468,42 +469,65 @@ function GamePlay({ userId, userName }) {
                   {customGameInitializer && (
 
                       <div className="game-parameters">
-                          {// TODO: Handle case invalid/impossible parameters. Currently, they just crash the program.
-                          }
-
+                      
                           <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
 
                           <div className="parameter">
-                              <input id="word-length" type="range" min="3" max="7" defaultValue="5" />
+                              <label htmlFor="word-length">Word Length:</label>
+                              <div>
+                                  <input id="word-length" type="range" min="3" max="7" defaultValue="5" />
+                              </div>
+                             
                           </div>
 
+              
                           <div className="parameter">
-                              <input id="max-guesses" type="range" min="3" max="7" defaultValue="6" />
+                              <label htmlFor="max-guesses">Number of Guesses:</label>
+                              <div>
+                                  <input id="max-guesses" type="range" min="3" max="7" defaultValue="6" />
+                              </div>
+                           
                           </div>
-                          {// TODO: input requirements; currently, this demands a string, with NO SPACES, of all the restricted letters.
-
+                          {// TODO: Need to handle the case where letter restrictions recieves invalid input
                           }
                           <div className="parameter">
-                              <input id="letter-restrictions" type="text" />
+                              <label htmlFor="letter-restrictions">Restricted Letters:</label>
+                              <div>
+                                  
+                                  <input id="letter-restrictions" type="text" pattern="[A-Za-z]"/>
+                              </div>
                           </div>
-                          { // TODO: change the input type of specific requirements to have one box per letter with default value "_"
-                              // the current method has no checks for bad input; must be taken of the form: "_ _ _ _ _", which is a wordLength-long string 
-                              // of all _'s (or the respective letter you want in that spot) separated by spaces. ~letter is supported.
-
-                          }
                           <div className="parameter">
-                              <input id="specific-requirements" type="text" />
+                              <label htmlFor="specific-requirements">Specific Requirements for the Word:</label>
+                              <div id="specific-requirements">       
+                                  {(() => {
+                                      let restrictionBoxes = [];
+                                      for (let i = 0; i < wordLength; i++) {
+                                          restrictionBoxes.push(
+                                              <div key={i} id="specific-requirements-box-div">
+                                                  <label htmlFor="specific-requirements-box">Letter {i+1}: </label>
+                                                 <input id="specific-requirements-box" type="text" size="2" maxLength="2" defaultValue=""/>
+                                              </div>
+                                          )
+                                      }
+                                      return restrictionBoxes;
+                                  })()}
+                              </div>
                           </div>
+                          
 
                           <div className="parameter-button">
                               <button
                                   onClick={() => {
 
-
                                       setWordLength(document.getElementById('word-length').value);
                                       setMaxGuesses(document.getElementById('max-guesses').value);
                                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
-                                      setSpecificRequirements(document.getElementById('specific-requirements').value.split(" "));
+
+                                      console.log(document.getElementById('specific-requirements'))
+
+
+                                      setSpecificRequirements(document.getElementById('specific-requirements').value);
 
                                       // maybe use a 'try' statement here and demand it not be invalid?
                                       // IMPORTANT !!!! -- depending on how the word list is set up, we may want to change the .toUpperCase() statement
@@ -512,7 +536,7 @@ function GamePlay({ userId, userName }) {
                                           wordList,
                                           document.getElementById('word-length').value,
                                           document.getElementById('letter-restrictions').value.split(""),
-                                          document.getElementById('specific-requirements').value.split(" ")
+                                          document.getElementById('specific-requirements').value
                                       ).toLowerCase())
 
                                       setMessage('Button Clicked! Custom Game Starting Now!');
@@ -525,6 +549,11 @@ function GamePlay({ userId, userName }) {
                                   {' '}
                                   {customGameMessage}
                               </button>
+                              <p className="explanation">***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
+                                  for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
+                                  first letter, and an 'l' as its fourth. You can also use '~' to require a letter NOT be placed in that spot.
+                                  for example, "~e ~e ~e ~e ~e" would mean that none of the 5 letters could be 'e' — effectively the same as
+                                  restricting the letter e! </p>
                           </div>
 
                       </div>
