@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Header from './atoms/Header';
+import { useNavigate } from 'react-router-dom';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -99,7 +100,8 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
 }
 
 
-function GamePlay({ userId, userName }) {
+function GamePlay({ userId, userName, setIsSignedIn }) {
+  setIsSignedIn(true);
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -201,6 +203,7 @@ function GamePlay({ userId, userName }) {
   const [playerWonOne, setPlayerWonOne] = useState(false);
   const [playerLost, setPlayerLost] = useState(false);
   const [displayInvalid, setDisplayInvalid] = useState(false);
+  const navigate = useNavigate();
 
   function handleKbClick(kbButtonSquare) {
     const nextGridSquares = gridSquares.slice();
@@ -380,12 +383,7 @@ function GamePlay({ userId, userName }) {
           )}
         </>
       ) : (
-        <>
-          <h1>PLEASE SIGN IN</h1>
-          <Link to='/auth'>
-            <button>SIGN IN</button>
-          </Link>
-        </>
+        navigate("/Auth")
       )}
 
       {showBoard && (
@@ -616,7 +614,13 @@ function GamePlay({ userId, userName }) {
         </>
       )}
       <Link to='/history'>
-        <button>HISTORY</button>
+        <button>History</button>
+      </Link>
+      <Link to='/dataanalytics'>
+        <button>Data Analytics</button>
+      </Link>
+      <Link to='/'>
+        <button>Homepage</button>
       </Link>
     </>
   );
