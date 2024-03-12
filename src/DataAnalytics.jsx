@@ -23,6 +23,7 @@ function DataAnalytics( {uid, userName} ){
     const [numFives, setNumFives] = useState(0);
     const [numSixes, setNumSixes] = useState(0);
     const [gamesCompleted, setGamesCompleted] = useState(0);
+    const [allIndexs, setLast] = useState([]);
     const [allVals, setVals] = useState([]);
     const [allObjects, setObjects] = useState([]);
 
@@ -100,7 +101,8 @@ function DataAnalytics( {uid, userName} ){
             setNumSixes(sixes);
             setGamesCompleted(gamesCompleted);
             setVals(guesses);
-            setObjects(zip(allVals,allIndex))
+            setLast(allIndex);
+            setObjects(zip(allVals,allIndexs))
 
             console.log("Games played: ", gamesPlayed);
             console.log("Total guesses: ", totalGuesses);
@@ -119,6 +121,7 @@ function DataAnalytics( {uid, userName} ){
             console.log("Num fives: ", numFives);
             console.log("Num sixes: ", numSixes);
             console.log("Games Completed: ", gamesCompleted);
+            console.log("Last Won: ", last);
         }
     }, [data]);
     
@@ -171,15 +174,16 @@ function DataAnalytics( {uid, userName} ){
                                 : (Math.floor((stat / gamesPlayed) * 80) + 8).toString();
                             let barColor = (index === 1) ? "green"
                                 : "rgb(107,107,109";
+                            console.log(stat);
                             console.log(barWidth);
                             console.log(barColor);
                             return (
-                                
-                                <tr key={index}>
-                                    <td>{index}</td>
-                                    <td><div className='chart' style={{
-                                        width: '${barWidth}',
-                                        backgroundColor: '${barColor}'}}>
+                                <tr key={index+1}>
+                                    <td>{index+1}</td>
+                                    <td>
+                                        <div className='chart' style={{
+                                            width: `${barWidth}`,
+                                            backgroundColor: `${barColor}`}}>
                                         {stat}
                                         </div>
                                     </td>
