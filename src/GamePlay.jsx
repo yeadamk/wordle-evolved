@@ -75,8 +75,7 @@ function checkWinner(colorArr) {
 
 // IMPORTANT! Depending on whether the word list stores fully capitalized words or lower case words, this may need to change
 function checkValidWord(userGuess, words) {
-    console.log(userGuess.toLowerCase())
-    console.log(words)
+   
     if (words.includes(userGuess.toLowerCase())) {
         return true;
     } else {
@@ -105,9 +104,7 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
             SpecificRequirements[i] = " ";
         }
     }
-    console.log("STUFF")
-    console.log(SpecificRequirements)
-    console.log(LetterRestrictions)
+   
     for (let i = 0; i < words.length; i++) {
 
         let word = words[i].toUpperCase();
@@ -125,12 +122,12 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
 
             } else if (SpecificRequirements[j].length > 1 && (SpecificRequirements[j][1].toUpperCase() == word[j]
                 || SpecificRequirements[0].toUpperCase() == word[j])) {
-                console.log("word " + word + " failed test 2 at letter " + j)
+             
                 valid = false;
                 break;
             } else if (SpecificRequirements[j].length == 1 && SpecificRequirements[j] != " " && SpecificRequirements[j] != "_"
                 && SpecificRequirements[j].toUpperCase() != word[j]) {
-                console.log("word " + word + " failed test 3 at letter " + j)
+               
                 valid = false;
                 break;
 
@@ -143,7 +140,7 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
         }
     }
    
-    console.log(validWords)
+
     return validWords[Math.floor(Math.random() * validWords.length)]
 }
 
@@ -179,6 +176,7 @@ function GamePlay({ userId, userName }) {
     const [customGameInitializer, setCustomGameInitializer] = useState(false);
 
     const [wordLengthSlider, setWordLengthSlider] = useState(5); 
+    const [maxGuessSlider, setMaxGuessSlider] = useState(6);
     const [letterRestrictionsInput, setLetterRestrictionsInput] = useState(""); 
     const [specificRequirementsBoxes, setSpecificRequirementsBoxes] = useState(Array(20).fill(""));
 
@@ -189,39 +187,45 @@ function GamePlay({ userId, userName }) {
     const [gridRowsCopy, setGridRowsCopy] = useState(new Map())
     const [gridRowsSet, setGridRowsSet] = useState(true);
 
-    function initializeGridRows(length) {
-        if (gridRowsSet) {
 
-            let num = 0;
-            for (let i = 0; i < length; i++) {
-                num++;
-            }
-          
-            let gridRows = new Map()
-            
-            for (let i = 0; i < maxGuesses; i++) {
-            
-                gridRows.set(i, Array(num).fill(
+    let gridRows = new Map()
 
-                    <div className='boardsquare' style={{ backgroundColor: 'white' }}>
-                        {null}
-                    </div>
+    if (gridRowsSet) {
 
-                ))
-       
-            }
-
-            setGridRowsSet(false)
-            setGridSquares(gridRows.get(0))
-            setGridRowsCopy(gridRows)
+        let num = 0;
+        for (let i = 0; i < wordLength; i++) {
+            num++;
         }
-    }
-    initializeGridRows(wordLength)
-    let gridRows = gridRowsCopy; 
-    
-  
+
+        let max = 0;
+        for (let i = 0; i < maxGuesses; i++) {
+            max++;
+        }
+
    
 
+        for (let i = 0; i < max; i++) {
+
+            gridRows.set(i, Array(num).fill(
+
+                <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+                    {null}
+                </div>
+
+            ))
+
+        }
+
+        
+        setGridRowsSet(false)
+        setGridSquares(gridRows.get(0))
+        setGridRowsCopy(gridRows)
+        
+    }
+
+
+    
+    
     const kbInit = [
       { value: 'Q', color: 'white' },
       { value: 'W', color: 'white' },
@@ -283,6 +287,7 @@ function GamePlay({ userId, userName }) {
        'DEL',
     ];
 
+
     const [kbSquares, setKbSquares] = useState(kbInit)
     const [userGuesses, setUserGuesses] = useState([]);
     const [guessColors, setGuessColors] = useState([]);
@@ -299,13 +304,9 @@ function GamePlay({ userId, userName }) {
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
 
-    console.log("targetWord")
-    console.log(targetWord)
 
     function handleKbClick(kbButtonSquare) {
-        console.log("gridRows")
-        console.log(gridRows)
-        console.log("gridSquares")
+     
         const nextGridSquares = gridSquares;
         const nextKbSquares = kbSquares;
         let currentGuess = numGuesses;
@@ -422,12 +423,13 @@ function GamePlay({ userId, userName }) {
             }
         }
         
-        
         gridRows.set(numGuesses, nextGridSquares);
         setGridSquares(gridRows.get(currentGuess))    
         setGridRowsCopy(gridRows)
       
     }
+
+
 
     useEffect(() => {
         const reformattedUserGuesses = { ...userGuesses };
@@ -466,7 +468,12 @@ function GamePlay({ userId, userName }) {
         setWordLengthSlider(result);
     };
 
-    
+    function handleMaxGuessSliderChange(event) {
+        const result = event.target.value;
+        setMaxGuessSlider(result);
+    };
+
+
     function handleSpecificRequirementsBoxChange(event, i) {
         const result = event.target.value;
         const copyArray = [...specificRequirementsBoxes];
@@ -543,8 +550,11 @@ function GamePlay({ userId, userName }) {
                           <div className="parameter">
                               <label htmlFor="word-length">Word Length:</label>
                               <div>
-                                  <input id="word-length" type="range" min="2" max="7" onChange={handleWordLengthSliderChange} value={wordLengthSlider} />
+                                  <input id="word-length" type="range" min="1" max="20" onChange={handleWordLengthSliderChange} value={wordLengthSlider} />
+                                  
+                                  <label id="word-length-slider-label" htmlFor="word-length">          {wordLengthSlider}</label>
                               </div>
+                              
                              
                           </div>
 
@@ -552,7 +562,8 @@ function GamePlay({ userId, userName }) {
                           <div className="parameter">
                               <label htmlFor="max-guesses">Number of Guesses:</label>
                               <div>
-                                  <input id="max-guesses"  type="range" min="3" max="7" defaultValue="6" />
+                                  <input id="max-guesses" type="range" min="1" max="20" value={maxGuessSlider} onChange={handleMaxGuessSliderChange} />
+                                  <label id="max-guesses-slider-label" htmlFor="max-guesses">          {maxGuessSlider}</label>
                               </div>
                            
                           </div>
@@ -596,29 +607,27 @@ function GamePlay({ userId, userName }) {
 
                                       
 
-                                      // maybe use a 'try' statement here and demand it not be invalid?
-                                      // IMPORTANT !!!! -- depending on how the word list is set up, we may want to change the .toUpperCase() statement
-
-                                      // Also Note, the names below will give you the proper parameters for everything
-                    
-                                      //!!! IMPORTANT: depending on the word list, the .toLowerCase() may have to be changed
                                       const selectedWord = generateWord(
                                           wordList,
                                           document.getElementById('word-length').value,
                                           document.getElementById('letter-restrictions').value.split(""),
                                           specificRequirementsBoxes
                                       ).toLowerCase();
-                             
+                                    
                                       setTargetWord(selectedWord);
+                                      setMaxGuesses(maxGuessSlider);
                                       setWordLength(wordLengthSlider);                              
                                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
                                       setSpecificRequirements(specificRequirementsBoxes);
                                       setGridRowsSet(true);
-
-                                      console.log(gridRowsCopy)
-                                      initializeGridRows(wordLengthSlider);
+                                    
+                                      const numCopy = maxGuessSlider
+                                
+                                    
+                            
+                       
                                       setGridSquares(gridRowsCopy.get(0));
-
+                                    
 
                                       setMessage('Button Clicked! Custom Game Starting Now!');
                                       setCustomGameInitializer(false);
@@ -688,10 +697,11 @@ function GamePlay({ userId, userName }) {
 
             (() => {
                 
-                          gridRows = gridRowsCopy
-                console.log(gridRows)
+                gridRows = gridRowsCopy
+
+             
                 let rows = []
-                for (let i = 0; i < maxGuesses; i++) {
+                for (let i = 0; i < gridRows.size; i++) {
                     rows.push(
                         <div className='board-row' key={i}>
                             {(() => {
