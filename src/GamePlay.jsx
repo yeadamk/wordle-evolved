@@ -90,13 +90,15 @@ function checkWinner(colorArr) {
   return true;
 }
 
-function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, words) {
+async function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4) {
   const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
-
-  if (words.has(userGuess)) {
-    return true;
-  } else {
-    return false;
+  try {
+    const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${userGuess}`);
+    return response.status === 200;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return false;
+    }
   }
 }
 
@@ -169,14 +171,22 @@ function GamePlay({ userId, userName }) {
 
   const [kbSquares, setKbSquares] = useState(kbInit);
 
-  const [targetWord, setTargetWord] = useState(() => {
+  const [targetWord, setTargetWord] = useState('');
 
-    const wordsArr = Array.from(wordList2);
+  useEffect(() => {
+  const fetchRandomWord = async () => {
+      try {
+      const response = await axios.get('https://random-word-api.herokuapp.com/word?length=5');
+      let randomWord = response.data[0];
+      randomWord = randomWord.toUpperCase();
+      setTargetWord(randomWord);
+      } catch (error) {
+      console.error('Error fetching random word:', error);
+      }
+  };
 
-    const randomIndex = Math.floor(Math.random() * wordsArr.length);
-
-    return wordsArr[randomIndex];
-  });
+  fetchRandomWord();
+  }, []);
 
 
   // Backend variables
@@ -193,7 +203,7 @@ function GamePlay({ userId, userName }) {
   const [playerLost, setPlayerLost] = useState(false);
   const [displayInvalid, setDisplayInvalid] = useState(false);
 
-  function handleKbClick(kbButtonSquare) {
+  async function handleKbClick(kbButtonSquare) {
     const nextGridSquares = gridSquares.slice();
     const nextKbSquares = kbSquares.slice();
 
@@ -206,16 +216,16 @@ function GamePlay({ userId, userName }) {
       }
     } else if (kbButtonSquare.value == 'RET') {
       if (currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
-        if (
-          checkValidWord(
-            nextGridSquares[currGridSq - 5],
-            nextGridSquares[currGridSq - 4],
-            nextGridSquares[currGridSq - 3],
-            nextGridSquares[currGridSq - 2],
-            nextGridSquares[currGridSq - 1],
-            wordList2,
-          )
-        ) {
+
+        const wordValid = await checkValidWord(
+                            nextGridSquares[currGridSq - 5],
+                            nextGridSquares[currGridSq - 4],
+                            nextGridSquares[currGridSq - 3],
+                            nextGridSquares[currGridSq - 2],
+                            nextGridSquares[currGridSq - 1]
+                          );
+
+        if (wordValid) {
           const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
 
           const guess = nextGridSquares.slice(currGridSq - 5, currGridSq);
