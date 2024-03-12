@@ -78,47 +78,50 @@ function checkValidWord(userGuess, words) {
     }
 }
 
-function generateWord(words, length, letterRestrictions, specificRequirements) {
+function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
 
     let validWords = []
     let valid = true
 
-    if (letterRestrictions == null) {
-        letterRestrictions = []
+    if (LetterRestrictions == null) {
+        LetterRestrictions = []
     }
 
-    if (specificRequirements == null) {
-        specificRequirements = []
+    if (SpecificRequirements == null) {
+        SpecificRequirements = []
         for (let i = 0; i < length; i++) {
-            specificRequirements.push("_")
+            SpecificRequirements.push(" ")
         }
     }
 
-
-
+    for (let i = 0; i < length; i++) {
+        if (SpecificRequirements[i] == "") {
+            SpecificRequirements[i] = " ";
+        }
+    }
+  
     for (let i = 0; i < words.length; i++) {
 
-        let word = words[i]
+        let word = words[i].toUpperCase();
         if (word.length != length) {
             continue
         }
 
         valid = true
         for (let j = 0; j < word.length; j++) {
-
-
-            if (letterRestrictions.includes(word[j])) {
-
+        
+            if (LetterRestrictions.includes(word[j])) {
+            
                 valid = false;
                 break;
 
-            } else if (specificRequirements[j].length > 1 && specificRequirements[j][1] == word[j]) {
-
+            } else if (SpecificRequirements[j].length > 1 && (SpecificRequirements[j][1] == word[j] || SpecificRequirements[0] == word[j])) {
+               
                 valid = false;
                 break;
-            } else if (specificRequirements[j].length == 1 && specificRequirements[j] != "_"
-                && specificRequirements[j] != word[j]) {
-
+            } else if (SpecificRequirements[j].length == 1 && SpecificRequirements[j] != " "
+                && SpecificRequirements[j] != word[j]) {
+                
                 valid = false;
                 break;
 
@@ -130,7 +133,7 @@ function generateWord(words, length, letterRestrictions, specificRequirements) {
             validWords.push(word)
         }
     }
-
+   
 
     return validWords[Math.floor(Math.random() * validWords.length)]
 }
@@ -144,7 +147,7 @@ function generateWordList() {
         "laser", "risks", "antic", "china", "ninja", "north", "sight", "night", "reels", "flows", "exile", "orcas", "shred", "music", "muses",
         "blast", "chris", "larry", "barry", "jerry", "timae", "camel", "hints", "share", "crane", "great", "like", "stop", "grab", "grep", "pops",
         "cans", "cons", "onto", "into", "ends", "rave", "gore", "dare", "dire", "mice", "maps", "most", "post", 'tows', 'goes', 'open', 'nobs', 'pens',
-        'free', 'seen', 'knee', 'knob', 'knot', 'gnat'
+        'free', 'seen', 'knee', 'knob', 'knot', 'gnat', "an", "na", "on", "of", "qi", "lo", "my", "hi", "fo", "sk", "po", "pa", "ma", "me", "be"
     ]
     return wordList;
 }
@@ -156,7 +159,7 @@ function GamePlay({ userId, userName }) {
     const [wordLength, setWordLength] = useState(5)
     const [maxGuesses, setMaxGuesses] = useState(6)
     const [letterRestrictions, setLetterRestrictions] = useState(Array(0))
-    const [specificRequirements, setSpecificRequirements] = useState(Array(wordLength).fill("_"))
+    const [specificRequirements, setSpecificRequirements] = useState(Array(20).fill("_"))
 
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
@@ -165,6 +168,11 @@ function GamePlay({ userId, userName }) {
     const [showHomeScreen, setShowHomeScreen] = useState(true);
     const [customGame, setCustomGame] = useState(true);
     const [customGameInitializer, setCustomGameInitializer] = useState(false);
+
+    const [wordLengthSlider, setWordLengthSlider] = useState(5); 
+    const [letterRestrictionsInput, setLetterRestrictionsInput] = useState(""); 
+    const [specificRequirementsBoxes, setSpecificRequirementsBoxes] = useState(Array(20).fill(""));
+
 
     const [currGridSq, setCurrGridSq] = useState(0);
     const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
@@ -261,8 +269,7 @@ function GamePlay({ userId, userName }) {
     const [playerLost, setPlayerLost] = useState(false);
     const [displayInvalid, setDisplayInvalid] = useState(false);
 
-
-
+    
     function handleKbClick(kbButtonSquare) {
         
 
@@ -294,7 +301,7 @@ function GamePlay({ userId, userName }) {
                     setUserGuesses([...userGuesses, guess]);
                     setGuessColors([...guessColors, newColorArr]);
 
-                    for (let i = 0; i < 5; i++) {
+                    for (let i = 0; i < wordLength; i++) {
 
 
                         if (newColorArr[i] == 0) {
@@ -411,6 +418,33 @@ function GamePlay({ userId, userName }) {
         }
     }, [playerWon, playerLost]);
 
+
+
+ //   document.getElementById('letter-restrictions').addEventListener("input", handleChange)
+    function handleLetterRestrictionsChange(event) {
+        const text = event.target.value.toUpperCase().replace(/[^A-Z]/g, "");
+
+        setLetterRestrictionsInput(text);
+    };
+
+    function handleWordLengthSliderChange(event) {
+        const result = event.target.value;
+        setWordLengthSlider(result);
+    };
+
+    
+    function handleSpecificRequirementsBoxChange(event, i) {
+        const result = event.target.value;
+        const copyArray = [...specificRequirementsBoxes];
+        copyArray[i] = result.toUpperCase().replace(/[^A-Z~]/, "")
+        
+        setSpecificRequirementsBoxes(copyArray)
+        
+
+
+    }
+    
+
   return (
     <>
       {/* <div>
@@ -475,7 +509,7 @@ function GamePlay({ userId, userName }) {
                           <div className="parameter">
                               <label htmlFor="word-length">Word Length:</label>
                               <div>
-                                  <input id="word-length" type="range" min="3" max="7" defaultValue="5" />
+                                  <input id="word-length" type="range" min="2" max="7" onChange={handleWordLengthSliderChange} value={wordLengthSlider} />
                               </div>
                              
                           </div>
@@ -484,17 +518,17 @@ function GamePlay({ userId, userName }) {
                           <div className="parameter">
                               <label htmlFor="max-guesses">Number of Guesses:</label>
                               <div>
-                                  <input id="max-guesses" type="range" min="3" max="7" defaultValue="6" />
+                                  <input id="max-guesses"  type="range" min="3" max="7" defaultValue="6" />
                               </div>
                            
                           </div>
-                          {// TODO: Need to handle the case where letter restrictions recieves invalid input
+                          {
                           }
                           <div className="parameter">
                               <label htmlFor="letter-restrictions">Restricted Letters:</label>
                               <div>
-                                  
-                                  <input id="letter-restrictions" type="text" pattern="[A-Za-z]"/>
+                                  <input id="letter-restrictions" size={26} type="text" value={letterRestrictionsInput} onChange={handleLetterRestrictionsChange}
+                                      maxLength={26} />
                               </div>
                           </div>
                           <div className="parameter">
@@ -502,11 +536,13 @@ function GamePlay({ userId, userName }) {
                               <div id="specific-requirements">       
                                   {(() => {
                                       let restrictionBoxes = [];
-                                      for (let i = 0; i < wordLength; i++) {
+                                      for (let i = 0; i < wordLengthSlider; i++) {
+                                          // ADD NOT BOXES
                                           restrictionBoxes.push(
                                               <div key={i} id="specific-requirements-box-div">
-                                                  <label htmlFor="specific-requirements-box">Letter {i+1}: </label>
-                                                 <input id="specific-requirements-box" type="text" size="2" maxLength="2" defaultValue=""/>
+                                                 <label htmlFor="specific-requirements-box">Letter {i+1}: </label>
+                                                  <input className="specific-requirements-box" key={i} type="text" size="2" maxLength="2"
+                                                      value={specificRequirementsBoxes[i]} onChange={(e) => handleSpecificRequirementsBoxChange(e, i)}/>
                                               </div>
                                           )
                                       }
@@ -517,42 +553,47 @@ function GamePlay({ userId, userName }) {
                           
 
                           <div className="parameter-button">
-                              <button
+                              <input type="submit"
                                   onClick={() => {
 
                                       setWordLength(document.getElementById('word-length').value);
                                       setMaxGuesses(document.getElementById('max-guesses').value);
                                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
 
-                                      console.log(document.getElementById('specific-requirements'))
-
-
-                                      setSpecificRequirements(document.getElementById('specific-requirements').value);
+                                      
 
                                       // maybe use a 'try' statement here and demand it not be invalid?
                                       // IMPORTANT !!!! -- depending on how the word list is set up, we may want to change the .toUpperCase() statement
 
-                                      setTargetWord(generateWord(
+                                      // Also Note, the names below will give you the proper parameters for everything
+                    
+                                      //!!! IMPORTANT: depending on the word list, the .toLowerCase() may have to be changed
+                                      const selectedWord = generateWord(
                                           wordList,
                                           document.getElementById('word-length').value,
                                           document.getElementById('letter-restrictions').value.split(""),
-                                          document.getElementById('specific-requirements').value
-                                      ).toLowerCase())
+                                          specificRequirementsBoxes
+                                      ).toLowerCase();
+                             
+                                      setTargetWord(selectedWord);
+
+                           
+                                      setWordLength(wordLengthSlider);
+                                      setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""))
+                                      setSpecificRequirements(specificRequirementsBoxes)
 
                                       setMessage('Button Clicked! Custom Game Starting Now!');
                                       setCustomGameInitializer(false);
                                       setShowBoard(true);
 
 
-
-                                  }}>
-                                  {' '}
-                                  {customGameMessage}
-                              </button>
+                                  }} value="Submit Parameters and Start Custom Game">
+                          
+                              </input>
                               <p className="explanation">***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
                                   for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
                                   first letter, and an 'l' as its fourth. You can also use '~' to require a letter NOT be placed in that spot.
-                                  for example, "~e ~e ~e ~e ~e" would mean that none of the 5 letters could be 'e' — effectively the same as
+                                  for example, "~e ~e ~e ~e ~e" would mean that none of the 5 letters could be 'e', effectively the same as
                                   restricting the letter e! </p>
                           </div>
 
