@@ -606,7 +606,7 @@ function GamePlay({ userId, userName }) {
                   )}
         </>
       ) : (
-        navigate("/Auth")
+        useNavigate("/Auth")
       )}
 
       {showBoard && (
