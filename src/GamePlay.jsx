@@ -68,7 +68,23 @@ function checkWinner(colorArr) {
         }
     }
 
+
     return true;
+
+  return true;
+}
+
+async function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4) {
+  const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
+  try {
+    const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${userGuess}`);
+    return response.status === 200;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return false;
+    }
+  }
+
 }
 
 // IMPORTANT! Depending on whether the word list stores fully capitalized words or lower case words, this may need to change
@@ -156,12 +172,97 @@ function generateWordList() {
 
 function GamePlay({ userId, userName }) {
 
+  const [message, setMessage] = useState('Click To Start Daily Game!');
+  const [showBoard, setShowBoard] = useState(false);
+  const [currGridSq, setCurrGridSq] = useState(0);
+  const [gridSquares, setGridSquares] = useState(Array(30).fill(null));
+  const kbInit = [
+    { value: 'Q', color: 'white' },
+    { value: 'W', color: 'white' },
+    { value: 'E', color: 'white' },
+    { value: 'R', color: 'white' },
+    { value: 'T', color: 'white' },
+    { value: 'Y', color: 'white' },
+    { value: 'U', color: 'white' },
+    { value: 'I', color: 'white' },
+    { value: 'O', color: 'white' },
+    { value: 'P', color: 'white' },
+    { value: 'A', color: 'white' },
+    { value: 'S', color: 'white' },
+    { value: 'D', color: 'white' },
+    { value: 'F', color: 'white' },
+    { value: 'G', color: 'white' },
+    { value: 'H', color: 'white' },
+    { value: 'J', color: 'white' },
+    { value: 'K', color: 'white' },
+    { value: 'L', color: 'white' },
+    { value: 'RET', color: 'white' },
+    { value: 'Z', color: 'white' },
+    { value: 'X', color: 'white' },
+    { value: 'C', color: 'white' },
+    { value: 'V', color: 'white' },
+    { value: 'B', color: 'white' },
+    { value: 'N', color: 'white' },
+    { value: 'M', color: 'white' },
+    { value: 'DEL', color: 'white' },
+  ];
+  const kbInitLettersOnly = [
+    'Q',
+    'W',
+    'E',
+    'R',
+    'T',
+    'Y',
+    'U',
+    'I',
+    'O',
+    'P',
+    'A',
+    'S',
+    'D',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'RET',
+    'Z',
+    'X',
+    'C',
+    'V',
+    'B',
+    'N',
+    'M',
+    'DEL',
+  ];
+
+  const [kbSquares, setKbSquares] = useState(kbInit);
+
+  const [targetWord, setTargetWord] = useState('');
+
+  useEffect(() => {
+  const fetchRandomWord = async () => {
+      try {
+      const response = await axios.get('https://random-word-api.herokuapp.com/word?length=5');
+      let randomWord = response.data[0];
+      randomWord = randomWord.toUpperCase();
+      setTargetWord(randomWord);
+      } catch (error) {
+      console.error('Error fetching random word:', error);
+      }
+  };
+
+  fetchRandomWord();
+  }, []);
+
 
     const [wordList, setWordList] = useState(generateWordList());
     const [wordLength, setWordLength] = useState(5)
     const [maxGuesses, setMaxGuesses] = useState(6)
     const [letterRestrictions, setLetterRestrictions] = useState(Array(0))
     const [specificRequirements, setSpecificRequirements] = useState(Array(20).fill("_"))
+
 
 
     const [message, setMessage] = useState('Click To Start Daily Game!');
@@ -174,6 +275,31 @@ function GamePlay({ userId, userName }) {
     const [wordLengthSlider, setWordLengthSlider] = useState(5); 
     const [letterRestrictionsInput, setLetterRestrictionsInput] = useState(""); 
     const [specificRequirementsBoxes, setSpecificRequirementsBoxes] = useState(Array(20).fill(""));
+
+  async function handleKbClick(kbButtonSquare) {
+    const nextGridSquares = gridSquares.slice();
+    const nextKbSquares = kbSquares.slice();
+
+    if (kbButtonSquare.value == 'DEL') {
+      if (currGridSq > 0 && currGridSq > minIndDel) {
+        nextGridSquares[currGridSq - 1] = null;
+        setCurrGridSq(currGridSq - 1);
+        setRestrictType(false);
+        setDisplayInvalid(false);
+      }
+    } else if (kbButtonSquare.value == 'RET') {
+      if (currGridSq % 5 == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
+
+        const wordValid = await checkValidWord(
+                            nextGridSquares[currGridSq - 5],
+                            nextGridSquares[currGridSq - 4],
+                            nextGridSquares[currGridSq - 3],
+                            nextGridSquares[currGridSq - 2],
+                            nextGridSquares[currGridSq - 1]
+                          );
+
+        if (wordValid) {
+          const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
 
 
     const [currGridSq, setCurrGridSq] = useState(0);
