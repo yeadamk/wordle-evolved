@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from './atoms/Header';
 import { wordList2 } from './wordleWords_v4.jsx';
 
@@ -192,6 +193,7 @@ function GamePlay({ userId, userName }) {
   const [playerWonOne, setPlayerWonOne] = useState(false);
   const [playerLost, setPlayerLost] = useState(false);
   const [displayInvalid, setDisplayInvalid] = useState(false);
+  const navigate = useNavigate();
 
   function handleKbClick(kbButtonSquare) {
     const nextGridSquares = gridSquares.slice();
@@ -333,7 +335,7 @@ function GamePlay({ userId, userName }) {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-
+    
       {/*userId ? (
         <>
         <Header
@@ -347,6 +349,7 @@ function GamePlay({ userId, userName }) {
         </>
       )}
       */}
+  
       { userId && (
         <Header
         userId={userId}
@@ -371,12 +374,7 @@ function GamePlay({ userId, userName }) {
           )}
         </>
       ) : (
-        <>
-          <h1>PLEASE SIGN IN</h1>
-          <Link to='/auth'>
-            <button>SIGN IN</button>
-          </Link>
-        </>
+        navigate("/Auth")
       )}
 
       {showBoard && (
@@ -607,7 +605,13 @@ function GamePlay({ userId, userName }) {
         </>
       )}
       <Link to='/history'>
-        <button>HISTORY</button>
+        <button>History</button>
+      </Link>
+      <Link to='/dataanalytics'>
+        <button>Data Analytics</button>
+      </Link>
+      <Link to='/'>
+        <button>Homepage</button>
       </Link>
     </>
   );
