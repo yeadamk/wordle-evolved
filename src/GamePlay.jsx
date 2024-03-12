@@ -23,7 +23,8 @@ function KeyboardSquare({ value, color, onKbSquareClick }) {
 // IMPORTANT! Depending on whether the word list stores fully capitalized words or lower case words, this may need to change
 function checkStatus(userGuess, targetWord) {
 
-    userGuess = userGuess.toLowerCase()
+    targetWord = targetWord.toUpperCase()
+    userGuess = userGuess.toUpperCase()
     const wordLength = userGuess.length
     const lettersDict = new Map()
     let status = []
