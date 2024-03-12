@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Header from './atoms/Header';
 import { useNavigate } from 'react-router-dom';
+import { wordList2 } from './wordleWords_v4.jsx';
+
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;
@@ -92,7 +94,7 @@ function checkWinner(colorArr) {
 function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGuess4, words) {
   const userGuess = userGuess0 + userGuess1 + userGuess2 + userGuess3 + userGuess4;
 
-  if (words.includes(userGuess)) {
+  if (words.has(userGuess)) {
     return true;
   } else {
     return false;
@@ -100,8 +102,7 @@ function checkValidWord(userGuess0, userGuess1, userGuess2, userGuess3, userGues
 }
 
 
-function GamePlay({ userId, userName, setIsSignedIn }) {
-  setIsSignedIn(true);
+function GamePlay({ userId, userName }) {
   const [message, setMessage] = useState('Click To Start Daily Game!');
   const [showBoard, setShowBoard] = useState(false);
   const [currGridSq, setCurrGridSq] = useState(0);
@@ -169,26 +170,15 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
 
   const [kbSquares, setKbSquares] = useState(kbInit);
 
-  //to be replaced with linux.words later? Filtered down of course.
-  const wordList = [
-    'BEANS',
-    'RATIO',
-    'HELLO',
-    'WORLD',
-    'MOUSE',
-    'ROCKY',
-    'WATER',
-    'SUPER',
-    'HOUSE',
-    'BEETS',
-    'PEACE',
-    'CREED',
-  ];
-
-  //chooses a random word for the list to be targetWord
   const [targetWord, setTargetWord] = useState(() => {
-    return wordList[Math.floor(Math.random() * wordList.length)];
+
+    const wordsArr = Array.from(wordList2);
+
+    const randomIndex = Math.floor(Math.random() * wordsArr.length);
+
+    return wordsArr[randomIndex];
   });
+
 
   // Backend variables
   const [userGuesses, setUserGuesses] = useState([]);
@@ -225,7 +215,7 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
             nextGridSquares[currGridSq - 3],
             nextGridSquares[currGridSq - 2],
             nextGridSquares[currGridSq - 1],
-            wordList,
+            wordList2,
           )
         ) {
           const newColorArr = checkStatus(...nextGridSquares.slice(currGridSq - 5, currGridSq), targetWord);
@@ -345,10 +335,10 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-      
+    
       {/*userId ? (
         <>
-        <Header 
+        <Header
           userId={userId}
           userName={userName}
         />
@@ -359,13 +349,14 @@ function GamePlay({ userId, userName, setIsSignedIn }) {
         </>
       )}
       */}
+  
       { userId && (
-        <Header 
+        <Header
         userId={userId}
         userName={userName}
         />
       )}
-      
+
       {userId ? (
         <>
           <h1>Welcome {userName}!!!</h1>
