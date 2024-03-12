@@ -100,7 +100,7 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
     }
 
     for (let i = 0; i < length; i++) {
-        if (SpecificRequirements[i] == "") {
+        if (SpecificRequirements[i] == "" || SpecificRequirements[i] == "~") {
             SpecificRequirements[i] = " ";
         }
     }
@@ -179,6 +179,8 @@ function GamePlay({ userId, userName }) {
     const [maxGuessSlider, setMaxGuessSlider] = useState(6);
     const [letterRestrictionsInput, setLetterRestrictionsInput] = useState(""); 
     const [specificRequirementsBoxes, setSpecificRequirementsBoxes] = useState(Array(20).fill(""));
+    const [specificRequirementsCheckBoxes, setSpecificRequirementsCheckBoxes] = useState(Array(20).fill(1));
+
 
 
     const [currGridSq, setCurrGridSq] = useState(0);
@@ -476,15 +478,29 @@ function GamePlay({ userId, userName }) {
 
     function handleSpecificRequirementsBoxChange(event, i) {
         const result = event.target.value;
+       
         const copyArray = [...specificRequirementsBoxes];
-        copyArray[i] = result.toUpperCase().replace(/[^A-Z~]/, "")
+        copyArray[i] = result.toUpperCase().replace(/[^A-Z]/, "")
         
         setSpecificRequirementsBoxes(copyArray)
         
+    }
 
+    function handleSpecificRequirementsCheckBoxChange(event, i) {
+        const result = event.target.value;
+        const copyArray = [...specificRequirementsCheckBoxes];
+
+        if (result == 1 ){
+            copyArray[i] = 0;
+
+        }
+        else {
+            copyArray[i] = 1;
+        }
+
+        setSpecificRequirementsCheckBoxes(copyArray);
 
     }
-    
 
   return (
     <>
@@ -582,12 +598,16 @@ function GamePlay({ userId, userName }) {
                                   {(() => {
                                       let restrictionBoxes = [];
                                       for (let i = 0; i < wordLengthSlider; i++) {
-                                          // ADD NOT BOXES
+                                       
                                           restrictionBoxes.push(
                                               <div key={i} id="specific-requirements-box-div">
                                                  <label htmlFor="specific-requirements-box">Letter {i+1}: </label>
-                                                  <input className="specific-requirements-box" key={i} type="text" size="2" maxLength="2"
-                                                      value={specificRequirementsBoxes[i]} onChange={(e) => handleSpecificRequirementsBoxChange(e, i)}/>
+                                                  <input className="specific-requirements-box" key={i} type="text" size="2" maxLength="1"
+                                                      value={specificRequirementsBoxes[i]} onChange={(e) => handleSpecificRequirementsBoxChange(e, i)} />
+                                                  <label htmlFor="specific-requirements-box">  NOT:
+                                                      <input type="checkbox" value={specificRequirementsCheckBoxes[i] }
+                                                          onChange={(e) => handleSpecificRequirementsCheckBoxChange(e, i)} />
+                                                  </label>
                                               </div>
                                           )
                                       }
@@ -604,8 +624,13 @@ function GamePlay({ userId, userName }) {
                                       setWordLength(document.getElementById('word-length').value);
                                       setMaxGuesses(document.getElementById('max-guesses').value);
                                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
+                                     
 
-                                      
+                                      for (let i = 0; i < 20; i++) {
+                                          if (!specificRequirementsCheckBoxes[i]) {
+                                              specificRequirementsBoxes[i] = "~" + specificRequirementsBoxes[i];
+                                          }
+                                      }
 
                                       const selectedWord = generateWord(
                                           wordList,
@@ -613,6 +638,8 @@ function GamePlay({ userId, userName }) {
                                           document.getElementById('letter-restrictions').value.split(""),
                                           specificRequirementsBoxes
                                       ).toLowerCase();
+
+                                  
                                     
                                       setTargetWord(selectedWord);
                                       setMaxGuesses(maxGuessSlider);
@@ -639,8 +666,8 @@ function GamePlay({ userId, userName }) {
                               </input>
                               <p className="explanation">***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
                                   for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
-                                  first letter, and an 'l' as its fourth. You can also use '~' to require a letter NOT be placed in that spot.
-                                  for example, "~e ~e ~e ~e ~e" would mean that none of the 5 letters could be 'e', effectively the same as
+                                  first letter, and an 'l' as its fourth. You can also use the NOT box to require a letter NOT be placed in that spot.
+                                  for example, "NOT e, NOT e, NOT e, NOT e, NOT e"" would mean that none of the 5 letters could be 'e', effectively the same as
                                   restricting the letter e! </p>
                           </div>
 
