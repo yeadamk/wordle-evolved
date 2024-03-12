@@ -22,6 +22,9 @@ function DataAnalytics( {uid, userName} ){
     const [numFours, setNumFours] = useState(0);
     const [numFives, setNumFives] = useState(0);
     const [numSixes, setNumSixes] = useState(0);
+    const [gamesCompleted, setGamesCompleted] = useState(0);
+    const [allVals, setVals] = useState([]);
+    const [allObjects, setObjects] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -46,6 +49,7 @@ function DataAnalytics( {uid, userName} ){
             const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
             const averageG = totalG / data.length;
             const winPer = (numberWins / data.length) * 100;
+            const gamesCompleted = numberWins + numberLosses;
 
             let tmpCurrWS = 0;
             let maxWS = 0;
@@ -53,10 +57,19 @@ function DataAnalytics( {uid, userName} ){
             let currWS = 0;
             let keepIncrementing = true;
 
+            let last = 0;
+            let allIndex = new Array(6).fill(0);
+            let guesses = [numOnes,numTwos,numThrees,numFours,numFives,numSixes];
+            let zip = (a1, a2) => a1.map((x, i) => [x, a2[i]]);
+            if( last > 0 && last < 7){
+                allIndex.splice(last - 1, 0, 1);
+            }
+
             data.forEach((item) => {
                 if(item.playerWon) {
                     tmpCurrWS++;
                     maxWS = Math.max(tmpCurrWS, maxWS);
+                    last = item.numGuesses;
                 } else {
                     tmpCurrWS = 0
                 }
@@ -85,6 +98,9 @@ function DataAnalytics( {uid, userName} ){
             setNumFours(fours);
             setNumFives(fives);
             setNumSixes(sixes);
+            setGamesCompleted(gamesCompleted);
+            setVals(guesses);
+            setObjects(zip(allVals,allIndex))
 
             console.log("Games played: ", gamesPlayed);
             console.log("Total guesses: ", totalGuesses);
@@ -102,6 +118,7 @@ function DataAnalytics( {uid, userName} ){
             console.log("Num fours: ", numFours);
             console.log("Num fives: ", numFives);
             console.log("Num sixes: ", numSixes);
+            console.log("Games Completed: ", gamesCompleted);
         }
     }, [data]);
     
@@ -124,19 +141,53 @@ function DataAnalytics( {uid, userName} ){
                 </div>
                 <div className='up'>
                     <h1>Completed</h1>
+                    <h2>{gamesCompleted}</h2>
                 </div>
                 <div className='up'>
                     <h1>Win %</h1>
+                    {winPercentage ? (
+                        <h2>{winPercentage}</h2>
+                    ) : (
+                        <h2>Play More Games</h2>
+                    )}
                 </div>
                 <div className='up'> 
                     <h1> Current Streak </h1>
+                    <h2>{currentWinStreak}</h2>
                 </div>
                 <div className='up'>
                     <h1> Max Streak </h1>
+                    <h2>{maxWinStreak}</h2>
                 </div>
             </div>
             <div className='stats'>
                 <h1> Overall Statistics </h1>
+            </div>
+            <div className='distro'>
+                <table>
+                    <tbody>
+                        {allObjects.map((stat, index) => {
+                            let barWidth = (stat === 0) ? "4" 
+                                : (Math.floor((stat / gamesPlayed) * 80) + 8).toString();
+                            let barColor = (index === 1) ? "green"
+                                : "rgb(107,107,109";
+                            console.log(barWidth);
+                            console.log(barColor);
+                            return (
+                                
+                                <tr key={index}>
+                                    <td>{index}</td>
+                                    <td><div className='chart' style={{
+                                        width: '${barWidth}',
+                                        backgroundColor: '${barColor}'}}>
+                                        {stat}
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
         </>
     );  
