@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Header from './atoms/Header';
 import '../styles/DataAnalytics.css';
 
 function DataAnalytics( {uid, userName} ){
@@ -49,8 +50,8 @@ function DataAnalytics( {uid, userName} ){
             const numberLosses = data.filter((item) => item.playerWon == false).length;
             const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
             const averageG = totalG / data.length;
-            const winPer = (numberWins / data.length) * 100;
-            const gamesCompleted = numberWins + numberLosses;
+            const winPer = ((numberWins / data.length) * 100).toFixed(1);
+            const gamesCompleted = numberWins;
 
             let tmpCurrWS = 0;
             let maxWS = 0;
@@ -60,11 +61,8 @@ function DataAnalytics( {uid, userName} ){
 
             let last = 0;
             let allIndex = new Array(6).fill(0);
-            let guesses = [numOnes,numTwos,numThrees,numFours,numFives,numSixes];
             let zip = (a1, a2) => a1.map((x, i) => [x, a2[i]]);
-            if( last > 0 && last < 7){
-                allIndex.splice(last - 1, 0, 1);
-            }
+
 
             data.forEach((item) => {
                 if(item.playerWon) {
@@ -75,6 +73,10 @@ function DataAnalytics( {uid, userName} ){
                     tmpCurrWS = 0
                 }
             });
+
+            if( last > 0 && last < 7){
+                allIndex[last-1] = 1;
+            }
 
             data.forEach((item) => {
                 if(item.playerWon && keepIncrementing) {
@@ -99,8 +101,9 @@ function DataAnalytics( {uid, userName} ){
             setNumFours(fours);
             setNumFives(fives);
             setNumSixes(sixes);
+
             setGamesCompleted(gamesCompleted);
-            setVals(guesses);
+            setVals([ones,twos,threes,fours,fives,sixes]);
             setLast(allIndex);
             setObjects(zip(allVals,allIndexs))
 
@@ -122,11 +125,20 @@ function DataAnalytics( {uid, userName} ){
             console.log("Num sixes: ", numSixes);
             console.log("Games Completed: ", gamesCompleted);
             console.log("Last Won: ", last);
+            console.log("SetLast: ", allIndexs);
+            console.log("AllVals", allVals);
+            console.log("Objs:", allObjects);
         }
     }, [data]);
     
     return (
         <>
+            { uid && (
+                <Header 
+                    userId={uid}
+                    userName={userName}
+                />
+            )}
             <div className='user-box'>
                 {data ? (
                     <div>
@@ -151,7 +163,7 @@ function DataAnalytics( {uid, userName} ){
                     {winPercentage ? (
                         <h2>{winPercentage}</h2>
                     ) : (
-                        <h2>Play More Games</h2>
+                        <h2>0</h2>
                     )}
                 </div>
                 <div className='up'> 
@@ -170,21 +182,22 @@ function DataAnalytics( {uid, userName} ){
                 <table>
                     <tbody>
                         {allObjects.map((stat, index) => {
-                            let barWidth = (stat === 0) ? "4" 
-                                : (Math.floor((stat / gamesPlayed) * 80) + 8).toString();
-                            let barColor = (index === 1) ? "green"
+                            let barWidth = (stat[0] === 0) ? "4" 
+                                : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
+                            let barColor = (stat[1] === 1) ? "green"
                                 : "rgb(107,107,109";
                             console.log(stat);
+                            console.log(index);
                             console.log(barWidth);
                             console.log(barColor);
                             return (
-                                <tr key={index+1}>
-                                    <td>{index+1}</td>
-                                    <td>
+                                <tr id="guesses"key={index+1}>
+                                    <td id="guess">{index+1}</td>
+                                    <td id="val">
                                         <div className='chart' style={{
-                                            width: `${barWidth}`,
+                                            width: `${barWidth}%`,
                                             backgroundColor: `${barColor}`}}>
-                                        {stat}
+                                        {stat[0]}
                                         </div>
                                     </td>
                                 </tr>

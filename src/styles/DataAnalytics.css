@@ -59,5 +59,22 @@
   vertical-align: middle;
 }
 .distro {
+  width: 1152px;
+  overflow: auto;
+  margin-left: 64px;
+  margin-right: -128px;
+}
+
+.distro table{
+  /*display: flex;*/
   width: 100%;
+}
+
+#guess{
+  display: flex;
+  justify-content: left;
+  width: 2%;
+}
+#val{
+  width: 98%
 }

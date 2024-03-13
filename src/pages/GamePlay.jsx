@@ -529,7 +529,12 @@ function GamePlay({ userId, userName }) {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div> */}
-
+      { userId && (
+        <Header 
+        userId={userId}
+        userName={userName}
+        />
+      )}
           {userId ? (
 
 
@@ -572,8 +577,9 @@ function GamePlay({ userId, userName }) {
                           Edit <code>src/App.jsx</code> and save to test HMR
                       </p>
                   </div>
+                  {/*
                   <p className='read-the-docs'>Click on the Vite and React logos to learn more</p>
-
+                  */}
                   {customGameInitializer && (
 
                       <div className="game-parameters">
