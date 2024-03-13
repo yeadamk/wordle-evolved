@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import HistoryElement from './atoms/HistoryElement';
 import HistoryLegend from './atoms/HistoryLegend';
@@ -9,6 +10,7 @@ import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 
 function History({ uid, userName }) {
   const [history, setHistory] = useState();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState('');
   const [filterContent, setFilterContent] = useState('');
 
@@ -19,6 +21,12 @@ function History({ uid, userName }) {
       setHistory(response.data);
     })();
   }, [uid]);
+
+  useEffect(() => {
+    if (!uid){
+      navigate("/auth");
+    }
+  }, [uid, navigate]);
 
   return (
     <>

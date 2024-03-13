@@ -5,7 +5,7 @@ import SignUp from './atoms/SignUp';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Auth({ setUserId, setUserName }) {
+function Auth({ setIsSignedIn, setUserId, setUserName }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -23,6 +23,7 @@ function Auth({ setUserId, setUserName }) {
     setUserName(response.data.name);
     if (response.data.name != null) {
       navigate('/gameplay');
+      setIsSignedIn(true);
       setFailed(false);
     } else {
       setFailed(true);
