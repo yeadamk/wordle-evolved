@@ -142,8 +142,11 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
         }
     }
 
+    if (validWords.length == 0) {
+        return "";
+    }
 
-    return validWords[Math.floor(Math.random() * validWords.length)]
+    return validWords[Math.floor(Math.random() * validWords.length)];
 }
 
 
@@ -638,6 +641,8 @@ function GamePlay({ userId, userName }) {
                               <input type="submit"
                                   onClick={() => {
 
+
+
                                       setWordLength(document.getElementById('word-length').value);
                                       setMaxGuesses(document.getElementById('max-guesses').value);
                                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
@@ -649,34 +654,40 @@ function GamePlay({ userId, userName }) {
                                           }
                                       }
 
-                                      const selectedWord = generateWord(
-                                          wordList,
-                                          document.getElementById('word-length').value,
-                                          document.getElementById('letter-restrictions').value.split(""),
-                                          specificRequirementsBoxes
+                                    
+                                     
+                                        const selectedWord = generateWord(
+                                            wordList,
+                                            document.getElementById('word-length').value,
+                                            document.getElementById('letter-restrictions').value.split(""),
+                                            specificRequirementsBoxes
                                       ).toLowerCase();
 
+                                      if (selectedWord == "") {
+                                          alert("No word meets this criteria!")
+                                          return;
+                                      }
+                                        
+                                      
+                                        setTargetWord(selectedWord);
+                                        setMaxGuesses(maxGuessSlider);
+                                        setWordLength(wordLengthSlider);
+                                        setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
+                                        setSpecificRequirements(specificRequirementsBoxes);
+                                        setGridRowsSet(true);
+
+                                        const numCopy = maxGuessSlider
 
 
-                                      setTargetWord(selectedWord);
-                                      setMaxGuesses(maxGuessSlider);
-                                      setWordLength(wordLengthSlider);
-                                      setLetterRestrictions(document.getElementById('letter-restrictions').value.split(""));
-                                      setSpecificRequirements(specificRequirementsBoxes);
-                                      setGridRowsSet(true);
 
-                                      const numCopy = maxGuessSlider
+                                        setGridSquares(gridRowsCopy.get(0));
 
 
+                                        setMessage('Button Clicked! Custom Game Starting Now!');
+                                        setCustomGameInitializer(false);
+                                        setShowBoard(true);
 
-
-                                      setGridSquares(gridRowsCopy.get(0));
-
-
-                                      setMessage('Button Clicked! Custom Game Starting Now!');
-                                      setCustomGameInitializer(false);
-                                      setShowBoard(true);
-
+                                     
 
                                   }} value="Submit Parameters and Start Custom Game">
 
