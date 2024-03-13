@@ -1,30 +1,96 @@
-.landing-container {
-  margin-top: 5vh;
+:root {
+  --light-purple: rgb(177, 79, 226);
+  --purple: rgb(143, 56, 186);
+  --blue: #412dc8;
+}
+.landing-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70vh;
+  min-height: 100vh;
 }
 
 .title {
-  color: rgb(132, 72, 163);
+  color: var(--blue);
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  max-width: 100%;
+  margin-top: 2rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.subtitle {
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--light-purple);
+  margin-bottom: 0.5rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 .description {
   color: black;
+  text-align: left;
+  font-size: 1.2rem;
+  width: 80ch;
+  max-width: 80%;
+  margin: 1rem 0;
+}
+
+@media screen and (max-width: 1280px) {
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .description {
+    width: 80ch;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    width: 60ch;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
 }
 
 .signin-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #0d2ee8;
-  color: #fff;
+  margin-top: 1rem;
+  padding: 0.7rem 1.2rem;
+  background-color: var(--blue);
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
   text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 2rem;
+  transition: background-color 200ms ease-out;
 }
 
 .signin-button:hover {
-  background-color: rgb(132, 72, 163);
+  background-color: var(--purple);
+  transition: background-color 0s;
+  cursor: pointer;
 }

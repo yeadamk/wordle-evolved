@@ -6,85 +6,85 @@ import axios from 'axios';
 import Header from './atoms/Header';
 import '../styles/DataAnalytics.css';
 
-function DataAnalytics( {uid, userName} ){
-    const [data, setData] = useState();
-    const [gamesPlayed, setGamesPlayed] = useState(0);
-    const [totalGuesses, setTotalGuesses] = useState(0);
-    const [averageGuesses, setAverageGuesses] = useState(0);
-    const [totalWins, setTotalWins] = useState(0);
-    const [totalLosses, setTotalLosses] = useState(0);
-    const [winPercentage, setWinPercentage] = useState(0);
-    const [currentWinStreak, setCurrentWinStreak] = useState(0);
-    const [maxWinStreak, setMaxWinStreak] = useState(0);
-    const [averageTargetWordLength, setaverageTargetWordLength] = useState(0);
-    const [numOnes, setNumOnes] = useState(0);
-    const [numTwos, setNumTwos] = useState(0);
-    const [numThrees, setNumThrees] = useState(0);
-    const [numFours, setNumFours] = useState(0);
-    const [numFives, setNumFives] = useState(0);
-    const [numSixes, setNumSixes] = useState(0);
-    const [gamesCompleted, setGamesCompleted] = useState(0);
-    const [allIndexs, setLast] = useState([]);
-    const [allVals, setVals] = useState([]);
-    const [allObjects, setObjects] = useState([]);
+function DataAnalytics({ uid, userName }) {
+  const [data, setData] = useState();
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [totalGuesses, setTotalGuesses] = useState(0);
+  const [averageGuesses, setAverageGuesses] = useState(0);
+  const [totalWins, setTotalWins] = useState(0);
+  const [totalLosses, setTotalLosses] = useState(0);
+  const [winPercentage, setWinPercentage] = useState(0);
+  const [currentWinStreak, setCurrentWinStreak] = useState(0);
+  const [maxWinStreak, setMaxWinStreak] = useState(0);
+  const [averageTargetWordLength, setaverageTargetWordLength] = useState(0);
+  const [numOnes, setNumOnes] = useState(0);
+  const [numTwos, setNumTwos] = useState(0);
+  const [numThrees, setNumThrees] = useState(0);
+  const [numFours, setNumFours] = useState(0);
+  const [numFives, setNumFives] = useState(0);
+  const [numSixes, setNumSixes] = useState(0);
+  const [gamesCompleted, setGamesCompleted] = useState(0);
+  const [allIndexs, setLast] = useState([]);
+  const [allVals, setVals] = useState([]);
+  const [allObjects, setObjects] = useState([]);
 
-    useEffect(() => {
-        (async () => {
-          const response = await axios.get(`http://localhost:4000/api/gethistory/${uid}`);
-          setData(response.data);
-        })();
-    }, []);
+  useEffect(() => {
+    (async () => {
+      const response = await axios.get(`http://localhost:4000/api/gethistory/${uid}`);
+      setData(response.data);
+    })();
+  }, []);
 
-    useEffect(() => {
-        if (data){
-            
-            const ones = data.filter((item) => item.numGuesses === 1).length;
-            const twos = data.filter((item) => item.numGuesses === 2).length;
-            const threes = data.filter((item) => item.numGuesses === 3).length;
-            const fours = data.filter((item) => item.numGuesses === 4).length;
-            const fives = data.filter((item) => item.numGuesses === 5).length;
-            const sixes = data.filter((item) => item.numGuesses === 6 && item.playerWon==true).length;
-            const totalG = data.map((item) => item.numGuesses).reduce((acc, guesses) => acc+guesses, 0);
-            const totalLengthOfAllTargetWords = data.map((item) => item.length).reduce((acc, wordLength) => acc+wordLength, 0);
-            const numberWins = data.filter((item) => item.playerWon == true).length;
-            const numberLosses = data.filter((item) => item.playerWon == false).length;
-            const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
-            const averageG = totalG / data.length;
-            const winPer = ((numberWins / data.length) * 100).toFixed(1);
-            const gamesCompleted = numberWins;
+  useEffect(() => {
+    if (data) {
+      const ones = data.filter((item) => item.numGuesses === 1).length;
+      const twos = data.filter((item) => item.numGuesses === 2).length;
+      const threes = data.filter((item) => item.numGuesses === 3).length;
+      const fours = data.filter((item) => item.numGuesses === 4).length;
+      const fives = data.filter((item) => item.numGuesses === 5).length;
+      const sixes = data.filter((item) => item.numGuesses === 6 && item.playerWon == true).length;
+      const totalG = data.map((item) => item.numGuesses).reduce((acc, guesses) => acc + guesses, 0);
+      const totalLengthOfAllTargetWords = data
+        .map((item) => item.length)
+        .reduce((acc, wordLength) => acc + wordLength, 0);
+      const numberWins = data.filter((item) => item.playerWon == true).length;
+      const numberLosses = data.filter((item) => item.playerWon == false).length;
+      const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
+      const averageG = totalG / data.length;
+      const winPer = (numberWins / data.length) * 100;
+      const gamesCompleted = numberWins + numberLosses;
 
-            let tmpCurrWS = 0;
-            let maxWS = 0;
+      let tmpCurrWS = 0;
+      let maxWS = 0;
 
-            let currWS = 0;
-            let keepIncrementing = true;
+      let currWS = 0;
+      let keepIncrementing = true;
 
-            let last = 0;
-            let allIndex = new Array(6).fill(0);
-            let zip = (a1, a2) => a1.map((x, i) => [x, a2[i]]);
+      let last = 0;
+      let allIndex = new Array(6).fill(0);
+      let guesses = [numOnes, numTwos, numThrees, numFours, numFives, numSixes];
+      let zip = (a1, a2) => a1.map((x, i) => [x, a2[i]]);
+      if (last > 0 && last < 7) {
+        allIndex.splice(last - 1, 0, 1);
+      }
 
+      data.forEach((item) => {
+        if (item.playerWon) {
+          tmpCurrWS++;
+          maxWS = Math.max(tmpCurrWS, maxWS);
+          last = item.numGuesses;
+        } else {
+          tmpCurrWS = 0;
+        }
+      });
 
-            data.forEach((item) => {
-                if(item.playerWon) {
-                    tmpCurrWS++;
-                    maxWS = Math.max(tmpCurrWS, maxWS);
-                    last = item.numGuesses;
-                } else {
-                    tmpCurrWS = 0
-                }
-            });
-
-            if( last > 0 && last < 7){
-                allIndex[last-1] = 1;
-            }
-
-            data.forEach((item) => {
-                if(item.playerWon && keepIncrementing) {
-                    currWS++;
-                } else {
-                    keepIncrementing = false;
-                }
-            });
+      data.forEach((item) => {
+        if (item.playerWon && keepIncrementing) {
+          currWS++;
+        } else {
+          keepIncrementing = false;
+        }
+      });
 
             setGamesPlayed(data.length);
             setTotalGuesses(totalG);

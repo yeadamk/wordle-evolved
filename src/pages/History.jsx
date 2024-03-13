@@ -23,19 +23,14 @@ function History({ uid, userName }) {
   }, [uid]);
 
   useEffect(() => {
-    if (!uid){
-      navigate("/auth");
+    if (!uid) {
+      navigate('/auth');
     }
   }, [uid, navigate]);
 
   return (
     <>
-      { uid && (
-        <Header 
-        userId={uid}
-        userName={userName}
-        />
-      )}
+      {uid && <Header userId={uid} userName={userName} />}
       <div className='user-box'>
         {uid ? (
           <div>

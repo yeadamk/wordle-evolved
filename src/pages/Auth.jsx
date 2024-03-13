@@ -49,7 +49,6 @@ function Auth({ setIsSignedIn, setUserId, setUserName }) {
 
   return (
     <div className='landing-hero'>
-
       <div className='login-container'>
         <div className='toggle-container'>
           <button className={`toggle toggle-left ${authToggle ? 'sel' : ''}`} onClick={() => setAuthToggle(true)}>
