@@ -458,411 +458,414 @@ function GamePlay({ userId, userName }) {
   }
 
   return (
-    <div className='game-container'>
-      {userId ? (
-        <main>
-          <h1 className='title'>
-            <Link to='/'>Wordle Evolved</Link>
-          </h1>
-          <section className={`card ${buttonClicked ? 'hidden' : ''}`}>
-            <h2>Basic Rules</h2>
-            <p className='description'>
-              If a square is green, you guessed the correct position of a letter in the word. If a square is yellow, it
-              means you guessed a letter that is in the word but not in the correct spot. If the square does not change
-              color, the letter is not in the word.
-            </p>
-            <div className='button-container'>
-              {showHomeScreen && (
-                <button
-                  className='start-button'
-                  onClick={() => {
-                    setMessage('Button Clicked! Daily Game Starting Now!');
-                    setShowHomeScreen(false);
-                    setShowBoard(true);
-                    setCustomGame(false);
-                    setButtonClicked(true);
-                  }}>
-                  {' '}
-                  {message}
-                </button>
-              )}
-              {showHomeScreen && (
-                <button
-                  className='start-button'
-                  onClick={() => {
-                    setCustomGameMessage('Submit Parameters and Start Custom Game');
-                    setShowHomeScreen(false);
-                    setCustomGameInitializer(true);
-                    setCustomGame(true);
-                    setButtonClicked(true);
-                  }}>
-                  {' '}
-                  {customGameMessage}
-                </button>
-              )}
-            </div>
-          </section>
-          {customGameInitializer && (
-            <div className='game-parameters'>
-              <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
-
-              <div className='parameter'>
-                <label htmlFor='word-length'>Word Length:</label>
-                <div>
-                  <input
-                    id='word-length'
-                    type='range'
-                    min='1'
-                    max='20'
-                    onChange={handleWordLengthSliderChange}
-                    value={wordLengthSlider}
-                  />
-
-                  <label id='word-length-slider-label' htmlFor='word-length'>
-                    {' '}
-                    {wordLengthSlider}
-                  </label>
-                </div>
-              </div>
-
-              <div className='parameter'>
-                <label htmlFor='max-guesses'>Number of Guesses:</label>
-                <div>
-                  <input
-                    id='max-guesses'
-                    type='range'
-                    min='1'
-                    max='20'
-                    value={maxGuessSlider}
-                    onChange={handleMaxGuessSliderChange}
-                  />
-                  <label id='max-guesses-slider-label' htmlFor='max-guesses'>
-                    {' '}
-                    {maxGuessSlider}
-                  </label>
-                </div>
-              </div>
-              {}
-              <div className='parameter'>
-                <label htmlFor='letter-restrictions'>Restricted Letters:</label>
-                <div>
-                  <input
-                    id='letter-restrictions'
-                    size={26}
-                    type='text'
-                    value={letterRestrictionsInput}
-                    onChange={handleLetterRestrictionsChange}
-                    maxLength={26}
-                  />
-                </div>
-              </div>
-              <div className='parameter'>
-                <label htmlFor='specific-requirements'>Specific Requirements for the Word:</label>
-                <div id='specific-requirements'>
-                  {(() => {
-                    let restrictionBoxes = [];
-                    for (let i = 0; i < wordLengthSlider; i++) {
-                      restrictionBoxes.push(
-                        <div key={i} id='specific-requirements-box-div'>
-                          <label htmlFor='specific-requirements-box'>Letter {i + 1}: </label>
-                          <input
-                            className='specific-requirements-box'
-                            key={i}
-                            type='text'
-                            size='2'
-                            maxLength='1'
-                            value={specificRequirementsBoxes[i]}
-                            onChange={(e) => handleSpecificRequirementsBoxChange(e, i)}
-                          />
-                          <label htmlFor='specific-requirements-box'>
-                            {' '}
-                            NOT:
-                            <input
-                              type='checkbox'
-                              value={specificRequirementsCheckBoxes[i]}
-                              onChange={(e) => handleSpecificRequirementsCheckBoxChange(e, i)}
-                            />
-                          </label>
-                        </div>,
-                      );
-                    }
-                    return restrictionBoxes;
-                  })()}
-                </div>
-              </div>
-
-              <div>
-                <input
-                  className='parameter-button'
-                  type='submit'
-                  onClick={() => {
-                    setWordLength(document.getElementById('word-length').value);
-                    setMaxGuesses(document.getElementById('max-guesses').value);
-                    setLetterRestrictions(document.getElementById('letter-restrictions').value.split(''));
-
-                    for (let i = 0; i < 20; i++) {
-                      if (!specificRequirementsCheckBoxes[i]) {
-                        specificRequirementsBoxes[i] = '~' + specificRequirementsBoxes[i];
-                      }
-                    }
-
-                    const selectedWord = generateWord(
-                      wordList,
-                      document.getElementById('word-length').value,
-                      document.getElementById('letter-restrictions').value.split(''),
-                      specificRequirementsBoxes,
-                    ).toLowerCase();
-
-                    setTargetWord(selectedWord);
-                    setMaxGuesses(maxGuessSlider);
-                    setWordLength(wordLengthSlider);
-                    setLetterRestrictions(document.getElementById('letter-restrictions').value.split(''));
-                    setSpecificRequirements(specificRequirementsBoxes);
-                    setGridRowsSet(true);
-
-                    const numCopy = maxGuessSlider;
-
-                    setGridSquares(gridRowsCopy.get(0));
-
-                    setMessage('Button Clicked! Custom Game Starting Now!');
-                    setCustomGameInitializer(false);
-                    setShowBoard(true);
-                  }}
-                  value='Start Custom Game'></input>
-              </div>
-              <p className='explanation'>
-                ***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
-                for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
-                first letter, and an 'l' as its fourth. You can also use the NOT box to require a letter NOT be placed
-                in that spot. for example, "NOT e, NOT e, NOT e, NOT e, NOT e"" would mean that none of the 5 letters
-                could be 'e', effectively the same as restricting the letter e!{' '}
+    <>
+      <Header userId={userId} userName={userName} />
+      <div className='game-container'>
+        {userId ? (
+          <main>
+            <h1 className='title'>
+              <Link to='/'>Wordle Evolved</Link>
+            </h1>
+            <section className={`card ${buttonClicked ? 'hidden' : ''}`}>
+              <h2>Basic Rules</h2>
+              <p className='description'>
+                If a square is green, you guessed the correct position of a letter in the word. If a square is yellow,
+                it means you guessed a letter that is in the word but not in the correct spot. If the square does not
+                change color, the letter is not in the word.
               </p>
-            </div>
-          )}
-          <div className={`button-container ${buttonClicked ? 'hidden' : ''}`}>
-            <Link to='/history'>
-              <button className='start-button'>History</button>
-            </Link>
-            <Link to='/dataanalytics'>
-              <button className='data-button'>Data Analytics</button>
-            </Link>
-          </div>
-        </main>
-      ) : (
-        <>
-          <h1>PLEASE SIGN IN</h1>
-          <Link to='/auth'>
-            <button className='signin-button'>SIGN IN</button>
-          </Link>
-        </>
-      )}
-      <section className={`gameboard ${showBoard ? '' : 'hidden'}`}>
-        {showBoard && (
-          <>
-            {displayInvalid && (
-              <>
-                <div>
-                  <p> Not a valid word! </p>
+              <div className='button-container'>
+                {showHomeScreen && (
+                  <button
+                    className='start-button'
+                    onClick={() => {
+                      setMessage('Button Clicked! Daily Game Starting Now!');
+                      setShowHomeScreen(false);
+                      setShowBoard(true);
+                      setCustomGame(false);
+                      setButtonClicked(true);
+                    }}>
+                    {' '}
+                    {message}
+                  </button>
+                )}
+                {showHomeScreen && (
+                  <button
+                    className='start-button'
+                    onClick={() => {
+                      setCustomGameMessage('Submit Parameters and Start Custom Game');
+                      setShowHomeScreen(false);
+                      setCustomGameInitializer(true);
+                      setCustomGame(true);
+                      setButtonClicked(true);
+                    }}>
+                    {' '}
+                    {customGameMessage}
+                  </button>
+                )}
+              </div>
+            </section>
+            {customGameInitializer && (
+              <div className='game-parameters'>
+                <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
+
+                <div className='parameter'>
+                  <label htmlFor='word-length'>Word Length:</label>
+                  <div>
+                    <input
+                      id='word-length'
+                      type='range'
+                      min='1'
+                      max='20'
+                      onChange={handleWordLengthSliderChange}
+                      value={wordLengthSlider}
+                    />
+
+                    <label id='word-length-slider-label' htmlFor='word-length'>
+                      {' '}
+                      {wordLengthSlider}
+                    </label>
+                  </div>
                 </div>
-              </>
-            )}
 
-            {playerWonOne && (
-              <>
-                <div>
-                  <p> You won! It took {numGuesses} guess! </p>
+                <div className='parameter'>
+                  <label htmlFor='max-guesses'>Number of Guesses:</label>
+                  <div>
+                    <input
+                      id='max-guesses'
+                      type='range'
+                      min='1'
+                      max='20'
+                      value={maxGuessSlider}
+                      onChange={handleMaxGuessSliderChange}
+                    />
+                    <label id='max-guesses-slider-label' htmlFor='max-guesses'>
+                      {' '}
+                      {maxGuessSlider}
+                    </label>
+                  </div>
                 </div>
-              </>
-            )}
-
-            {playerWon && (
-              <>
-                <div>
-                  <p> You won! It took {numGuesses} guesses! </p>
+                {}
+                <div className='parameter'>
+                  <label htmlFor='letter-restrictions'>Restricted Letters:</label>
+                  <div>
+                    <input
+                      id='letter-restrictions'
+                      size={26}
+                      type='text'
+                      value={letterRestrictionsInput}
+                      onChange={handleLetterRestrictionsChange}
+                      maxLength={26}
+                    />
+                  </div>
                 </div>
-              </>
-            )}
-
-            {playerLost && (
-              <>
-                <div>
-                  <p> Game over! The word was {targetWord}. </p>
-                </div>
-              </>
-            )}
-
-            {(() => {
-              gridRows = gridRowsCopy;
-
-              let rows = [];
-              for (let i = 0; i < gridRows.size; i++) {
-                rows.push(
-                  <div className='board-row' key={i}>
+                <div className='parameter'>
+                  <label htmlFor='specific-requirements'>Specific Requirements for the Word:</label>
+                  <div id='specific-requirements'>
                     {(() => {
-                      let row = [];
-                      for (let j = 0; j < wordLength; j++) {
-                        row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />);
+                      let restrictionBoxes = [];
+                      for (let i = 0; i < wordLengthSlider; i++) {
+                        restrictionBoxes.push(
+                          <div key={i} id='specific-requirements-box-div'>
+                            <label htmlFor='specific-requirements-box'>Letter {i + 1}: </label>
+                            <input
+                              className='specific-requirements-box'
+                              key={i}
+                              type='text'
+                              size='2'
+                              maxLength='1'
+                              value={specificRequirementsBoxes[i]}
+                              onChange={(e) => handleSpecificRequirementsBoxChange(e, i)}
+                            />
+                            <label htmlFor='specific-requirements-box'>
+                              {' '}
+                              NOT:
+                              <input
+                                type='checkbox'
+                                value={specificRequirementsCheckBoxes[i]}
+                                onChange={(e) => handleSpecificRequirementsCheckBoxChange(e, i)}
+                              />
+                            </label>
+                          </div>,
+                        );
                       }
-                      return row;
+                      return restrictionBoxes;
                     })()}
-                  </div>,
-                );
-              }
-              return rows;
-            })()}
+                  </div>
+                </div>
 
-            <div className='kb-row'>
-              <KeyboardSquare
-                value={kbSquares[0].value}
-                color={kbSquares[0].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[0])}
-              />
-              <KeyboardSquare
-                value={kbSquares[1].value}
-                color={kbSquares[1].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[1])}
-              />
-              <KeyboardSquare
-                value={kbSquares[2].value}
-                color={kbSquares[2].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[2])}
-              />
-              <KeyboardSquare
-                value={kbSquares[3].value}
-                color={kbSquares[3].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[3])}
-              />
-              <KeyboardSquare
-                value={kbSquares[4].value}
-                color={kbSquares[4].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[4])}
-              />
-              <KeyboardSquare
-                value={kbSquares[5].value}
-                color={kbSquares[5].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[5])}
-              />
-              <KeyboardSquare
-                value={kbSquares[6].value}
-                color={kbSquares[6].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[6])}
-              />
-              <KeyboardSquare
-                value={kbSquares[7].value}
-                color={kbSquares[7].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[7])}
-              />
-              <KeyboardSquare
-                value={kbSquares[8].value}
-                color={kbSquares[8].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[8])}
-              />
-              <KeyboardSquare
-                value={kbSquares[9].value}
-                color={kbSquares[9].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[9])}
-              />
-            </div>
+                <div>
+                  <input
+                    className='parameter-button'
+                    type='submit'
+                    onClick={() => {
+                      setWordLength(document.getElementById('word-length').value);
+                      setMaxGuesses(document.getElementById('max-guesses').value);
+                      setLetterRestrictions(document.getElementById('letter-restrictions').value.split(''));
 
-            <div className='kb-row'>
-              <KeyboardSquare
-                value={kbSquares[10].value}
-                color={kbSquares[10].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[10])}
-              />
-              <KeyboardSquare
-                value={kbSquares[11].value}
-                color={kbSquares[11].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[11])}
-              />
-              <KeyboardSquare
-                value={kbSquares[12].value}
-                color={kbSquares[12].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[12])}
-              />
-              <KeyboardSquare
-                value={kbSquares[13].value}
-                color={kbSquares[13].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[13])}
-              />
-              <KeyboardSquare
-                value={kbSquares[14].value}
-                color={kbSquares[14].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[14])}
-              />
-              <KeyboardSquare
-                value={kbSquares[15].value}
-                color={kbSquares[15].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[15])}
-              />
-              <KeyboardSquare
-                value={kbSquares[16].value}
-                color={kbSquares[16].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[16])}
-              />
-              <KeyboardSquare
-                value={kbSquares[17].value}
-                color={kbSquares[17].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[17])}
-              />
-              <KeyboardSquare
-                value={kbSquares[18].value}
-                color={kbSquares[18].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[18])}
-              />
-            </div>
+                      for (let i = 0; i < 20; i++) {
+                        if (!specificRequirementsCheckBoxes[i]) {
+                          specificRequirementsBoxes[i] = '~' + specificRequirementsBoxes[i];
+                        }
+                      }
 
-            <div className='kb-row'>
-              <KeyboardSquare
-                value={kbSquares[19].value}
-                color={kbSquares[19].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[19])}
-              />
-              <KeyboardSquare
-                value={kbSquares[20].value}
-                color={kbSquares[20].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[20])}
-              />
-              <KeyboardSquare
-                value={kbSquares[21].value}
-                color={kbSquares[21].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[21])}
-              />
-              <KeyboardSquare
-                value={kbSquares[22].value}
-                color={kbSquares[22].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[22])}
-              />
-              <KeyboardSquare
-                value={kbSquares[23].value}
-                color={kbSquares[23].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[23])}
-              />
-              <KeyboardSquare
-                value={kbSquares[24].value}
-                color={kbSquares[24].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[24])}
-              />
-              <KeyboardSquare
-                value={kbSquares[25].value}
-                color={kbSquares[25].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[25])}
-              />
-              <KeyboardSquare
-                value={kbSquares[26].value}
-                color={kbSquares[26].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[26])}
-              />
-              <KeyboardSquare
-                value={kbSquares[27].value}
-                color={kbSquares[27].color}
-                onKbSquareClick={() => handleKbClick(kbSquares[27])}
-              />
+                      const selectedWord = generateWord(
+                        wordList,
+                        document.getElementById('word-length').value,
+                        document.getElementById('letter-restrictions').value.split(''),
+                        specificRequirementsBoxes,
+                      ).toLowerCase();
+
+                      setTargetWord(selectedWord);
+                      setMaxGuesses(maxGuessSlider);
+                      setWordLength(wordLengthSlider);
+                      setLetterRestrictions(document.getElementById('letter-restrictions').value.split(''));
+                      setSpecificRequirements(specificRequirementsBoxes);
+                      setGridRowsSet(true);
+
+                      const numCopy = maxGuessSlider;
+
+                      setGridSquares(gridRowsCopy.get(0));
+
+                      setMessage('Button Clicked! Custom Game Starting Now!');
+                      setCustomGameInitializer(false);
+                      setShowBoard(true);
+                    }}
+                    value='Start Custom Game'></input>
+                </div>
+                <p className='explanation'>
+                  ***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
+                  for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
+                  first letter, and an 'l' as its fourth. You can also use the NOT box to require a letter NOT be placed
+                  in that spot. for example, "NOT e, NOT e, NOT e, NOT e, NOT e"" would mean that none of the 5 letters
+                  could be 'e', effectively the same as restricting the letter e!{' '}
+                </p>
+              </div>
+            )}
+            <div className={`button-container ${buttonClicked ? 'hidden' : ''}`}>
+              <Link to='/history'>
+                <button className='start-button'>History</button>
+              </Link>
+              <Link to='/dataanalytics'>
+                <button className='data-button'>Data Analytics</button>
+              </Link>
             </div>
+          </main>
+        ) : (
+          <>
+            <h1>PLEASE SIGN IN</h1>
+            <Link to='/auth'>
+              <button className='signin-button'>SIGN IN</button>
+            </Link>
           </>
         )}
-      </section>
-    </div>
+        <section className={`gameboard ${showBoard ? '' : 'hidden'}`}>
+          {showBoard && (
+            <>
+              {displayInvalid && (
+                <>
+                  <div>
+                    <p> Not a valid word! </p>
+                  </div>
+                </>
+              )}
+
+              {playerWonOne && (
+                <>
+                  <div>
+                    <p> You won! It took {numGuesses} guess! </p>
+                  </div>
+                </>
+              )}
+
+              {playerWon && (
+                <>
+                  <div>
+                    <p> You won! It took {numGuesses} guesses! </p>
+                  </div>
+                </>
+              )}
+
+              {playerLost && (
+                <>
+                  <div>
+                    <p> Game over! The word was {targetWord}. </p>
+                  </div>
+                </>
+              )}
+
+              {(() => {
+                gridRows = gridRowsCopy;
+
+                let rows = [];
+                for (let i = 0; i < gridRows.size; i++) {
+                  rows.push(
+                    <div className='board-row' key={i}>
+                      {(() => {
+                        let row = [];
+                        for (let j = 0; j < wordLength; j++) {
+                          row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />);
+                        }
+                        return row;
+                      })()}
+                    </div>,
+                  );
+                }
+                return rows;
+              })()}
+
+              <div className='kb-row'>
+                <KeyboardSquare
+                  value={kbSquares[0].value}
+                  color={kbSquares[0].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[0])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[1].value}
+                  color={kbSquares[1].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[1])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[2].value}
+                  color={kbSquares[2].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[2])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[3].value}
+                  color={kbSquares[3].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[3])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[4].value}
+                  color={kbSquares[4].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[4])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[5].value}
+                  color={kbSquares[5].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[5])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[6].value}
+                  color={kbSquares[6].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[6])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[7].value}
+                  color={kbSquares[7].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[7])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[8].value}
+                  color={kbSquares[8].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[8])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[9].value}
+                  color={kbSquares[9].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[9])}
+                />
+              </div>
+
+              <div className='kb-row'>
+                <KeyboardSquare
+                  value={kbSquares[10].value}
+                  color={kbSquares[10].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[10])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[11].value}
+                  color={kbSquares[11].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[11])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[12].value}
+                  color={kbSquares[12].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[12])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[13].value}
+                  color={kbSquares[13].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[13])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[14].value}
+                  color={kbSquares[14].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[14])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[15].value}
+                  color={kbSquares[15].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[15])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[16].value}
+                  color={kbSquares[16].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[16])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[17].value}
+                  color={kbSquares[17].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[17])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[18].value}
+                  color={kbSquares[18].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[18])}
+                />
+              </div>
+
+              <div className='kb-row'>
+                <KeyboardSquare
+                  value={kbSquares[19].value}
+                  color={kbSquares[19].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[19])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[20].value}
+                  color={kbSquares[20].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[20])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[21].value}
+                  color={kbSquares[21].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[21])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[22].value}
+                  color={kbSquares[22].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[22])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[23].value}
+                  color={kbSquares[23].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[23])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[24].value}
+                  color={kbSquares[24].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[24])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[25].value}
+                  color={kbSquares[25].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[25])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[26].value}
+                  color={kbSquares[26].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[26])}
+                />
+                <KeyboardSquare
+                  value={kbSquares[27].value}
+                  color={kbSquares[27].color}
+                  onKbSquareClick={() => handleKbClick(kbSquares[27])}
+                />
+              </div>
+            </>
+          )}
+        </section>
+      </div>
+    </>
   );
 }
 

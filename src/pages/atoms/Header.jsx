@@ -8,8 +8,8 @@ function Header({ userId, userName }) {
   return (
     <>
       <header>
-        <div class='inline'>
-          <section class='buttons'>
+        <div className='inline'>
+          <section className='buttons'>
             {userId ? (
               <>
                 <Link to='/gameplay' className='link'>
@@ -29,9 +29,9 @@ function Header({ userId, userName }) {
             )}
           </section>
           <section class='name'>
-            <Link to='/gameplay'>
+            {/* <Link to='/gameplay'>
               <h1>Wordle Evolved</h1>
-            </Link>
+            </Link> */}
           </section>
           <section class='sign'>
             {userId ? (
