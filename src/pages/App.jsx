@@ -1,11 +1,11 @@
-import './App.css';
+import { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './LandingPage';
 import Auth from './Auth';
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import GamePlay from './GamePlay';
 import History from './History';
 import DataAnalytics from './DataAnalytics';
+import '../styles/App.css';
 
 function App() {
   const [userId, setUserId] = useState('');

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import './DataAnalytics.css';
+import axios from 'axios';
+import '../styles/DataAnalytics.css';
 
 function DataAnalytics( {uid, userName} ){
     const [data, setData] = useState();

@@ -1,11 +1,8 @@
-import './App.css';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
-import Header from './atoms/Header';
 import { useNavigate } from 'react-router-dom';
-import { wordList2 } from './wordleWords_v4.jsx';
-
+import axios from 'axios';
+import '../styles/App.css';
 
 function GridSquare({ value }) {
   return <div className='square'>{value}</div>;

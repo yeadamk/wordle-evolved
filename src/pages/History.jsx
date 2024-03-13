@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import HistoryElement from './atoms/HistoryElement';
 import HistoryLegend from './atoms/HistoryLegend';
 import Header from './atoms/Header';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 
 function History({ uid, userName }) {
   const [history, setHistory] = useState();

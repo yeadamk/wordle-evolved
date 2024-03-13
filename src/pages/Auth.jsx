@@ -1,9 +1,9 @@
-import './Auth.css';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Login from './atoms/Login';
 import SignUp from './atoms/SignUp';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import '../styles/Auth.css';
 
 function Auth({ setIsSignedIn, setUserId, setUserName }) {
   const [email, setEmail] = useState('');
