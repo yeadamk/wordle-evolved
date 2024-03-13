@@ -33,6 +33,7 @@
   /*margin-left: 80px;*/
   margin-right: 80px;
 }
+
 /*
 .left{
     flex-flow: row;
@@ -40,6 +41,7 @@
     justify-content: space-between;
 }
 */
+
 .sign {
   width: 20px;
   height: 97.3px;
@@ -48,24 +50,6 @@
   flex-grow: 1;
   flex-wrap: wrap;
   justify-content: right;
-  /*padding-top: 30px;*/
-  /*margin-right: 50px;*/
-  /*border: solid black 2px;*/
-}
-
-.name {
-  font-size: 30px;
-  justify-content: center;
-  display: flex;
-  flex: 1;
-  color: #000000;
-}
-.name h1 {
-  font-size: 30px;
-  color: #000000;
-  text-decoration: none;
-  margin-top: -30px;
-  border-bottom-style: none;
 }
 
 .name h1:hover,
@@ -77,9 +61,10 @@ h1:active {
   cursor: pointer;
   border-bottom-style: none !important;
 }
+
 .sign > div {
   display: flex;
-  margin-left: 10px;
+  margin-right: 10px;
   justify-content: center;
   align-items: center;
 }

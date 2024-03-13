@@ -13,44 +13,31 @@ function Header({ userId, userName }) {
             {userId ? (
               <>
                 <Link to='/gameplay' className='link'>
-                  <FontAwesomeIcon icon={faKeyboard} size='2x' class='fa-fw' />
+                  <FontAwesomeIcon icon={faKeyboard} class='fa-fw fa-2xl' />
                 </Link>
               </>
             ) : (
               <>
-                <h1>Sign In</h1>
-                <Link to='/auth'>
-                  <button>
-                    {/*onClick={() => }*/}
-                    Sign In
-                  </button>
-                </Link>
+              {/* If the user is not logged in, display nothing */}
               </>
             )}
           </section>
-          <section class='name'>
-            {/* <Link to='/gameplay'>
-              <h1>Wordle Evolved</h1>
-            </Link> */}
-          </section>
+          <h1 className='title'>
+            <Link to='/'>Wordle Evolved</Link>
+          </h1>
           <section class='sign'>
             {userId ? (
               <>
                 {' '}
                 <div>
                   <Link to='/history' className='link'>
-                    <FontAwesomeIcon icon={faUser} size='1x' class='fa-fw' />
+                    <FontAwesomeIcon icon={faUser} size='2x' class='fa-fw fa-xl' />
                   </Link>
-                </div>
-                <div>
-                  <FontAwesomeIcon icon={faRightFromBracket} size='1x' class='fa-fw' margin-left='10px' />
                 </div>
               </>
             ) : (
               <>
-                <Link to='/auth'>
-                  <button>Sign In</button>
-                </Link>
+                {/* If the user is not logged in, display nothing */}
               </>
             )}
           </section>

@@ -463,9 +463,6 @@ function GamePlay({ userId, userName }) {
       <div className='game-container'>
         {userId ? (
           <main>
-            <h1 className='title'>
-              <Link to='/'>Wordle Evolved</Link>
-            </h1>
             <section className={`card ${buttonClicked ? 'hidden' : ''}`}>
               <h2>Basic Rules</h2>
               <p className='description'>
@@ -652,7 +649,7 @@ function GamePlay({ userId, userName }) {
           </main>
         ) : (
           <>
-            <h1>PLEASE SIGN IN</h1>
+            <h1 className='signin-text'>PLEASE SIGN IN</h1>
             <Link to='/auth'>
               <button className='signin-button'>SIGN IN</button>
             </Link>
