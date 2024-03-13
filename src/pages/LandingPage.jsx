@@ -25,7 +25,7 @@ function LandingPage({ isSignedIn }) {
       </p>
       {isSignedIn ? (
         <button className='signin-button' onClick={signInClickRedirect}>
-          Go to game
+          Start
         </button>
       ) : (
         <button className='signin-button' onClick={signInClickRedirect}>

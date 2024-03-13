@@ -86,128 +86,120 @@ function DataAnalytics({ uid, userName }) {
         }
       });
 
-            setGamesPlayed(data.length);
-            setTotalGuesses(totalG);
-            setTotalWins(numberWins);
-            setTotalLosses(numberLosses);
-            setWinPercentage(winPer);
-            setCurrentWinStreak(currWS);
-            setMaxWinStreak(maxWS);
-            setAverageGuesses(averageG);
-            setaverageTargetWordLength(averageTargetWordLen);
-            setNumOnes(ones);
-            setNumTwos(twos);
-            setNumThrees(threes);
-            setNumFours(fours);
-            setNumFives(fives);
-            setNumSixes(sixes);
+      setGamesPlayed(data.length);
+      setTotalGuesses(totalG);
+      setTotalWins(numberWins);
+      setTotalLosses(numberLosses);
+      setWinPercentage(winPer);
+      setCurrentWinStreak(currWS);
+      setMaxWinStreak(maxWS);
+      setAverageGuesses(averageG);
+      setaverageTargetWordLength(averageTargetWordLen);
+      setNumOnes(ones);
+      setNumTwos(twos);
+      setNumThrees(threes);
+      setNumFours(fours);
+      setNumFives(fives);
+      setNumSixes(sixes);
 
-            setGamesCompleted(gamesCompleted);
-            setVals([ones,twos,threes,fours,fives,sixes]);
-            setLast(allIndex);
-            setObjects(zip(allVals,allIndexs))
+      setGamesCompleted(gamesCompleted);
+      setVals([ones, twos, threes, fours, fives, sixes]);
+      setLast(allIndex);
+      setObjects(zip(allVals, allIndexs));
 
-            console.log("Games played: ", gamesPlayed);
-            console.log("Total guesses: ", totalGuesses);
-            console.log("Average guesses: ", averageGuesses);
-            console.log("Total wins: ", totalWins);
-            console.log("Total losses: ", totalLosses);
-            console.log("Win percentage: ", winPercentage);
-            console.log("Current win streak: ", currentWinStreak);
-            console.log("Max win streak: ", maxWinStreak);
-            console.log("Average target word length: ", averageTargetWordLength);
-            console.log("Num one: ", numOnes);
-            console.log("Num twos: ", numTwos);
-            console.log("Num threes: ", numThrees);
-            console.log("Num four: ", numFours);
-            console.log("Num fours: ", numFours);
-            console.log("Num fives: ", numFives);
-            console.log("Num sixes: ", numSixes);
-            console.log("Games Completed: ", gamesCompleted);
-            console.log("Last Won: ", last);
-            console.log("SetLast: ", allIndexs);
-            console.log("AllVals", allVals);
-            console.log("Objs:", allObjects);
-        }
-    }, [data]);
-    
-    return (
-        <>
-            { uid && (
-                <Header 
-                    userId={uid}
-                    userName={userName}
-                />
-            )}
-            <div className='user-box'>
-                {data ? (
-                    <div>
-                        <FontAwesomeIcon icon={faCircleUser} size='3x' />
-                        <p className='line'>{userName}</p>
+      console.log('Games played: ', gamesPlayed);
+      console.log('Total guesses: ', totalGuesses);
+      console.log('Average guesses: ', averageGuesses);
+      console.log('Total wins: ', totalWins);
+      console.log('Total losses: ', totalLosses);
+      console.log('Win percentage: ', winPercentage);
+      console.log('Current win streak: ', currentWinStreak);
+      console.log('Max win streak: ', maxWinStreak);
+      console.log('Average target word length: ', averageTargetWordLength);
+      console.log('Num one: ', numOnes);
+      console.log('Num twos: ', numTwos);
+      console.log('Num threes: ', numThrees);
+      console.log('Num four: ', numFours);
+      console.log('Num fours: ', numFours);
+      console.log('Num fives: ', numFives);
+      console.log('Num sixes: ', numSixes);
+      console.log('Games Completed: ', gamesCompleted);
+      console.log('Last Won: ', last);
+      console.log('SetLast: ', allIndexs);
+      console.log('AllVals', allVals);
+      console.log('Objs:', allObjects);
+    }
+  }, [data]);
+
+  return (
+    <>
+      {uid && <Header userId={uid} userName={userName} />}
+      <div className='user-box'>
+        {data ? (
+          <div>
+            <FontAwesomeIcon icon={faCircleUser} size='3x' />
+            <p className='line'>{userName}</p>
+          </div>
+        ) : (
+          <Link to='/auth'>
+            <button>signin</button>
+          </Link>
+        )}
+        <div className='up'>
+          <h1>Played</h1>
+          <h2>{gamesPlayed}</h2>
+        </div>
+        <div className='up'>
+          <h1>Completed</h1>
+          <h2>{gamesCompleted}</h2>
+        </div>
+        <div className='up'>
+          <h1>Win %</h1>
+          {winPercentage ? <h2>{winPercentage}</h2> : <h2>0</h2>}
+        </div>
+        <div className='up'>
+          <h1> Current Streak </h1>
+          <h2>{currentWinStreak}</h2>
+        </div>
+        <div className='up'>
+          <h1> Max Streak </h1>
+          <h2>{maxWinStreak}</h2>
+        </div>
+      </div>
+      <div className='stats'>
+        <h1> Overall Statistics </h1>
+      </div>
+      <div className='distro'>
+        <table>
+          <tbody>
+            {allObjects.map((stat, index) => {
+              let barWidth = stat[0] === 0 ? '4' : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
+              let barColor = stat[1] === 1 ? 'green' : 'rgb(107,107,109';
+              console.log(stat);
+              console.log(index);
+              console.log(barWidth);
+              console.log(barColor);
+              return (
+                <tr id='guesses' key={index + 1}>
+                  <td id='guess'>{index + 1}</td>
+                  <td id='val'>
+                    <div
+                      className='chart'
+                      style={{
+                        width: `${barWidth}%`,
+                        backgroundColor: `${barColor}`,
+                      }}>
+                      {stat[0]}
                     </div>
-                ) : (
-                    <Link to='/auth'>
-                        <button>signin</button>
-                    </Link>
-                )}
-                <div className='up'>
-                    <h1>Played</h1>
-                    <h2>{gamesPlayed}</h2>
-                </div>
-                <div className='up'>
-                    <h1>Completed</h1>
-                    <h2>{gamesCompleted}</h2>
-                </div>
-                <div className='up'>
-                    <h1>Win %</h1>
-                    {winPercentage ? (
-                        <h2>{winPercentage}</h2>
-                    ) : (
-                        <h2>0</h2>
-                    )}
-                </div>
-                <div className='up'> 
-                    <h1> Current Streak </h1>
-                    <h2>{currentWinStreak}</h2>
-                </div>
-                <div className='up'>
-                    <h1> Max Streak </h1>
-                    <h2>{maxWinStreak}</h2>
-                </div>
-            </div>
-            <div className='stats'>
-                <h1> Overall Statistics </h1>
-            </div>
-            <div className='distro'>
-                <table>
-                    <tbody>
-                        {allObjects.map((stat, index) => {
-                            let barWidth = (stat[0] === 0) ? "4" 
-                                : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
-                            let barColor = (stat[1] === 1) ? "green"
-                                : "rgb(107,107,109";
-                            console.log(stat);
-                            console.log(index);
-                            console.log(barWidth);
-                            console.log(barColor);
-                            return (
-                                <tr id="guesses"key={index+1}>
-                                    <td id="guess">{index+1}</td>
-                                    <td id="val">
-                                        <div className='chart' style={{
-                                            width: `${barWidth}%`,
-                                            backgroundColor: `${barColor}`}}>
-                                        {stat[0]}
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
-        </>
-    );  
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
 }
 
 export default DataAnalytics;

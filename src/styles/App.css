@@ -1,3 +1,11 @@
+:root {
+  --purple: rgb(143, 56, 186);
+  --light-purple: rgb(177, 79, 226);
+  --blue: #412dc8;
+  --light-blue: #4e5dd0;
+  --dark-blue: #091c89;
+}
+
 * {
   font-family: 'JetBrains Mono', monospace;
 }
