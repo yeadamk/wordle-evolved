@@ -26,13 +26,7 @@ touch .env
 
 Paste the following content into the .env file
 ```
-VITE_API_KEY=AIzaSyA4H4ChI5WaEf4HMxC1zISmw7TYhXy2h3s
-VITE_AUTH_DOMAIN=wordle-evolved-6c9f4.firebaseapp.com
-VITE_PROJECT_ID=wordle-evolved-6c9f4
-VITE_STORAGE_BUCKET=wordle-evolved-6c9f4.appspot.com
-VITE_MESSAGING_SENDER_ID=958450328450
-VITE_APP_ID=1:958450328450:web:c32581273b441aefbca59b
-VITE_MEASUREMENT_ID=G-CLMWC7H81Q
+Replace this with instructions for the user to set up their own API key
 ```
 
 Let's get the backend server running
