@@ -1,0 +1,28 @@
+#!/bin/bash
+
+npm install
+
+cd backend
+
+touch .env
+
+read -p "Enter your API key: " apiKey
+read -p "Enter your authentication domain: " authDomain
+read -p "Enter your project ID: " projectId
+read -p "Enter your storage bucket: " storageBucket
+read -p "Enter your messaging sender ID: " messagingSenderId
+read -p "Enter your app ID: " appId
+read -p "Enter your measurement ID: " measurementId
+
+echo "VITE_API_KEY=$apiKey" >> .env
+echo "VITE_AUTH_DOMAIN=$authDomain.firebaseapp.com" >> .env
+echo "VITE_PROJECT_ID=$projectId" >> .env
+echo "VITE_STORAGE_BUCKET=$storageBucket.appspot.com" >> .env
+echo "VITE_MESSAGING_SENDER_ID=$messagingSenderId" >> .env
+echo "VITE_APP_ID=$appId" >> .env
+echo "VITE_MEASUREMENT_ID=$measurementId" >> .env
+
+node index.js
+
+
+
