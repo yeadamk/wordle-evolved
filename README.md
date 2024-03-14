@@ -33,14 +33,14 @@ cd wordle-evolved
 ![image13](images/image13.png)
 ![image14](images/image14.png)
 
-### Installing Dependencies and setting up Backend
+### Installing Dependencies and Setting Up Backend
 Now that firebase is all set up, you can run a shell script and it will prompt you to enter the keys you got from step 1. Make sure you are entering this information without the enclosing quotation marks around it. For example, when asked for an api key, please enter AIzaSyCJLwC9Nqjvq0U3ILxMmCpSmxyN2npQvTE instead of "AIzaSyCJLwC9Nqjvq0U3ILxMmCpSmxyN2npQvTE". 
 
 To run the shell script, type `./project_start_script`
 ```
 ./project_start_script
 ```
-This will install all required dependencies and get the backend server running. 
+Running this script will install all required dependencies and get the backend server running. 
 
 ### Test
 After completing all the steps above, test the game using `npm run dev`
