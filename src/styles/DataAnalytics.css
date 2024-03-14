@@ -1,3 +1,6 @@
+/*CSS For the Data Analytics Page */
+
+/*For General Stats + User Profile */
 .user-box {
   display: flex;
   width: 90%;
@@ -40,6 +43,17 @@
   justify-content: center ;
 }
 
+.line {
+  padding-right: 25px;
+  border-right: 2px solid black;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  vertical-align: middle;
+}
+
+/*Daily Game Statistics*/
 .stats {
   display: flex;
   align-items: center;
@@ -53,15 +67,7 @@
   text-align: center;
   /*margin-top: 20px;*/
 }
-.line {
-  padding-right: 25px;
-  border-right: 2px solid black;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  vertical-align: middle;
-}
+/* Guess Distribution */
 .distro {
   width: 1152px;
   overflow: auto;
@@ -135,6 +141,7 @@
   border-right: 2px solid black;
   height: 100%;
 }
+
 #titles{
   display: flex;
   width: 1536px;
@@ -154,6 +161,8 @@
   height: 40px;
   align-items: center;
 }
+
+/* For the Word List */
 
 #options{
   position: absolute;

@@ -8,6 +8,8 @@ import '../styles/DataAnalytics.css';
 
 
 function DataAnalytics({ uid, userName }) {
+
+  {/*Declare all state variables */}
   const [data, setData] = useState();
   const [gamesPlayed, setGamesPlayed] = useState(0);
   const [totalGuesses, setTotalGuesses] = useState(0);
@@ -30,6 +32,7 @@ function DataAnalytics({ uid, userName }) {
   const [allObjects, setObjects] = useState([]);
   const [allWords, setWords] = useState([]);
 
+  {/*Get all the data */}
   useEffect(() => {
     (async () => {
       const response = await axios.get(`http://localhost:4000/api/gethistory/${uid}`);
@@ -39,6 +42,7 @@ function DataAnalytics({ uid, userName }) {
 
   useEffect(() => {
     if (data) {
+      {/*Set all state variables*/}
       const ones = data.filter((item) => item.numGuesses === 1).length;
       const twos = data.filter((item) => item.numGuesses === 2).length;
       const threes = data.filter((item) => item.numGuesses === 3).length;
