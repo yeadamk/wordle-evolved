@@ -7,7 +7,7 @@ This web application expands upon the game of Wordle. It provides the ability fo
 ### Clone
 Clone the repository, then `cd` into it
 ```
-git clone https://github.com/yeadamk/wordle-evovled
+git clone https://github.com/yeadamk/wordle-evolved
 cd wordle-evolved
 ```
 
