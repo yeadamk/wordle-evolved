@@ -6,6 +6,7 @@ import axios from 'axios';
 import Header from './atoms/Header';
 import '../styles/DataAnalytics.css';
 
+
 function DataAnalytics({ uid, userName }) {
   const [data, setData] = useState();
   const [gamesPlayed, setGamesPlayed] = useState(0);
@@ -89,6 +90,14 @@ function DataAnalytics({ uid, userName }) {
         }
       });
 
+      {/*
+      let displayNumber = 5;
+
+      function changeDisplay (displayNumberPassed) {
+        displayNumber = displayNumberPassed;
+      };
+    */}
+
       let words = []
       let occurences = []
       data.forEach((item) => {
@@ -113,6 +122,7 @@ function DataAnalytics({ uid, userName }) {
         }
       })
 
+
       setGamesPlayed(data.length);
       setTotalGuesses(totalG);
       setTotalWins(numberWins);
@@ -133,8 +143,8 @@ function DataAnalytics({ uid, userName }) {
       setVals([ones, twos, threes, fours, fives, sixes]);
       setLast(allIndex);
       setObjects(zip([ones, twos, threes, fours, fives, sixes], allIndex));
-      setWords(zip(words,occurences).sort((a,b) => b[1] - a[1]))
-
+      setWords(zip(words,occurences).sort((a,b) => b[1] - a[1]).slice(0,10))
+      {/*
       console.log('Games played: ', gamesPlayed);
       console.log('Total guesses: ', totalGuesses);
       console.log('Average guesses: ', averageGuesses);
@@ -159,6 +169,7 @@ function DataAnalytics({ uid, userName }) {
       console.log('Occurences: ', occurences);
       console.log('Words', words);
       console.log('All Worlds', allWords);
+    */}
     }
   }, [data]);
 
@@ -205,7 +216,7 @@ function DataAnalytics({ uid, userName }) {
           Guess Distribution
         </h1>
         <h1>
-          Most Common Words
+          Most Common Words Guessed
         </h1>
       </div>
       <div id="dailystats">
@@ -213,8 +224,8 @@ function DataAnalytics({ uid, userName }) {
           <table>
             <tbody>
               {allObjects.map((stat, index) => {
-                let barWidth = stat[0] === 0 ? '2' : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
-                let barColor = stat[1] === 1 ? 'green' : 'rgb(197,227,231)';
+                let barWidth = stat[0] === 0 ? '4' : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
+                let barColor = stat[1] === 1 ? 'green' : 'rgb(102,102,102)';
                 return (
                   <tr id='guesses' key={index + 1}>
                     <td id='guess'>{index + 1}</td>
@@ -223,7 +234,7 @@ function DataAnalytics({ uid, userName }) {
                         className='chart'
                         style={{
                           width: `${barWidth}%`,
-                          backgroundColor: `${barColor}`,
+                          backgroundColor: `${barColor}`
                         }}>
                         {stat[0]}
                       </div>
@@ -235,23 +246,25 @@ function DataAnalytics({ uid, userName }) {
           </table>
         </div>
         <div className='words'>
+          {/*
           <div id="options">
-            <button>5</button>
-            <button>25</button>
-            <button>100</button>
+            <button onClick={() => changeDisplay(5)}>5</button>
+            <button onClick={() => changeDisplay(25)}>25</button>
+            <button onClick={() => changeDisplay(100)}>100</button>
           </div>
+          */}
           <div id="list">
               <table>
                 <tbody>
-                  <tr>
-                    <th>Word</th>
-                    <th>Occurences</th>
+                  <tr id="header">
+                    <th width="50%">Word</th>
+                    <th width="50%">Occurences</th>
                   </tr>
                   {allWords.map((word,occurence) =>{
                     return(
-                      <tr>
-                        <td>{word[0]}</td>
-                        <td>{word[1]}</td>
+                      <tr key={occurence}>
+                        <td width="50%">{word[0]}</td>
+                        <td width="50">{word[1]}</td>
                       </tr>
                     );
                   })}

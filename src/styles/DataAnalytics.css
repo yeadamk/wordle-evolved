@@ -72,32 +72,40 @@
 .distro table{
   /*display: flex;*/
   width: 100%;
+  border-spacing: 2em;
+  border-collapse: separate;
 }
 
 #guess{
   display: flex;
   justify-content: left;
   width: 100%;
-  background-color:rgb(88, 209, 209);
+  background-color:white;
   font-weight: bold;
   margin-right: 5px;
   text-transform: uppercase;
+  /*
   border-right: 1px solid black;
   border-left: 1px solid black;
   border: 1px solid black;
+  */
 
 }
 #guesses{
   margin-left: 3px;
+  margin: 100px 0px;
+  font-size: 20px;
 }
 #val{
   width: 98%;
   color: white;
   justify-content: center;
   text-align: center;
+  vertical-align: middle;
   padding-left: 4px;
   padding-top: 0px;
   padding-bottom: 0px;
+  font-size: 30px;
 }
 
 #dailystats{
@@ -115,7 +123,7 @@
   width: 100%;
 }
 .distro table{
-  border-collapse: collapse;
+  /*border-collapse: collapse;*/
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -129,6 +137,8 @@
 }
 #titles{
   display: flex;
+  width: 1536px;
+  margin-left: 86px;
 }
 #titles h1{
   display: flex;
@@ -141,6 +151,8 @@
 .chart{
   text-align: center;
   justify-content: center;
+  height: 40px;
+  align-items: center;
 }
 
 #options{
@@ -162,7 +174,25 @@
 #list{
   display: flex;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 #list tr{
   padding: 10px;
+  width: 100%;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
 }
+
+#list table{
+  display: flex;
+  width: 100%;
+  table-layout: fixed;
+}
+#list tbody{
+  flex-grow: 1;
+}
+#header{
+  border-bottom: 1px solid black;
+}
+
