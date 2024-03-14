@@ -27,6 +27,7 @@ function DataAnalytics({ uid, userName }) {
   const [allIndexs, setLast] = useState([]);
   const [allVals, setVals] = useState([]);
   const [allObjects, setObjects] = useState([]);
+  const [allWords, setWords] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -51,7 +52,7 @@ function DataAnalytics({ uid, userName }) {
       const numberLosses = data.filter((item) => item.playerWon == false).length;
       const averageTargetWordLen = totalLengthOfAllTargetWords / data.length;
       const averageG = totalG / data.length;
-      const winPer = (numberWins / data.length) * 100;
+      const winPer = ((numberWins / data.length) * 100).toFixed(1);
       const gamesCompleted = numberWins + numberLosses;
 
       let tmpCurrWS = 0;
@@ -62,11 +63,9 @@ function DataAnalytics({ uid, userName }) {
 
       let last = 0;
       let allIndex = new Array(6).fill(0);
-      let guesses = [numOnes, numTwos, numThrees, numFours, numFives, numSixes];
+      /*let guesses = [numOnes, numTwos, numThrees, numFours, numFives, numSixes];*/
       let zip = (a1, a2) => a1.map((x, i) => [x, a2[i]]);
-      if (last > 0 && last < 7) {
-        allIndex.splice(last - 1, 0, 1);
-      }
+      
 
       data.forEach((item) => {
         if (item.playerWon) {
@@ -78,6 +77,10 @@ function DataAnalytics({ uid, userName }) {
         }
       });
 
+      if (last > 0 && last < 7) {
+        allIndex.splice(last - 1, 0, 1);
+      }
+
       data.forEach((item) => {
         if (item.playerWon && keepIncrementing) {
           currWS++;
@@ -85,6 +88,30 @@ function DataAnalytics({ uid, userName }) {
           keepIncrementing = false;
         }
       });
+
+      let words = []
+      let occurences = []
+      data.forEach((item) => {
+        if(item.length === 5){
+          console.log(item);
+          console.log(Object.values(item.guesses));
+          for(let i = 0; i<(Object.values(item.guesses)).length;i++){
+            console.log(i);
+            let word = Object.values(item.guesses)[i];
+            /*let word = Object.values(guesses)[i];*/
+            console.log(word);
+            if(words.includes(word)){
+              occurences[words.indexOf(word)] += 1;
+            } else{
+              words.push(word);
+              occurences[words.indexOf(word)] = 1;
+            }
+          }
+          /*console.log((Object.values(guesses)).length);*/
+          /*console.log(Object);*/
+          /*** */
+        }
+      })
 
       setGamesPlayed(data.length);
       setTotalGuesses(totalG);
@@ -105,7 +132,8 @@ function DataAnalytics({ uid, userName }) {
       setGamesCompleted(gamesCompleted);
       setVals([ones, twos, threes, fours, fives, sixes]);
       setLast(allIndex);
-      setObjects(zip(allVals, allIndexs));
+      setObjects(zip([ones, twos, threes, fours, fives, sixes], allIndex));
+      setWords(zip(words,occurences).sort((a,b) => b[1] - a[1]))
 
       console.log('Games played: ', gamesPlayed);
       console.log('Total guesses: ', totalGuesses);
@@ -128,6 +156,9 @@ function DataAnalytics({ uid, userName }) {
       console.log('SetLast: ', allIndexs);
       console.log('AllVals', allVals);
       console.log('Objs:', allObjects);
+      console.log('Occurences: ', occurences);
+      console.log('Words', words);
+      console.log('All Worlds', allWords);
     }
   }, [data]);
 
@@ -167,36 +198,67 @@ function DataAnalytics({ uid, userName }) {
         </div>
       </div>
       <div className='stats'>
-        <h1> Overall Statistics </h1>
+        <h1> Daily Game Statistics </h1>
       </div>
-      <div className='distro'>
-        <table>
-          <tbody>
-            {allObjects.map((stat, index) => {
-              let barWidth = stat[0] === 0 ? '4' : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
-              let barColor = stat[1] === 1 ? 'green' : 'rgb(107,107,109';
-              console.log(stat);
-              console.log(index);
-              console.log(barWidth);
-              console.log(barColor);
-              return (
-                <tr id='guesses' key={index + 1}>
-                  <td id='guess'>{index + 1}</td>
-                  <td id='val'>
-                    <div
-                      className='chart'
-                      style={{
-                        width: `${barWidth}%`,
-                        backgroundColor: `${barColor}`,
-                      }}>
-                      {stat[0]}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div id="titles">
+        <h1>
+          Guess Distribution
+        </h1>
+        <h1>
+          Most Common Words
+        </h1>
+      </div>
+      <div id="dailystats">
+        <div className='distro'>
+          <table>
+            <tbody>
+              {allObjects.map((stat, index) => {
+                let barWidth = stat[0] === 0 ? '2' : (Math.floor((stat[0] / gamesPlayed) * 80) + 8).toString();
+                let barColor = stat[1] === 1 ? 'green' : 'rgb(197,227,231)';
+                return (
+                  <tr id='guesses' key={index + 1}>
+                    <td id='guess'>{index + 1}</td>
+                    <td id='val'>
+                      <div
+                        className='chart'
+                        style={{
+                          width: `${barWidth}%`,
+                          backgroundColor: `${barColor}`,
+                        }}>
+                        {stat[0]}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className='words'>
+          <div id="options">
+            <button>5</button>
+            <button>25</button>
+            <button>100</button>
+          </div>
+          <div id="list">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Word</th>
+                    <th>Occurences</th>
+                  </tr>
+                  {allWords.map((word,occurence) =>{
+                    return(
+                      <tr>
+                        <td>{word[0]}</td>
+                        <td>{word[1]}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+          </div>
+        </div>
       </div>
     </>
   );

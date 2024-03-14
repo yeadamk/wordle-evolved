@@ -83,6 +83,7 @@ app.use('/api/addhistory', async (req, res) => {
     };
     const docRef = await addDoc(collection(db, 'history'), historyObj);
     console.log('Document written with ID: ', docRef.id);
+    console.log(historyObj)
     res.send(docRef);
   } catch (e) {
     console.error('Error adding document: ', e);

@@ -31,11 +31,13 @@
 }
 
 .up > h2 {
+  display:flex;
   align-self: flex-end;
   flex-basis: 100%;
   font-size: 12px;
   margin-top: -40px;
   margin-bottom: 40px;
+  justify-content: center ;
 }
 
 .stats {
@@ -43,11 +45,13 @@
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid gray;
+  border-top: 1px solid gray;
   width: 90%;
   margin: 0 5%;
   font-size: 20px;
-  background-color: lightgray;
+  background-color: #5bbbcf7c;
   text-align: center;
+  /*margin-top: 20px;*/
 }
 .line {
   padding-right: 25px;
@@ -61,8 +65,8 @@
 .distro {
   width: 1152px;
   overflow: auto;
-  margin-left: 64px;
-  margin-right: -128px;
+  /*margin-left: 64px;*/
+  /*margin-right: -128px;*/
 }
 
 .distro table{
@@ -73,8 +77,92 @@
 #guess{
   display: flex;
   justify-content: left;
-  width: 2%;
+  width: 100%;
+  background-color:rgb(88, 209, 209);
+  font-weight: bold;
+  margin-right: 5px;
+  text-transform: uppercase;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+  border: 1px solid black;
+
+}
+#guesses{
+  margin-left: 3px;
 }
 #val{
-  width: 98%
+  width: 98%;
+  color: white;
+  justify-content: center;
+  text-align: center;
+  padding-left: 4px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+#dailystats{
+  display: flex;
+  width: 1536px;
+  margin-left: 86px;
+}
+
+#dailystats div{
+  flex-basis: 0;
+  flex-grow: 1;
+  display: flex;
+}
+.distro h1{
+  width: 100%;
+}
+.distro table{
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  color: #333;
+
+
+}
+.distro{
+  border-right: 2px solid black;
+  height: 100%;
+}
+#titles{
+  display: flex;
+}
+#titles h1{
+  display: flex;
+  flex-basis: 0;
+  flex-grow: 1;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.chart{
+  text-align: center;
+  justify-content: center;
+}
+
+#options{
+  position: absolute;
+  display: flex;
+  flex-wrap: row;
+  flex-grow: 1;
+  flex-basis: 0;
+  justify-content: center;
+}
+
+#options button{
+  flex-grow: 1;
+  flex-basis: 0;
+  width: 235px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#list{
+  display: flex;
+  margin-top: 20px;
+}
+#list tr{
+  padding: 10px;
 }
