@@ -11,7 +11,7 @@
 }
 
 .user-box > div {
-  margin: 10px;
+  margin: 5px;
 }
 
 .up {
@@ -45,7 +45,8 @@
 }
 
 .line {
-  padding-right: 25px;
+  font-weight: bold;
+  padding-right: 2rem;
   border-right: 2px solid black;
   height: 100%;
   justify-content: center;
