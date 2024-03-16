@@ -2,7 +2,7 @@ import React from 'react';
 import './Header.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightFromBracket, faUser, faKeyboard } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket, faUser, faKeyboard, faChartSimple } from '@fortawesome/free-solid-svg-icons';
 
 function Header({ userId, userName }) {
   return (
@@ -29,6 +29,11 @@ function Header({ userId, userName }) {
             {userId ? (
               <>
                 {' '}
+                <div>
+                  <Link to='/dataanalytics' className='link'>
+                    <FontAwesomeIcon icon={faChartSimple} size='2x' class='fa-fw fa-xl' />
+                  </Link>
+                </div>
                 <div>
                   <Link to='/history' className='link'>
                     <FontAwesomeIcon icon={faUser} size='2x' class='fa-fw fa-xl' />
