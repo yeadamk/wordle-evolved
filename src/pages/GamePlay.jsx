@@ -74,7 +74,9 @@ async function checkValidWord(userGuess) {
 
 function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
   let validWords = [];
+  let checkList = [];
   let valid = true;
+  let index = 0;
 
   if (LetterRestrictions == null) {
     LetterRestrictions = [];
@@ -87,39 +89,59 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
     }
   }
 
-  for (let i = 0; i < length; i++) {
-    if (SpecificRequirements[i] == '' || SpecificRequirements[i] == '~') {
+
+
+  for (let i = 0; i < 20; i++) {
+    if (SpecificRequirements[i] == '' || SpecificRequirements[i] == '~' || SpecificRequirements[i] == '_') {
       SpecificRequirements[i] = ' ';
     }
-  }
+    }
+
+
+    console.log(SpecificRequirements);
+
+    for (let i = 0; i < length; i++) {
+        if (SpecificRequirements[i] != ' ') {
+            checkList.push(i);
+        }
+    }
+
 
   for (let i = 0; i < words.length; i++) {
     let word = words[i].toUpperCase();
     if (word.length != length) {
       continue;
-    }
+      }
+ 
+      valid = true;
 
-    valid = true;
+      if (checkList.length != 0) {
+          for (let j = 0; j < checkList.length; j++) {
+              index = checkList[j];
+              if (SpecificRequirements[index].length == 1 && SpecificRequirements[index] != word[index]) {
+                  valid = false;
+              }
+              else if (SpecificRequirements[index].length != 1 && SpecificRequirements[index] == word[index]) {
+                  valid = false;
+              }
+          }
+      }
+
+      if (!valid) {
+          continue; 
+      }
+
+      if (LetterRestrictions.length == 0) {
+          validWords.push(word);
+          continue;
+      }
+    
     for (let j = 0; j < length; j++) {
       if (LetterRestrictions.includes(word[j].toUpperCase())) {
         console.log('word ' + word + ' failed test 1 at letter ' + word[j]);
         valid = false;
         break;
-      } else if (
-        SpecificRequirements[j].length > 1 &&
-        (SpecificRequirements[j][1].toUpperCase() == word[j] || SpecificRequirements[0].toUpperCase() == word[j])
-      ) {
-        valid = false;
-        break;
-      } else if (
-        SpecificRequirements[j].length == 1 &&
-        SpecificRequirements[j] != ' ' &&
-        SpecificRequirements[j] != '_' &&
-        SpecificRequirements[j].toUpperCase() != word[j]
-      ) {
-        valid = false;
-        break;
-      }
+      } 
     }
 
     if (valid == true) {
@@ -514,7 +536,7 @@ function GamePlay({ userId, userName }) {
                       id='word-length'
                       type='range'
                       min='1'
-                      max='20'
+                      max='15'
                       onChange={handleWordLengthSliderChange}
                       value={wordLengthSlider}
                     />
@@ -533,7 +555,7 @@ function GamePlay({ userId, userName }) {
                       id='max-guesses'
                       type='range'
                       min='1'
-                      max='20'
+                      max='15'
                       value={maxGuessSlider}
                       onChange={handleMaxGuessSliderChange}
                     />
@@ -641,7 +663,7 @@ function GamePlay({ userId, userName }) {
                   ***Specific Requirements are requirements that certain letters appear in certain spaces. For example,
                   for a 5-letter word, the pattern "a _ _ l _" would mean that the selected word must have an 'a' as its
                   first letter, and an 'l' as its fourth. You can also use the NOT box to require a letter NOT be placed
-                  in that spot. for example, "NOT e, NOT e, NOT e, NOT e, NOT e"" would mean that none of the 5 letters
+                  in that spot. For example, "NOT e, NOT e, NOT e, NOT e, NOT e"" would mean that none of the 5 letters
                   could be 'e', effectively the same as restricting the letter e!{' '}
                 </p>
               </div>
