@@ -20,7 +20,7 @@
   border-bottom: 1px solid black;
 }
 .user-box > div {
-  margin: 10px;
+  margin: 5px;
 }
 
 .up {
@@ -44,7 +44,7 @@
 }
 
 .up > h2 {
-  display:flex;
+  display: flex;
   align-self: flex-end;
   flex-basis: 100%;
   font-size: 12px;
@@ -54,7 +54,8 @@
 }
 
 .line {
-  padding-right: 25px;
+  font-weight: bold;
+  padding-right: 2rem;
   border-right: 2px solid black;
   height: 100%;
   justify-content: center;
@@ -77,6 +78,7 @@
   text-align: center;
   /*margin-top: 20px;*/
 }
+
 /* Guess Distribution */
 .distro {
   width: 1152px;
@@ -85,18 +87,18 @@
   /*margin-right: -128px;*/
 }
 
-.distro table{
+.distro table {
   /*display: flex;*/
   width: 100%;
   border-spacing: 2em;
   border-collapse: separate;
 }
 
-#guess{
+#guess {
   display: flex;
   justify-content: left;
   width: 100%;
-  background-color:white;
+  background-color: white;
   font-weight: bold;
   margin-right: 5px;
   text-transform: uppercase;
@@ -105,14 +107,15 @@
   border-left: 1px solid black;
   border: 1px solid black;
   */
-
 }
-#guesses{
+
+#guesses {
   margin-left: 3px;
   margin: 100px 0px;
   font-size: 20px;
 }
-#val{
+
+#val {
   width: 98%;
   color: white;
   justify-content: center;
@@ -124,35 +127,35 @@
   font-size: 30px;
 }
 
-#dailystats{
+#dailystats {
   display: flex;
   width: 90%;
   margin: 0 5%;
 }
 
-#dailystats div{
+#dailystats div {
   flex-basis: 0;
   flex-grow: 1;
   display: flex;
 }
-.distro h1{
+
+.distro h1 {
   width: 100%;
 }
-.distro table{
-  /*border-collapse: collapse;*/
+
+.distro table {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   color: #333;
-
-
 }
-.distro{
+
+.distro {
   border-right: 2px solid black;
   height: 100%;
 }
 
-#titles{
+#titles {
   display: flex;
   width: 90%;
   margin: 0 5%;
@@ -162,10 +165,16 @@
   flex-basis: 0;
   flex-grow: 1;
   justify-content: center;
-  margin-bottom: 10px;
 }
 
-.chart{
+#titles h1 {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 50%;
+}
+
+.chart {
   text-align: center;
   justify-content: center;
   height: 1em;
@@ -174,7 +183,11 @@
 
 /* For the Word List */
 
-#options{
+.words {
+  display: flex;
+}
+
+#options {
   position: absolute;
   display: flex;
   flex-wrap: row;
@@ -183,35 +196,42 @@
   justify-content: center;
 }
 
-#options button{
+#options button {
   flex-grow: 1;
   flex-basis: 0;
   width: 235px;
   margin-left: 10px;
   margin-right: 10px;
 }
-#list{
+
+#list {
   display: flex;
-  margin-top: 20px;
+  margin-top: 2rem;
   flex-wrap: wrap;
 }
-#list tr{
-  padding: 10px;
-  width: 100%;
+
+#list tr {
+  padding: 1rem;
+  width: 95%;
   display: flex;
   flex-grow: 1;
   justify-content: center;
+  font-size: 1rem;
 }
 
-#list table{
+#list table {
   display: flex;
   width: 100%;
   table-layout: fixed;
 }
-#list tbody{
+
+#list tbody {
   flex-grow: 1;
 }
-#header{
-  border-bottom: 1px solid black;
-}
 
+#header {
+  border-bottom: 2px solid black;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
