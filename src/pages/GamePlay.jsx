@@ -126,7 +126,9 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
       validWords.push(word);
     }
   }
-
+    if (validWords.length == 0) {
+        return ""; 
+    }
   return validWords[Math.floor(Math.random() * validWords.length)];
 }
 
@@ -610,7 +612,13 @@ function GamePlay({ userId, userName }) {
                         document.getElementById('word-length').value,
                         document.getElementById('letter-restrictions').value.split(''),
                         specificRequirementsBoxes,
-                      ).toLowerCase();
+                        ).toLowerCase();
+                      console.log(selectedWord)
+
+                        if (selectedWord == "") {
+                            alert("No word meets these requirements!")
+                            return; 
+                        }
 
                       setTargetWord(selectedWord);
                       setMaxGuesses(maxGuessSlider);
