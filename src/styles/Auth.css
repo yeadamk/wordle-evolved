@@ -8,9 +8,11 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(155, 80, 190, 2);
 }
+
 .toggle:hover {
   cursor: pointer;
 }
+
 .toggle {
   margin: 7vh 0;
   width: 37.5%;
@@ -44,4 +46,5 @@
 .error-msg {
   margin-top: 5vh;
   color: red;
+  text-align: center;
 }
