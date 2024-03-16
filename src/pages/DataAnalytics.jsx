@@ -200,27 +200,27 @@ function DataAnalytics({ uid, userName }) {
           <h2>{gamesCompleted}</h2>
         </div>
         <div className='up'>
-          <h1>Win %</h1>
+          <h1>Win(%)</h1>
           {winPercentage ? <h2>{winPercentage}</h2> : <h2>0</h2>}
         </div>
         <div className='up'>
-          <h1> Current Streak </h1>
+          <h1>Current Streak</h1>
           <h2>{currentWinStreak}</h2>
         </div>
         <div className='up'>
-          <h1> Max Streak </h1>
+          <h1>Max Streak</h1>
           <h2>{maxWinStreak}</h2>
         </div>
       </div>
       <div className='stats'>
-        <h1> Daily Game Statistics </h1>
+        <h1>Daily Game Statistics</h1>
       </div>
       <div id="titles">
         <h1>
-          Guess Distribution
+          <u>Guess Distribution</u>
         </h1>
         <h1>
-          Most Common Words Guessed
+          <u>Most Common Words Guessed</u>
         </h1>
       </div>
       <div id="dailystats">
@@ -250,13 +250,6 @@ function DataAnalytics({ uid, userName }) {
           </table>
         </div>
         <div className='words'>
-          {/*
-          <div id="options">
-            <button onClick={() => changeDisplay(5)}>5</button>
-            <button onClick={() => changeDisplay(25)}>25</button>
-            <button onClick={() => changeDisplay(100)}>100</button>
-          </div>
-          */}
           <div id="list">
               <table>
                 <tbody>
