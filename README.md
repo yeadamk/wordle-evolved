@@ -34,7 +34,7 @@ cd wordle-evolved
 ![image14](images/image14.png)
 
 ### Installing Dependencies and Setting Up Backend
-Now that firebase is all set up, you can run a shell script and it will prompt you to enter the keys you got from step 1. Make sure you are entering this information without the enclosing quotation marks around it. For example, when asked for an api key, please enter AIzaSyCJLwC9Nqjvq0U3ILxMmCpSmxyN2npQvTE instead of "AIzaSyCJLwC9Nqjvq0U3ILxMmCpSmxyN2npQvTE". 
+Now that firebase is all set up, you can run a shell script and it will prompt you to enter the keys you got from step 1. Make sure you are entering this information without the enclosing quotation marks around it. 
 
 To run the shell script, type `./project_start_script`
 ```
