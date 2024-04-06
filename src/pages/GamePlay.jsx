@@ -479,7 +479,67 @@ function GamePlay({ userId, userName }) {
     }
 
     setSpecificRequirementsCheckBoxes(copyArray);
-  }
+    }
+
+
+    function singleGame(gameNumber) {
+        return(
+        <>
+            {displayInvalid && (
+                <>
+                    <div>
+                        <p> Not a valid word! </p>
+                    </div>
+                </>
+            )}
+
+            {playerWonOne && (
+                <>
+                    <div>
+                        <p> You won! It took {numGuesses} guess! </p>
+                    </div>
+                </>
+            )}
+
+            {playerWon && (
+                <>
+                    <div>
+                        <p> You won! It took {numGuesses} guesses! </p>
+                    </div>
+                </>
+            )}
+
+            {playerLost && (
+                <>
+                    <div>
+                        <p> Game over! The word was {targetWord}. </p>
+                    </div>
+                </>
+            )}
+
+            {(() => {
+                gridRows = gridRowsCopy;
+
+                let rows = [];
+                for (let i = 0; i < gridRows.size; i++) {
+                    rows.push(
+                        <div className='board-row' key={i}>
+                            {(() => {
+                                let row = [];
+                                for (let j = 0; j < wordLength; j++) {
+                                    row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />);
+                                }
+                                return row;
+                            })()}
+                        </div>,
+                    );
+                }
+                return rows;
+            })()}
+        </>
+        )
+    }
+
 
   return (
     <>
@@ -686,59 +746,12 @@ function GamePlay({ userId, userName }) {
           </>
         )}
         <section className={`gameboard ${showBoard ? '' : 'hidden'}`}>
-          {showBoard && (
+                  {showBoard && (
+
+            
             <>
-              {displayInvalid && (
-                <>
-                  <div>
-                    <p> Not a valid word! </p>
-                  </div>
-                </>
-              )}
+                          {(() => {return singleGame(0)})()}
 
-              {playerWonOne && (
-                <>
-                  <div>
-                    <p> You won! It took {numGuesses} guess! </p>
-                  </div>
-                </>
-              )}
-
-              {playerWon && (
-                <>
-                  <div>
-                    <p> You won! It took {numGuesses} guesses! </p>
-                  </div>
-                </>
-              )}
-
-              {playerLost && (
-                <>
-                  <div>
-                    <p> Game over! The word was {targetWord}. </p>
-                  </div>
-                </>
-              )}
-
-              {(() => {
-                gridRows = gridRowsCopy;
-
-                let rows = [];
-                for (let i = 0; i < gridRows.size; i++) {
-                  rows.push(
-                    <div className='board-row' key={i}>
-                      {(() => {
-                        let row = [];
-                        for (let j = 0; j < wordLength; j++) {
-                          row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />);
-                        }
-                        return row;
-                      })()}
-                    </div>,
-                  );
-                }
-                return rows;
-              })()}
 
               <div className='kb-row'>
                 <KeyboardSquare
