@@ -62,15 +62,22 @@ function checkWinner(colorArr) {
 }
 
 async function checkValidWord(userGuess) {
+  console.log("userGuess is ")
+  console.log(userGuess)
   try {
+    
     const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${userGuess}`);
+    console.log("YES, we found your word")
     return response.status === 200;
   } catch (error) {
+    console.log("did not find word")
     if (error.response && error.response.status === 404) {
       return false;
     }
   }
 }
+
+
 
 function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
   let validWords = [];
@@ -138,7 +145,7 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
     
     for (let j = 0; j < length; j++) {
       if (LetterRestrictions.includes(word[j].toUpperCase())) {
-        console.log('word ' + word + ' failed test 1 at letter ' + word[j]);
+       // console.log('word ' + word + ' failed test 1 at letter ' + word[j]);
         valid = false;
         break;
       } 
@@ -154,6 +161,8 @@ function generateWord(words, length, LetterRestrictions, SpecificRequirements) {
   return validWords[Math.floor(Math.random() * validWords.length)];
 }
 
+// Idea to save memory: make this a function, not a component; don't save the output; 
+// Learn how to make a load screen while waiting for the word to generate? 
 async function generateWordList() {
   try {
     const response = await axios.get('https://random-word-api.herokuapp.com/all');
@@ -165,6 +174,7 @@ async function generateWordList() {
 }
 
 function GamePlay({ userId, userName }) {
+  // maybe we don't have to store this
   const [wordList, setWordList] = useState([]);
   useEffect(() => {
     async function fetchWordList() {
@@ -181,6 +191,7 @@ function GamePlay({ userId, userName }) {
 
   const [wordLength, setWordLength] = useState(5);
   const [maxGuesses, setMaxGuesses] = useState(6);
+  const [numGames, setNumGames] = useState(1);
   const [letterRestrictions, setLetterRestrictions] = useState(Array(0));
   const [specificRequirements, setSpecificRequirements] = useState(Array(20).fill('_'));
 
@@ -189,25 +200,43 @@ function GamePlay({ userId, userName }) {
   const [showBoard, setShowBoard] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
   const [showHomeScreen, setShowHomeScreen] = useState(true);
+  const [dailyGame, setDailyGame] = useState(false);
   const [customGame, setCustomGame] = useState(true);
   const [customGameInitializer, setCustomGameInitializer] = useState(false);
+  const [multiGame, setMultiGame] = useState(false);
 
   const [wordLengthSlider, setWordLengthSlider] = useState(5);
   const [maxGuessSlider, setMaxGuessSlider] = useState(6);
+  const [numGamesSlider, setNumGamesSlider] = useState(1);
   const [letterRestrictionsInput, setLetterRestrictionsInput] = useState('');
   const [specificRequirementsBoxes, setSpecificRequirementsBoxes] = useState(Array(20).fill(''));
   const [specificRequirementsCheckBoxes, setSpecificRequirementsCheckBoxes] = useState(Array(20).fill(1));
+  // shorten names??? ^^^^
 
   const [currGridSq, setCurrGridSq] = useState(0);
-  const [gridSquares, setGridSquares] = useState(Array(wordLength).fill(null));
 
-  const [gridRowsCopy, setGridRowsCopy] = useState(new Map());
+  let gnum = 0;
+  for (let i = 0; i < numGames; i++) {
+    gnum++;
+  }
+  
+
+  const [gridSquares, setGridSquares] = useState(Array(gnum).fill(Array(wordLength)));
+  // THE PROBLEM! gridRows copy has only a shallow copy here; we need deep copies; 
+  const [gridRowsCopy, setGridRowsCopy] = useState(Array(gnum));
   const [gridRowsSet, setGridRowsSet] = useState(true);
+  const [targetWord, setTargetWord] = useState(Array(numGames).fill(null));
 
-  let gridRows = new Map();
 
   if (gridRowsSet) {
     let num = 0;
+
+    //I'm no longer sure why nextGridSquares would need to be defined here -- try removing it
+    const nextGridRows = Array(gnum);
+    const nextGridSquares = Array(gnum).fill(Array(wordLength).fill(null));
+
+  //  console.log("nextGRIDROWS")
+   // console.log(nextGridRows);
     for (let i = 0; i < wordLength; i++) {
       num++;
     }
@@ -217,20 +246,28 @@ function GamePlay({ userId, userName }) {
       max++;
     }
 
-    for (let i = 0; i < max; i++) {
-      gridRows.set(
-        i,
-        Array(num).fill(
-          <div className='boardsquare' style={{ backgroundColor: 'white' }}>
-            {null}
-          </div>,
-        ),
-      );
-    }
+    for (let j = 0; j < numGames; j++) {
+      nextGridRows[j] = new Map();
+      for (let i = 0; i < max; i++) {
+        nextGridRows[j].set(
+          i,
+          Array(num).fill(
+            <div className='boardsquare' style={{ backgroundColor: 'white' }}>
+              {null}
+            </div>,
+          ),
+        );
+      }
 
+      nextGridSquares[j] = nextGridRows[j].get(0);
+
+    }
+   // console.log("now")
+   // console.log(nextGridRows)
+    setGridRowsCopy(nextGridRows);
     setGridRowsSet(false);
-    setGridSquares(gridRows.get(0));
-    setGridRowsCopy(gridRows);
+    setGridSquares(nextGridSquares);
+
   }
 
   const kbInit = [
@@ -263,6 +300,7 @@ function GamePlay({ userId, userName }) {
     { value: 'M', color: 'white' },
     { value: 'DEL', color: 'white' },
   ];
+
   const kbInitLettersOnly = [
     'Q',
     'W',
@@ -296,128 +334,224 @@ function GamePlay({ userId, userName }) {
 
   const [kbSquares, setKbSquares] = useState(kbInit);
   const [userGuesses, setUserGuesses] = useState([]);
-  const [guessColors, setGuessColors] = useState([]);
+  const [guessColors, setGuessColors] = useState(Array(numGames).fill(null));
 
-  const [targetWord, setTargetWord] = useState('');
 
-  useEffect(() => {
-    if (wordList.length > 0) {
-      const newTargetWord = generateWord(wordList, wordLength, letterRestrictions, specificRequirements);
-      setTargetWord(newTargetWord);
+  // problem with multiGame?
+
+  let checkBool = false;
+
+  for (let i = 0; i < numGames; i++) {
+    if (targetWord[i] == null) {
+      checkBool = true;
     }
-  }, [wordList, wordLength, letterRestrictions, specificRequirements]);
+  }
 
+  if (checkBool && wordList.size > 0) {
+    useEffect(() => {
+
+      const addArray = [];
+      let newTargetWord = "";
+      for (let i = 0; i < numGames; i++) {
+        //await?
+        newTargetWord = generateWord(wordList, wordLength, letterRestrictions, specificRequirements);
+        addArray.push(newTargetWord);
+      }
+      setTargetWord(addArray);
+    }, [wordList, wordLength, letterRestrictions, specificRequirements]);
+  }
+  //does this need to be an array?
   const [restrictType, setRestrictType] = useState(false);
-  let [colorArr, setColorArr] = useState(Array(wordLength).fill(null));
-  let [numGuesses, setNumGuesses] = useState(0);
-  const [playerWon, setPlayerWon] = useState(false);
-  const [playerWonOne, setPlayerWonOne] = useState(false);
-  const [playerLost, setPlayerLost] = useState(false);
+  let [colorArr, setColorArr] = useState(Array(numGames).fill(null));
+
+  const [playerWon, setPlayerWon] = useState(Array(numGames).fill(false));;
+  const [playerLost, setPlayerLost] = useState(Array(numGames).fill(false));
+  const [numGuesses, setNumGuesses] = useState(Array(numGames).fill(0)); // rename currentGuess?
   const [displayInvalid, setDisplayInvalid] = useState(false);
 
+  
+
   async function handleKbClick(kbButtonSquare) {
+    console.log("start!")
+    console.log(numGuesses)
+    console.log(targetWord)
+
+    //TESTING ONLY2
+   // setPlayerWon(Array(numGames).fill(true));
+
+    const playerWonArr = playerWon;
+    const playerLostArr = playerLost;
     const nextGridSquares = gridSquares;
+    const numGuessesArr = numGuesses;
+    const nextGridRows = gridRowsCopy;
     const nextKbSquares = kbSquares;
-    let currentGuess = numGuesses;
 
-    if (kbButtonSquare.value == 'DEL') {
-      if (currGridSq > 0) {
-        nextGridSquares[currGridSq - 1] = null;
-        setCurrGridSq(currGridSq - 1);
-        setRestrictType(false);
-        setDisplayInvalid(false);
-      }
-    } else if (kbButtonSquare.value == 'RET') {
-      if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWon && !playerWonOne && !playerLost) {
-        const guess = nextGridSquares.toString().replaceAll(',', '').toUpperCase();
+    let ret = false;
 
-        const wordValid = await checkValidWord(guess);
 
-        if (wordValid) {
-          const newColorArr = checkStatus(guess, targetWord);
-          setColorArr(newColorArr);
-          setUserGuesses([...userGuesses, guess]);
-          setGuessColors([...guessColors, newColorArr]);
+    for (let j = 0; j < numGames; j++) { 
+      console.log("game #" + j)
 
-          for (let i = 0; i < wordLength; i++) {
-            if (newColorArr[i] == 0) {
-              nextGridSquares[i] = (
-                <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
-                  {nextGridSquares[i]}
-                </div>
-              );
+      let currentGuess = numGuesses[j];
+      
 
-              if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color === 'white') {
-                nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
-                  ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
-                  color: 'grey',
-                };
-              }
-            } else if (newColorArr[i] == 1) {
-              nextGridSquares[i] = (
-                <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
-                  {nextGridSquares[i]}
-                </div>
-              );
+      if (kbButtonSquare.value == 'DEL') {
 
-              if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color !== 'green') {
-                nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
-                  ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
-                  color: 'yellow',
-                };
-              }
-            } else if (newColorArr[i] == 2) {
-              nextGridSquares[i] = (
-                <div className='GridSquare' style={{ backgroundColor: 'green' }}>
-                  {nextGridSquares[i]}
-                </div>
-              );
-
-              nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
-                ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
-                color: 'green',
-              };
-            } else {
-            }
-          }
-
-          setKbSquares(nextKbSquares);
-          setCurrGridSq(0);
-          setNumGuesses(numGuesses + 1);
-          currentGuess += 1;
-
-          if (checkWinner(newColorArr) && numGuesses == 0) {
-            setPlayerWonOne(true);
-          } else if (checkWinner(newColorArr)) {
-            setPlayerWon(true);
-          }
-
-          if (!checkWinner(newColorArr) && currentGuess >= maxGuesses) {
-            setPlayerLost(true);
-          }
-
+        if (currGridSq > 0) {
+          nextGridSquares[j][currGridSq - 1] = null;
+          setCurrGridSq(currGridSq - 1);
           setRestrictType(false);
           setDisplayInvalid(false);
-        } else {
-          setDisplayInvalid(true);
         }
-      }
-    } else {
-      if (!restrictType && !playerWon && !playerWonOne && !playerLost) {
-        nextGridSquares[currGridSq] = kbButtonSquare.value;
-        setCurrGridSq(currGridSq + 1);
+      } else if (kbButtonSquare.value == 'RET') {
+        //This might be off-placed
+        if (currGridSq % wordLength == 0 && currGridSq != 0 && !playerWonArr[j] && !playerLostArr[j]) { 
+  
+          //swap i's, j's later
 
-        if ((currGridSq + 1) % wordLength == 0) {
-          setRestrictType(true);
+      
+
+          let addStr = "";
+      
+          for (let k = 0; k < wordLength; k++) {
+            addStr += nextGridSquares[j][k]
+          }
+          
+          const guess = addStr.toUpperCase(); // fix the specifics! Should be array of all words
+          // problem with awaits being too slow now? this is why we need to store the dictionary?
+
+       //   console.log("guess for game " + j + "immediately after construction")
+       //   console.log(guess)
+    
+
+          if (await checkValidWord(guess)) { // repeated work from checkAllWords here
+              // might be a reason to re-factor such that the loops happen individually in each case;
+          //  console.log("proceeding to grade the word on game " + j)
+ 
+            const newColorArr = checkStatus(guess, targetWord[j]);
+
+            setUserGuesses([...userGuesses, guess]);
+            setGuessColors([...guessColors, newColorArr]);
+            console.log("The grades for game " + j)
+            console.log(newColorArr)
+            for (let i = 0; i < wordLength; i++) {
+          
+             
+              if (newColorArr[i] == 0) {
+              //  console.log("hit grey for letter " + i + " of word " + j)
+                nextGridSquares[j][i] = (
+                  <div className='GridSquare' style={{ backgroundColor: 'grey' }}>
+                    {nextGridSquares[j][i]}
+                  </div>
+                );
+
+                if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color === 'white') {
+                  nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                    ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
+                    color: 'grey',
+                  };
+                }
+              } else if (newColorArr[i] == 1) {
+           //     console.log("hit yellow for letter " + i + " of game " + j)
+                nextGridSquares[j][i] = (
+                
+                  <div className='GridSquare' style={{ backgroundColor: 'yellow' }}>
+                    {nextGridSquares[j][i]}
+                  </div>
+                );
+
+              if (nextKbSquares[kbInitLettersOnly.indexOf(guess[i])].color !== 'green') {
+              //  console.log("hit yellow for letter " + i + " of game " + j)
+                  nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                    ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
+                    color: 'yellow',
+                  };
+                }
+            } else if (newColorArr[i] == 2) {
+            //  console.log("hit green for letter " + i + " of game " + j)
+                nextGridSquares[j][i] = (
+                  <div className='GridSquare' style={{ backgroundColor: 'green' }}>
+                    {nextGridSquares[j][i]}
+                  </div>
+                );
+
+                nextKbSquares[kbInitLettersOnly.indexOf(guess[i])] = {
+                  ...nextKbSquares[kbInitLettersOnly.indexOf(guess[i])],
+                  color: 'green',
+                };
+              }
+            }
+
+            setKbSquares(nextKbSquares);
+            setCurrGridSq(0);
+            currentGuess += 1;
+
+            if (checkWinner(newColorArr)) {
+              playerWonArr[j] = true;
+            }
+
+            if (!checkWinner(newColorArr) && currentGuess >= maxGuesses) {
+              playerLostArr[j] = true;
+            }
+
+            setRestrictType(false);
+            setDisplayInvalid(false);
+            ret = true;
+
+          } else {
+            setDisplayInvalid(true);
+          }
         }
-        setDisplayInvalid(false);
+          
+      } else {
+      
+
+        if (!restrictType && !playerWon[j] && !playerLost[j]) {
+          nextGridSquares[j][currGridSq] = kbButtonSquare.value;
+          setCurrGridSq(currGridSq + 1);
+
+        //  console.log("here!")
+
+          if ((currGridSq + 1) % wordLength == 0) {
+            setRestrictType(true);
+          }
+          setDisplayInvalid(false);
+        }
       }
+
+      /*
+      console.log(j + "th game's entry in nextGridSquares + rows before set; game" + j)
+      console.log("nextGridSquares")
+      console.log(nextGridSquares[j])
+      console.log("ROWS!")
+      console.log(nextGridRows[j])
+      */
+     console.log("numGuesses for game " + j)
+      console.log(numGuesses)
+      nextGridRows[j].set(numGuesses[j], nextGridSquares[j]);
+      nextGridSquares[j] = nextGridRows[j].get(currentGuess);
+      numGuessesArr[j] = currentGuess;
+      
+
+      /*
+      console.log(j + "th game's entry in nextGridSquares + rows AFTeR set; game" + j)
+      console.log("nextGridSquares")
+      console.log(nextGridSquares[j])
+      console.log("ROWS!")
+      console.log(nextGridRows[j])
+      */
+     
+
     }
 
-    gridRows.set(numGuesses, nextGridSquares);
-    setGridSquares(gridRows.get(currentGuess));
-    setGridRowsCopy(gridRows);
+    setPlayerWon(playerWonArr);
+    setPlayerLost(playerLostArr);
+    setNumGuesses(numGuessesArr);
+    setGridRowsCopy(nextGridRows);
+    setGridSquares(nextGridSquares);
+
   }
+
 
   useEffect(() => {
     const reformattedUserGuesses = { ...userGuesses };
@@ -425,11 +559,11 @@ function GamePlay({ userId, userName }) {
     const history = {
       guesses: reformattedUserGuesses,
       colors: reformattedColors,
-      targetWord: targetWord,
-      playerWon: playerWon,
+      targetWord: targetWord[0],
+      playerWon: playerWon[0],
       uid: userId,
     };
-    if (playerWon || playerLost) {
+    if (playerWon[0] || playerLost[0]) {
       console.log('hello world');
       (async () => {
         try {
@@ -443,11 +577,7 @@ function GamePlay({ userId, userName }) {
   }, [playerWon, playerLost]);
 
   //   document.getElementById('letter-restrictions').addEventListener("input", handleChange)
-  function handleLetterRestrictionsChange(event) {
-    const text = event.target.value.toUpperCase().replace(/[^A-Z]/g, '');
 
-    setLetterRestrictionsInput(text);
-  }
 
   function handleWordLengthSliderChange(event) {
     const result = event.target.value;
@@ -457,6 +587,23 @@ function GamePlay({ userId, userName }) {
   function handleMaxGuessSliderChange(event) {
     const result = event.target.value;
     setMaxGuessSlider(result);
+  }
+
+  function handleNumGamesSliderChange(event) {
+    const result = event.target.value;
+    setNumGamesSlider(result);
+  }
+
+  function handleLetterRestrictionsChange(event) {
+    const text = event.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+
+    setLetterRestrictionsInput(text);
+  }
+
+  function handleLetterRequirementsChange(event) {
+    const text = event.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+
+    setLetterRestrictionsInput(text);
   }
 
   function handleSpecificRequirementsBoxChange(event, i) {
@@ -483,51 +630,66 @@ function GamePlay({ userId, userName }) {
 
 
     function singleGame(gameNumber) {
-        return(
+      return (
         <>
-            {displayInvalid && (
+          <div className='single-game'>
+
+            {playerWon[gameNumber] && (
                 <>
-                    <div>
-                        <p> Not a valid word! </p>
+                    <div> 
+                  <p> You won! It took you {numGuesses[gameNumber]} {(() => {
+                    if (numGuesses[gameNumber] != 1) { return "guesses!" }
+                    else {return  "guess!"}
+                  })()} </p>
                     </div>
                 </>
             )}
 
-            {playerWonOne && (
+            {playerLost[gameNumber] && (
                 <>
                     <div>
-                        <p> You won! It took {numGuesses} guess! </p>
+                  <p> Game over! The word was {targetWord[gameNumber]}. </p>
                     </div>
                 </>
             )}
 
-            {playerWon && (
-                <>
-                    <div>
-                        <p> You won! It took {numGuesses} guesses! </p>
-                    </div>
-                </>
-            )}
-
-            {playerLost && (
-                <>
-                    <div>
-                        <p> Game over! The word was {targetWord}. </p>
-                    </div>
-                </>
+            {(!playerLost[gameNumber] && !playerWon[gameNumber] && !displayInvalid) && (
+              <>
+                <div>
+                  <p> Game {gameNumber + 1}: </p>
+                </div>
+              </>
             )}
 
             {(() => {
-                gridRows = gridRowsCopy;
+        // console.log(gridRowsCopy[gameNumber])
+              const gameRows = gridRowsCopy[gameNumber]
+             // console.log("target word " + gameNumber + ": " + targetWord[gameNumber])
+              let rows = [];
+              /*
+              console.log("gameRows for game " + gameNumber)
+              //console.log(playerWon)
+              console.log(gameRows)
+              console.log("for testing: ")
+              console.log(gridRowsCopy[0])
+              console.log(gridRowsCopy[1])
+              console.log("length")
+              console.log(gameRows.size)
+              console.log(gameRows.size == 6)
+              */
 
-                let rows = [];
-                for (let i = 0; i < gridRows.size; i++) {
+              for (let i = 0; i < gameRows.size; i++) {
+                  //  console.log("here")
+                   
                     rows.push(
                         <div className='board-row' key={i}>
                             {(() => {
-                                let row = [];
-                                for (let j = 0; j < wordLength; j++) {
-                                    row.push(<GridSquare key={j} value={gridRows.get(i)[j]} />);
+                          let row = [];
+
+                          for (let j = 0; j < gameRows.get(i).length; j++) {
+                                    //console.log("here1")
+                                
+                                    row.push(<GridSquare key={j} value={gameRows.get(i)[j]} />);
                                 }
                                 return row;
                             })()}
@@ -536,6 +698,7 @@ function GamePlay({ userId, userName }) {
                 }
                 return rows;
             })()}
+          </div>
         </>
         )
     }
@@ -564,6 +727,7 @@ function GamePlay({ userId, userName }) {
                       setShowBoard(true);
                       setCustomGame(false);
                       setButtonClicked(true);
+                      setDailyGame(true);
                     }}>
                     {' '}
                     {message}
@@ -577,6 +741,7 @@ function GamePlay({ userId, userName }) {
                       setShowHomeScreen(false);
                       setCustomGameInitializer(true);
                       setCustomGame(true);
+                      setDailyGame(false);
                       setButtonClicked(true);
                     }}>
                     {' '}
@@ -585,6 +750,7 @@ function GamePlay({ userId, userName }) {
                 )}
               </div>
             </section>
+
             {customGameInitializer && (
               <div className='game-parameters'>
                 <p>Enter word length, max guesses, letter restrictions, and specific requirements</p>
@@ -625,7 +791,26 @@ function GamePlay({ userId, userName }) {
                     </label>
                   </div>
                 </div>
-                {}
+
+                <div className='parameter'>
+                  <label htmlFor='num-games'>Number of Games:</label>
+                  <div>
+                    <input
+                      id='num-games'
+                      type='range'
+                      min='1'
+                      max='10'
+                      value={numGamesSlider}
+                      onChange={handleNumGamesSliderChange}
+                    />
+                    <label id='num-games-slider-label' htmlFor='num-games'>
+                      {' '}
+                      {numGamesSlider}
+                    </label>
+                  </div>
+                </div>
+
+                
                 <div className='parameter'>
                   <label htmlFor='letter-restrictions'>Restricted Letters:</label>
                   <div>
@@ -689,29 +874,44 @@ function GamePlay({ userId, userName }) {
                         }
                       }
 
-                      const selectedWord = generateWord(
-                        wordList,
-                        document.getElementById('word-length').value,
-                        document.getElementById('letter-restrictions').value.split(''),
-                        specificRequirementsBoxes,
+                   
+                      let selectedWord = Array(numGamesSlider).fill(null);
+                      let numGuessesArr = Array(numGamesSlider).fill(null);
+              //        let nextGridSquares = Array(numGames).fill(Array(wordLength).fill(null));
+                      console.log("SELECTIon")
+                      for (let j = 0; j < numGamesSlider; j++) {
+                        selectedWord[j] = generateWord(
+                          wordList,
+                          document.getElementById('word-length').value,
+                          document.getElementById('letter-restrictions').value.split(''),
+                          specificRequirementsBoxes,
                         ).toLowerCase();
-                      console.log(selectedWord)
+                        console.log(selectedWord[j])
+                        numGuessesArr[j] = 0;
 
-                        if (selectedWord == "") {
-                            alert("No word meets these requirements!")
-                            return; 
+                        if (selectedWord[j] == "") {
+                          alert("No word meets these requirements!")
+                          return;
                         }
+
+
+                   //     nextGridSquares[j] = selectedWord[j].split("");
+                      }
 
                       setTargetWord(selectedWord);
                       setMaxGuesses(maxGuessSlider);
                       setWordLength(wordLengthSlider);
+                      setNumGames(numGamesSlider);
+                      setNumGuesses(numGuessesArr);
                       setLetterRestrictions(document.getElementById('letter-restrictions').value.split(''));
                       setSpecificRequirements(specificRequirementsBoxes);
                       setGridRowsSet(true);
 
-                      const numCopy = maxGuessSlider;
+                      if (numGamesSlider > 1) {
+                        setMultiGame(true); 
+                      }
 
-                      setGridSquares(gridRowsCopy.get(0));
+   
 
                       setMessage('Button Clicked! Custom Game Starting Now!');
                       setCustomGameInitializer(false);
@@ -750,8 +950,33 @@ function GamePlay({ userId, userName }) {
 
             
             <>
-                          {(() => {return singleGame(0)})()}
+              <div className='multi-game-container'>
+                {(() => {
 
+                  if (!multiGame) {
+                      return singleGame(0)
+                  }
+           
+                  let rows = []; 
+                 // console.log("copy")
+                 // console.log(gridRowsCopy)
+                  let c = 0;
+   
+                  for (let item in gridRowsCopy) {
+                    c++;
+                  }
+                  
+                 // console.log(c)
+                 
+                  for (let i = 0; i < c; i++) {
+                    rows.push(
+                      singleGame(i)
+                    )
+                  }
+                  return rows
+
+                })()}
+              </div>
 
               <div className='kb-row'>
                 <KeyboardSquare
